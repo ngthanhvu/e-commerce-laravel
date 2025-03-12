@@ -22,3 +22,7 @@ Route::get('/gio-hang', function () {
     $title = 'Giỏ hàng';
     return view('carts', compact('title'));
 });
+Route::get('/chi-tiet-san-pham', function () {
+    $title = 'Chi tiết sản phẩm';
+    return view('detail', compact('title'));
+});
