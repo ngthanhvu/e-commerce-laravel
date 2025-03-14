@@ -5,62 +5,56 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function register(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'confirm_password' => 'required|same:password',
+        ], [
+            'name.required' => 'Vui lòng nhập tên',
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.unique' => 'Email đa tồn tại',
+            'password.required' => 'Vui lòng nhập mật khẩu',
+            'password.min' => 'Mật khâu phải nhất 6 ký tự',
+            'confirm_password.required' => 'Vui lòng nhập lây mật khâu',
+            'confirm_password.same' => 'Mật khâu khác nhau',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+        return redirect('/dang-nhap')->with('success', 'Đăng ký thành công');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function login(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ], [
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'password.required' => 'Vui lòng nhập mật khâu',
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return redirect('/');
+        } else {
+            return back()->with('error', 'Email hoặc mật khâu không đúng');
+        }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
+    public function logout(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        Auth::logout();
+        return redirect('/dang-nhap');
     }
 }

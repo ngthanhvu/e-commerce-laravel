@@ -46,14 +46,23 @@
     <div class="container">
         <div class="form-container" id="loginForm">
             <h2 class="text-center mb-4">Đăng Nhập</h2>
-            <form>
+            <form method="POST" action="/dang-nhap">
+                @csrf
                 <div class="mb-3">
                     <label for="loginEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="loginEmail" placeholder="Nhập email của bạn" required>
+                    <input type="email" class="form-control" name="email" id="loginEmail"
+                        placeholder="Nhập email của bạn">
+                    @error('email')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="loginPassword" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" id="loginPassword" placeholder="Nhập mật khẩu" required>
+                    <input type="password" class="form-control" name="password" id="loginPassword"
+                        placeholder="Nhập mật khẩu">
+                    @error('password')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe">
@@ -69,7 +78,7 @@
                     <a href="#" class="btn btn-facebook social-btn w-100">
                         <i class="bi bi-facebook me-2"></i> Facebook
                     </a>
-                    <a href="#" class="btn btn-google social-btn w-100">
+                    <a href="/auth/google" class="btn btn-google social-btn w-100">
                         <i class="bi bi-google me-2"></i> Google
                     </a>
                 </div>

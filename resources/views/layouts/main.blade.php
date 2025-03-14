@@ -68,7 +68,23 @@
                                         alt="avatar" class="rounded-circle me-2" width="40" height="40">
                                     <div class="text-end">
                                         <div>
-                                            <a href="/dang-nhap" class="text-primary text-decoration-none">Đăng nhập</a>
+                                            @if (Auth::check())
+                                                <div>
+                                                    <span>Chào, {{ Auth::user()->name }}</span>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <form action="/dang-xuat" method="post" id="logoutForm">
+                                                        @csrf
+                                                        <span onclick="document.getElementById('logoutForm').submit();"
+                                                            class="text-danger text-decoration-none"
+                                                            style="cursor: pointer">Đăng xuất</span>
+                                                        </p>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <a href="/dang-nhap" class="text-primary text-decoration-none">Đăng
+                                                    nhập</a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
