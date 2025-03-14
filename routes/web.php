@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     $title = 'Trang chủ';
@@ -38,3 +40,13 @@ Route::get('/admin', function () {
     $title = 'Trang quản trị';
     return view('admin.index', compact('title'));
 });
+
+//products
+Route::get('/admin/products', [ProductController::class, 'index']);
+Route::get('/admin/products/create', [ProductController::class, 'create']);
+Route::post('/admin/products', [ProductController::class, 'store']);
+
+//categories
+Route::get('/admin/categories', [CategoryController::class, 'index']);
+Route::get('/admin/categories/create', [CategoryController::class, 'create']);
+Route::post('/admin/categories', [CategoryController::class, 'store']);

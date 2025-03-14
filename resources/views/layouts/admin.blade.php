@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>{{ $title ?? '' }} | Admin Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -36,12 +36,6 @@
             font-size: 18px;
         }
 
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-            width: calc(100% - 250px);
-        }
-
         .sidebar .dropdown-menu {
             background-color: #343a40;
             border: none;
@@ -57,6 +51,12 @@
         .sidebar .dropdown-menu .dropdown-item:hover {
             color: #fff;
             background-color: #495057;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
         }
 
         /* Responsive */
@@ -90,13 +90,28 @@
         <h4 class="text-white text-center mb-4">Admin Panel</h4>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" href="/admin#dashboard">
                     <i class="bi bi-house-door me-2"></i>Dashboard
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                    href="#productsMenu" role="button">
+                    <div><i class="bi bi-box me-2"></i>Products</div>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <div class="collapse" id="productsMenu">
+                    <ul class="nav flex-column ps-3">
+                        <li><a class="nav-link" href="/admin/products#list-products">List Products</a></li>
+                        <li><a class="nav-link" href="/admin/products/create#add-product">Add Product</a></li>
+                        <li><a class="nav-link" href="/admin/categories#categories">Categories</a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/users#users">
                     <i class="bi bi-person me-2"></i>Users
                 </a>
             </li>
@@ -110,33 +125,18 @@
                 </a>
                 <div class="collapse" id="settingsMenu">
                     <ul class="nav flex-column ps-3">
-                        <li><a class="nav-link" href="#">General</a></li>
-                        <li><a class="nav-link" href="#">Security</a></li>
-                        <li><a class="nav-link" href="#">Notifications</a></li>
+                        <li><a class="nav-link" href="/admin/settings/general#general">General</a></li>
+                        <li><a class="nav-link" href="/admin/settings/security#security">Security</a></li>
+                        <li><a class="nav-link" href="/admin/settings/notifications#notifications">Notifications</a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/reports#reports">
                     <i class="bi bi-bar-chart me-2"></i>Reports
                 </a>
-            </li>
-
-            <!-- Menu phân cấp Products -->
-            <li class="nav-item">
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#productsMenu" role="button">
-                    <div><i class="bi bi-box me-2"></i>Products</div>
-                    <i class="bi bi-chevron-down"></i>
-                </a>
-                <div class="collapse" id="productsMenu">
-                    <ul class="nav flex-column ps-3">
-                        <li><a class="nav-link" href="#">List Products</a></li>
-                        <li><a class="nav-link" href="#">Add Product</a></li>
-                        <li><a class="nav-link" href="#">Categories</a></li>
-                    </ul>
-                </div>
             </li>
         </ul>
     </div>
@@ -148,6 +148,51 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+            function removeActive() {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Chỉ thực hiện nếu đây là liên kết bình thường
+                    if (this.getAttribute('data-bs-toggle') === 'collapse') {
+                        return;
+                    }
+
+                    removeActive();
+                    this.classList.add('active');
+
+                    // Thêm hash vào URL khi nhấp vào các liên kết trong sidebar
+                    const href = this.getAttribute('href');
+                    window.location.href = href; // Điều hướng đến URL mới bao gồm hash
+                });
+            });
+
+            function setActiveFromHash() {
+                const hash = window.location.hash;
+                if (hash) {
+                    removeActive();
+                    const targetLink = document.querySelector(`.sidebar .nav-link[href*="${hash}"]`);
+                    if (targetLink) {
+                        targetLink.classList.add('active');
+                    }
+                } else {
+                    removeActive();
+                    document.querySelector('.sidebar .nav-link').classList.add('active');
+                }
+            }
+
+            setActiveFromHash();
+            window.addEventListener('hashchange', setActiveFromHash);
+        });
+    </script>
 </body>
 
 </html>

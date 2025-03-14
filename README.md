@@ -18,3 +18,7 @@ php artisan key:generate
 ```bash
 php artisan serve
 ```
+### Public thư mục storage
+```bash
+php artisan storage:link
+```
