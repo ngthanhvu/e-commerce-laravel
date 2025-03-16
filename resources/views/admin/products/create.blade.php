@@ -9,54 +9,58 @@
         <form action="/admin/products" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <!-- Cột trái -->
                 <div class="col-md-6">
-                    <!-- Tên sản phẩm -->
                     <div class="mb-3">
                         <label for="name" class="form-label">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="form-control" id="name" name="name"
+                            placeholder="Nhập tên sản phẩm">
+                        @error('name')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Giá sản phẩm -->
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá</label>
-                        <input type="number" class="form-control" id="price" name="price" required>
+                        <input type="number" class="form-control" id="price" name="price"
+                            placeholder="Nhập giá sản phẩm">
+                        @error('price')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Số lượng -->
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" required>
-                    </div>
-
-                    <!-- Slug sản phẩm -->
-                    <div class="mb-3">
-                        <label for="slug" class="form-label">Slug</label>
-                        <input type="text" class="form-control" id="slug" name="slug" required>
+                        <input type="number" class="form-control" id="quantity" name="quantity"
+                            placeholder="Nhập số lượng">
+                        @error('quantity')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
-                <!-- Cột phải -->
                 <div class="col-md-6">
-                    <!-- Danh mục -->
                     <div class="mb-3">
                         <label for="category_id" class="form-label">Danh mục</label>
-                        <select class="form-control" id="category_id" name="category_id" required>
+                        <select class="form-control" id="category_id" name="category_id">
                             <option value="">-- Chọn danh mục --</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
+                        @error('category_id')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Ảnh chính -->
                     <div class="mb-3">
                         <label for="main_image" class="form-label">Ảnh chính</label>
-                        <input type="file" class="form-control" id="main_image" name="main_image" required>
+                        <input type="file" class="form-control" id="main_image" name="main_image">
                         <div id="main_image_preview" class="mt-2"></div>
+                        @error('main_image')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Ảnh phụ -->
                     <div class="mb-3">
                         <label for="sub_images" class="form-label">Ảnh phụ</label>
                         <input type="file" class="form-control" id="sub_images" name="sub_images[]" multiple>
@@ -64,10 +68,9 @@
                     </div>
                 </div>
 
-                <!-- Biến thể (toàn chiều rộng) -->
                 <div class="col-12">
                     <div class="mb-3">
-                        <label class="form-label">Thêm biến thể sản phẩm</label>
+                        <label class="form-label">Thêm biến thể sản phẩm <span class="text-muted">(tuỳ chọn)</span></label>
                         <div id="variant-container">
                             <div class="variant-item mb-2">
                                 <div class="row">

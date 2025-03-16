@@ -38,9 +38,16 @@
             color: white;
         }
 
-        .btn-facebook:hover,
+        .btn-facebook:hover {
+            background-color: #ffffff;
+            color: #3b5998;
+            border: 1px solid #3b5998;
+        }
+
         .btn-google:hover {
-            opacity: 0.9;
+            background-color: #ffffff;
+            color: #db4437;
+            border: 1px solid #db4437;
         }
     </style>
     <div class="container">
@@ -85,10 +92,36 @@
             </div>
 
             <div class="text-center mt-3">
-                <a href="/dang-ky" class="text-center mt-3 text-decoration-none">Chưa có tài khoản?
+                <a href="/dang-ky" class="text-center mt-3 text-decoration-none text-muted">Chưa có tài khoản?
                     <span class="toggle-form">Đăng ký ngay</span>
                 </a>
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.querySelector('#loginForm form');
+            const emailInput = document.querySelector('#loginEmail');
+            const passwordInput = document.querySelector('#loginPassword');
+            const rememberMeCheckbox = document.querySelector('#rememberMe');
+
+            if (localStorage.getItem('rememberMe') === 'true') {
+                emailInput.value = localStorage.getItem('email') || '';
+                passwordInput.value = localStorage.getItem('password') || '';
+                rememberMeCheckbox.checked = true;
+            }
+
+            loginForm.addEventListener('submit', function(e) {
+                if (rememberMeCheckbox.checked) {
+                    localStorage.setItem('email', emailInput.value);
+                    localStorage.setItem('password', passwordInput.value);
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    localStorage.removeItem('email');
+                    localStorage.removeItem('password');
+                    localStorage.removeItem('rememberMe');
+                }
+            });
+        });
+    </script>
 @endsection

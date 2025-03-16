@@ -62,7 +62,7 @@
                 </div>
                 <button type="submit" class="btn btn-success w-100">Đăng Ký</button>
                 <div class="text-center mt-3">
-                    <a href="/dang-nhap" class="text-center mt-3 text-decoration-none">Đã có tài khoản? <span
+                    <a href="/dang-nhap" class="text-center mt-3 text-decoration-none text-muted">Đã có tài khoản? <span
                             class="toggle-form">Đăng nhập
                             ngay</span></a>
                 </div>

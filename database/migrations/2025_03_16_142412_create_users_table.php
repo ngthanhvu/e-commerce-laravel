@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('name', 255);
             $table->string('email', 255)->unique();
             $table->string('password', 255);
-            $table->string('oauth_provider', 255);
-            $table->string('oauth_id', 255);
+            $table->string('role')->default('user');
+            $table->string('oauth_provider', 255)->nullable();
+            $table->string('oauth_id', 255)->nullable();
             $table->timestamps();
         });
     }

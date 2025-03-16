@@ -4,19 +4,64 @@
     <div class="p-3 mb-4 rounded-3 bg-light">
         <h2>Danh sách sản phẩm</h2>
     </div>
+    @if (session('success'))
+        <script>
+            iziToast.success({
+                title: 'Thành công',
+                message: '{{ session('success') }}',
+                position: 'topRight'
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            iziToast.error({
+                title: 'Lỗi',
+                message: '{{ session('error') }}',
+                position: 'topRight'
+            });
+        </script>
+    @endif
     <div class="p-3 mb-4 rounded-3 bg-light">
-        <a href="/admin/products/create" class="btn btn-primary">Tạo sản phẩm</a>
-        <table class="table">
+        <!-- Thanh điều hướng số dòng và tìm kiếm -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <form method="GET" action="{{ route('admin.products.index') }}" id="entriesForm">
+                    <label for="entriesPerPage" class="form-label">Show</label>
+                    <select id="entriesPerPage" name="per_page" class="form-select d-inline w-auto"
+                        style="width: auto; display: inline-block;"
+                        onchange="document.getElementById('entriesForm').submit()">
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                    <span> entries per page</span>
+                    <input type="hidden" name="search" value="{{ $search }}">
+                </form>
+            </div>
+            <div class="col-md-3 offset-md-3">
+                <form method="GET" action="{{ route('admin.products.index') }}" class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Search..."
+                        value="{{ $search }}" aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng dữ liệu -->
+        <table class="table table-striped table-hover text-center">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Tên sản phẩm</th>
-                    <th scope="col">Danh mục</th>
-                    <th scope="col">Giá</th>
-                    <th scope="col">Ảnh chính</th>
-                    <th scope="col">Số lượng</th>
-                    <th scope="col">Biến thể</th>
-                    <th scope="col">Thao tác</th>
+                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Tên sản phẩm <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Danh mục <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Giá <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Hình ảnh <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Số lượng <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Biến thể <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +101,7 @@
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
                             </form>
+                            {{-- <a href="/admin/products/{{ $product->id }}" class="btn btn-danger">Xóa</a> --}}
                         </td>
                     </tr>
                 @endforeach
@@ -66,5 +112,39 @@
                 @endif
             </tbody>
         </table>
+
+        <!-- Phân trang -->
+        <div class="row">
+            <div class="col-md-6">
+                <p>Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }}
+                    entries</p>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <!-- Nút Previous -->
+                        <li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link"
+                                href="{{ $products->previousPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}"
+                                tabindex="-1">«</a>
+                        </li>
+
+                        <!-- Các trang -->
+                        @for ($i = 1; $i <= $products->lastPage(); $i++)
+                            <li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
+                                <a class="page-link"
+                                    href="{{ $products->url($i) . '&per_page=' . $perPage . '&search=' . $search }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        <!-- Nút Next -->
+                        <li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link"
+                                href="{{ $products->nextPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}">»</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 @endsection
