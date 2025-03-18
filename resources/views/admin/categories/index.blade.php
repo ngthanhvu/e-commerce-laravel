@@ -4,6 +4,24 @@
     <div class="p-3 mb-4 rounded-3 bg-light">
         <h2>Danh sách danh mục</h2>
     </div>
+    @if (session('success'))
+        <script>
+            iziToast.success({
+                title: 'Thành công',
+                message: '{{ session('success') }}',
+                position: 'topRight'
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            iziToast.error({
+                title: 'Lỗi',
+                message: '{{ session('error') }}',
+                position: 'topRight'
+            });
+        </script>
+    @endif
     <div class="p-3 mb-4 rounded-3 bg-light">
         <a href="/admin/categories/create" class="btn btn-primary">Tạo danh mục</a>
         <table class="table table-striped mt-3 table-hover table-bordered text-center">

@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? '' }} | php3</title>
+    <title>{{ $title ?? '' }} | Kicap Store</title>
+    <link rel="icon" href="//bizweb.dktcdn.net/100/436/596/themes/980306/assets/favicon.png?1742138342352"
+        type="image/x-icon">
     <!-- boostrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -72,6 +74,16 @@
                                         alt="avatar" class="rounded-circle me-2" width="40" height="40">
                                     <div class="text-end">
                                         <div>
+                                            @if (session('success'))
+                                                <script>
+                                                    iziToast.success({
+                                                        title: 'Thành công',
+                                                        message: '{{ session('success') }}',
+                                                        position: 'topRight'
+                                                    });
+                                                </script>
+                                            @endif
+
                                             @if (Auth::check())
                                                 <div>
                                                     <span>Chào, {{ Auth::user()->name }}</span>
@@ -111,6 +123,9 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Về chúng
                                 tôi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Admin</a>
                         </li>
                     </ul>
                 </div>

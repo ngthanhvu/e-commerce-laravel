@@ -73,7 +73,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        $title = "Chinh sua danh muc: {$category->name}";
+        return view('admin.categories.edit', compact('title', 'category'));
     }
 
     /**
@@ -81,7 +82,30 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'name.required' => 'Vui lóg nhập tên danh mục',
+            'name.max' => 'Tên danh mục khó qua 255 kí tự',
+            'description.required' => 'Vui lóg nhập mô tả',
+        ]);
+
+        if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($category->image);
+            $imagePath = $request->file('image')->store('categories', 'public');
+        } else {
+            $imagePath = $category->image;
+        }
+
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $imagePath,
+        ]);
+
+        return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được cập nhật!');
     }
 
     /**

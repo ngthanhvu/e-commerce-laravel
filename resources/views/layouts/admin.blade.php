@@ -97,32 +97,33 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <h4 class="text-white text-center mb-4">Admin Panel</h4>
+        <h4 class="text-white text-center mb-4"><a href="/" class="text-white text-decoration-none">Admin
+                Panel</a></h4>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link active" href="/admin#dashboard">
-                    <i class="bi bi-house-door me-2"></i>Dashboard
+                    <i class="bi bi-house-door me-2"></i>Bảng điều khiển
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                     href="#productsMenu" role="button">
-                    <div><i class="bi bi-box me-2"></i>Products</div>
+                    <div><i class="bi bi-box me-2"></i>Sản phẩm</div>
                     <i class="bi bi-chevron-down"></i>
                 </a>
                 <div class="collapse" id="productsMenu">
                     <ul class="nav flex-column ps-3">
-                        <li><a class="nav-link" href="/admin/products#list-products">List Products</a></li>
-                        <li><a class="nav-link" href="/admin/products/create#add-product">Add Product</a></li>
-                        <li><a class="nav-link" href="/admin/categories#categories">Categories</a></li>
+                        <li><a class="nav-link" href="/admin/products#list-products">Danh sách sản phẩm</a></li>
+                        <li><a class="nav-link" href="/admin/products/create#add-product">Thêm sản phẩm</a></li>
+                        <li><a class="nav-link" href="/admin/categories#categories">Danh mục</a></li>
                     </ul>
                 </div>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="/admin/users#users">
-                    <i class="bi bi-person me-2"></i>Users
+                    <i class="bi bi-person me-2"></i>Người dùng
                 </a>
             </li>
 
@@ -130,7 +131,7 @@
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                     href="#settingsMenu" role="button">
-                    <div><i class="bi bi-gear me-2"></i>Settings</div>
+                    <div><i class="bi bi-gear me-2"></i>Cài đặt</div>
                     <i class="bi bi-chevron-down"></i>
                 </a>
                 <div class="collapse" id="settingsMenu">
@@ -145,7 +146,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="/admin/reports#reports">
-                    <i class="bi bi-bar-chart me-2"></i>Reports
+                    <i class="bi bi-bar-chart me-2"></i>Báo cáo
                 </a>
             </li>
         </ul>

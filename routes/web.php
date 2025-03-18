@@ -4,11 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    $title = 'Trang chủ';
-    return view('index', compact('title'));
-});
+Route::get('/', [HomeController::class, 'index']);
 Route::get('/dang-nhap', function () {
     $title = 'Đăng nhập';
     return view('auth.login', compact('title'));
@@ -50,6 +48,8 @@ Route::put('/admin/products/{product}', [ProductController::class, 'update'])->n
 Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
 
 //categories
-Route::get('/admin/categories', [CategoryController::class, 'index']);
+Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
 Route::get('/admin/categories/create', [CategoryController::class, 'create']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
+Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
+Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');

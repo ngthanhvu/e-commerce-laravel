@@ -47,7 +47,7 @@ class UserController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect('/');
+            return redirect('/')->with('success', 'Đăng nhập thành công');
         } else {
             return back()->with('error', 'Email hoặc mật khâu không đúng');
         }
