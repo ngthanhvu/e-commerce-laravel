@@ -15,17 +15,17 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $title = 'Categories';
+        $title = 'Quản lý danh mục';
         $search = request()->input('search');
         $perPage = request()->input('per_page', 10);
 
-        $query = Category::query();
+        $query = Category::query()->whereNull('parent_id');
 
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
         }
 
-        $categories = $query->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);
+        $categories = $query->with('allChildren')->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);
 
         return view('admin.categories.index', compact('title', 'categories', 'search', 'perPage'));
     }
@@ -36,7 +36,8 @@ class CategoryController extends Controller
     public function create()
     {
         $title = 'Tạo danh mục';
-        return view('admin.categories.create', compact('title'));
+        $categories = Category::whereNull('parent_id')->with('allChildren')->get();
+        return view('admin.categories.create', compact('title', 'categories'));
     }
 
     /**
@@ -46,17 +47,17 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:categories,id', // Kiểm tra parent_id hợp lệ
             'description' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'name.required' => 'Vui lòng nhập tên danh mục',
-            'name.max' => 'Tên danh mục khó qua 255 kí tự',
+            'name.max' => 'Tên danh mục không quá 255 kí tự',
             'description.required' => 'Vui lòng nhập mô tả',
             'image.required' => 'Vui lòng chọn ảnh',
         ]);
 
         $slug = Str::slug($request->name);
-
         $originalSlug = $slug;
         $count = 1;
         while (Category::where('slug', $slug)->exists()) {
@@ -70,6 +71,7 @@ class CategoryController extends Controller
             'slug' => $slug,
             'description' => $request->description,
             'image' => $imagePath,
+            'parent_id' => $request->parent_id ?: null, // Nếu không chọn parent_id thì để null
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được tạo thành công!');
@@ -88,8 +90,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $title = "Chinh sua danh muc: {$category->name}";
-        return view('admin.categories.edit', compact('title', 'category'));
+        $title = "Chỉnh sửa danh mục: {$category->name}";
+        $categories = Category::whereNull('parent_id')->with('allChildren')->get();
+        return view('admin.categories.edit', compact('title', 'category', 'categories'));
     }
 
     /**
@@ -118,6 +121,7 @@ class CategoryController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $imagePath,
+            'parent_id' => $request->parent_id ?: null,
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được cập nhật!');
@@ -128,6 +132,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        Storage::disk('public')->delete($category->image);
+        $category->delete();
+        return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được xoá!');
     }
 }

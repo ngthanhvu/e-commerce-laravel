@@ -15,10 +15,7 @@ Route::get('/dang-ky', function () {
     $title = 'Đăng ký';
     return view('auth.register', compact('title'));
 });
-Route::get('/san-pham', function () {
-    $title = 'Sản phẩm';
-    return view('products', compact('title'));
-});
+Route::get('/san-pham', [HomeController::class, 'products'])->name('products');
 Route::get('/gio-hang', function () {
     $title = 'Giỏ hàng';
     return view('carts', compact('title'));
@@ -46,9 +43,10 @@ Route::middleware('check.role:admin')->group(function () {
     //categories
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::get('/admin/categories/create', [CategoryController::class, 'create']);
-    Route::post('/admin/categories', [CategoryController::class, 'store']);
+    Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
     Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy']);
     //users
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');

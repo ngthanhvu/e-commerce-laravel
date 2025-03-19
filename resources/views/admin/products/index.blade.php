@@ -97,13 +97,12 @@
                         </td>
                         <td>{{ $product->slug }}</td>
                         <td>
-                            <a href="/admin/products/{{ $product->id }}/edit" class="btn btn-warning btn-sm"><i
+                            <a href="/admin/products/{{ $product->id }}/edit" class="btn btn-warning btn-sm edit-btn"><i
                                     class="bi bi-pencil-square"></i> Sửa</a>
                             <form action="/admin/products/{{ $product->id }}" method="POST" style="display: inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')"><i class="bi bi-trash"></i>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn"><i class="bi bi-trash"></i>
                                     Xoá</button>
                             </form>
                         </td>
@@ -126,22 +125,17 @@
             <div class="col-md-6">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end">
-                        <!-- Nút Previous -->
                         <li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link"
                                 href="{{ $products->previousPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}"
                                 tabindex="-1">«</a>
                         </li>
-
-                        <!-- Các trang -->
                         @for ($i = 1; $i <= $products->lastPage(); $i++)
                             <li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
                                 <a class="page-link"
                                     href="{{ $products->url($i) . '&per_page=' . $perPage . '&search=' . $search }}">{{ $i }}</a>
                             </li>
                         @endfor
-
-                        <!-- Nút Next -->
                         <li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
                             <a class="page-link"
                                 href="{{ $products->nextPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}">»</a>
@@ -151,4 +145,53 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Xử lý nút Xóa
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    let categoryId = this.getAttribute("data-id");
+                    let form = this.closest("form");
+
+                    Swal.fire({
+                        title: "Bạn có chắc chắn muốn xóa?",
+                        text: "Dữ liệu này sẽ không thể khôi phục!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Xóa ngay!",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // Xử lý nút Sửa (Nếu muốn hiển thị cảnh báo khi bấm "Sửa")
+            document.querySelectorAll(".edit-btn").forEach(button => {
+                button.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    let editUrl = this.getAttribute("href");
+
+                    Swal.fire({
+                        title: "Bạn có muốn chỉnh sửa?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Chỉnh sửa",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href =
+                                editUrl;
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endsection
