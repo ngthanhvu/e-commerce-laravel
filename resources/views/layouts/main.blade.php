@@ -39,6 +39,11 @@
 </head>
 
 <body>
+    <div id="loading-spinner" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <div class="wrapper">
         <div style="background-color: #F5F6F7;">
             <div class="py-3">
@@ -180,6 +185,29 @@
             <p class="mt-3 text-center">&copy; 2025 Kicap | All Rights Reserved</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loadingSpinner = document.getElementById("loading-spinner");
+
+            function showLoading() {
+                loadingSpinner.classList.add("show");
+            }
+
+            function hideLoading() {
+                loadingSpinner.classList.remove("show");
+            }
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    const href = this.getAttribute("href");
+                    if (href && !href.startsWith("#") && !href.startsWith("javascript")) {
+                        showLoading();
+                    }
+                });
+            });
+            window.addEventListener("pageshow", hideLoading);
+        });
+    </script>
 </body>
 
 </html>

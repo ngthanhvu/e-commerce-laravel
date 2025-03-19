@@ -116,7 +116,7 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->first();
+        $product = Product::with(['category', 'mainImage', 'variants', 'images'])->where('slug', $slug)->first();
         if (!$product) {
             abort(404);
         }

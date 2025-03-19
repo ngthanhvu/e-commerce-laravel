@@ -18,7 +18,8 @@ class AuthenticateAdmin
         $user = Auth::user();
 
         if ($user->role !== 'admin') {
-            abort(403, 'Bạn không có quyền truy cập!');
+            // abort(403, 'Bạn không có quyền truy cập!');
+            return redirect('/404');
         }
 
         return $next($request);

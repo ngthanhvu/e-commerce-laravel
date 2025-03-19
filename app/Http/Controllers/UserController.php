@@ -9,6 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        $title = "Quản lý người dùng";
+        $search = request()->input('search');
+        $perPage = request()->input('per_page', 10);
+
+        $query = User::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        $users = $query->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);
+        return view('admin.users.index', compact('title', 'users', 'search', 'perPage'));
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -56,5 +74,22 @@ class UserController extends Controller
     {
         Auth::logout();
         return redirect('/dang-nhap');
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:admin,user',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được cập nhật!');
     }
 }

@@ -25,7 +25,7 @@
     <div class="p-3 mb-4 rounded-3 bg-light">
         <div class="row mb-3">
             <div class="col-md-6">
-                <a href="/admin/categories/create" class="btn btn-primary"><i class="bi bi-plus"></i> Tạo danh mục</a>
+                <a href="/admin/categories/create" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tạo danh mục</a>
             </div>
             <div class="col-md-3 offset-md-3">
                 <form method="GET" action="{{ route('admin.products.index') }}" class="input-group">
@@ -47,19 +47,22 @@
                 </tr>
             </thead>
             <tbody>
+                @php $index = 1; @endphp
                 @foreach ($categories as $category)
                     <tr>
-                        <th scope="row">{{ $category->id }}</th>
+                        <th scope="row">{{ $index++ }}</th>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->description }}</td>
                         <td><img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
-                                style="width: 100px"></td>
+                                style="width: 100px" class="border"></td>
                         <td>
-                            <a href="/admin/categories/{{ $category->id }}/edit" class="btn btn-warning">Sửa</a>
+                            <a href="/admin/categories/{{ $category->id }}/edit" class="btn btn-warning btn-sm"><i
+                                    class="bi bi-pencil-square"></i> Sửa</a>
                             <form action="/admin/categories/{{ $category->id }}" method="POST" style="display: inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Xóa</button>
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                    Xóa</button>
                             </form>
                         </td>
                     </tr>
@@ -75,7 +78,8 @@
         <!-- Phân trang -->
         <div class="row">
             <div class="col-md-6">
-                <p>Hiển thị {{ $categories->firstItem() }} đến {{ $categories->lastItem() }} trong {{ $categories->total() }}
+                <p>Hiển thị {{ $categories->firstItem() }} đến {{ $categories->lastItem() }} trong
+                    {{ $categories->total() }}
                     mục</p>
             </div>
             <div class="col-md-6">

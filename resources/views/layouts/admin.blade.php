@@ -18,8 +18,16 @@
     <!-- iziToast -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    {{-- font --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            font-family: 'Signika Negative', sans-serif;
+        }
+
         .sidebar {
             height: 100vh;
             width: 250px;
@@ -69,6 +77,28 @@
             width: calc(100% - 250px);
         }
 
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -95,6 +125,11 @@
 </head>
 
 <body>
+    <div id="loading-spinner" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <!-- Sidebar -->
     <div class="sidebar">
         <h4 class="text-white text-center mb-4"><a href="/" class="text-white text-decoration-none">Admin
@@ -202,6 +237,26 @@
 
             setActiveFromHash();
             window.addEventListener('hashchange', setActiveFromHash);
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            const loadingSpinner = document.getElementById("loading-spinner");
+
+            function showLoading() {
+                loadingSpinner.classList.add("show");
+            }
+
+            function hideLoading() {
+                loadingSpinner.classList.remove("show");
+            }
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    const href = this.getAttribute("href");
+                    if (href && !href.startsWith("#") && !href.startsWith("javascript")) {
+                        showLoading();
+                    }
+                });
+            });
+            window.addEventListener("pageshow", hideLoading);
         });
     </script>
 </body>

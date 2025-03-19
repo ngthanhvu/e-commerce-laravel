@@ -49,4 +49,12 @@ Route::middleware('check.role:admin')->group(function () {
     Route::post('/admin/categories', [CategoryController::class, 'store']);
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
     Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    //users
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+});
+
+Route::get('/404', function () {
+    $title = "404 Not Found";
+    return view('404', compact('title'));
 });

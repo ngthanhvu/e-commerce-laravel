@@ -61,13 +61,15 @@
                     <th scope="col">Hình ảnh <i class="bi bi-arrow-down-up"></i></th>
                     <th scope="col">Số lượng <i class="bi bi-arrow-down-up"></i></th>
                     <th scope="col">Biến thể <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Slug <i class="bi bi-arrow-down-up"></i></th>
                     <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
                 </tr>
             </thead>
             <tbody>
+                @php $index = 1; @endphp
                 @foreach ($products as $product)
                     <tr>
-                        <th scope="row">{{ $product->id }}</th>
+                        <th scope="row">{{ $index++ }}</th>
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->category->name ?? 'Không có danh mục' }}</td>
                         <td>{{ number_format($product->price) }} đ</td>
@@ -93,13 +95,16 @@
                                 @endforeach
                             @endif
                         </td>
+                        <td>{{ $product->slug }}</td>
                         <td>
-                            <a href="/admin/products/{{ $product->id }}/edit" class="btn btn-primary">Sửa</a>
+                            <a href="/admin/products/{{ $product->id }}/edit" class="btn btn-warning btn-sm"><i
+                                    class="bi bi-pencil-square"></i> Sửa</a>
                             <form action="/admin/products/{{ $product->id }}" method="POST" style="display: inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')"><i class="bi bi-trash"></i>
+                                    Xoá</button>
                             </form>
                         </td>
                     </tr>
