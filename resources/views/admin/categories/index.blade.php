@@ -23,15 +23,27 @@
         </script>
     @endif
     <div class="p-3 mb-4 rounded-3 bg-light">
-        <a href="/admin/categories/create" class="btn btn-primary">Tạo danh mục</a>
-        <table class="table table-striped mt-3 table-hover table-bordered text-center">
-            <thead class="table-dark">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <a href="/admin/categories/create" class="btn btn-primary"><i class="bi bi-plus"></i> Tạo danh mục</a>
+            </div>
+            <div class="col-md-3 offset-md-3">
+                <form method="GET" action="{{ route('admin.products.index') }}" class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
+                        value="{{ $search }}" aria-label="Search">
+                    <button class="btn btn-outline-secondary border-0" type="submit"><i class="bi bi-search"></i></button>
+                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                </form>
+            </div>
+        </div>
+        <table class="table table-striped table-hover text-center">
+            <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Tên danh mục</th>
-                    <th scope="col">Mota</th>
-                    <th scope="col">Hinh anh</th>
-                    <th scope="col">Thao tác</th>
+                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Tên danh mục <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Mota <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Hinh anh <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -59,5 +71,39 @@
                 @endif
             </tbody>
         </table>
+
+        <!-- Phân trang -->
+        <div class="row">
+            <div class="col-md-6">
+                <p>Hiển thị {{ $categories->firstItem() }} đến {{ $categories->lastItem() }} trong {{ $categories->total() }}
+                    mục</p>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <!-- Nút Previous -->
+                        <li class="page-item {{ $categories->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link"
+                                href="{{ $categories->previousPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}"
+                                tabindex="-1">«</a>
+                        </li>
+
+                        <!-- Các trang -->
+                        @for ($i = 1; $i <= $categories->lastPage(); $i++)
+                            <li class="page-item {{ $categories->currentPage() == $i ? 'active' : '' }}">
+                                <a class="page-link"
+                                    href="{{ $categories->url($i) . '&per_page=' . $perPage . '&search=' . $search }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        <!-- Nút Next -->
+                        <li class="page-item {{ $categories->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link"
+                                href="{{ $categories->nextPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}">»</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 @endsection

@@ -27,7 +27,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <form method="GET" action="{{ route('admin.products.index') }}" id="entriesForm">
-                    <label for="entriesPerPage" class="form-label">Show</label>
+                    <label for="entriesPerPage" class="form-label">Hiển thị</label>
                     <select id="entriesPerPage" name="per_page" class="form-select d-inline w-auto"
                         style="width: auto; display: inline-block;"
                         onchange="document.getElementById('entriesForm').submit()">
@@ -36,15 +36,15 @@
                         <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
                         <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
                     </select>
-                    <span> entries per page</span>
+                    <span> mục trên mỗi trang</span>
                     <input type="hidden" name="search" value="{{ $search }}">
                 </form>
             </div>
             <div class="col-md-3 offset-md-3">
                 <form method="GET" action="{{ route('admin.products.index') }}" class="input-group">
-                    <input type="text" class="form-control" name="search" placeholder="Search..."
+                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
                         value="{{ $search }}" aria-label="Search">
-                    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                    <button class="btn btn-outline-secondary border-0" type="submit"><i class="bi bi-search"></i></button>
                     <input type="hidden" name="per_page" value="{{ $perPage }}">
                 </form>
             </div>
@@ -101,7 +101,6 @@
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
                             </form>
-                            {{-- <a href="/admin/products/{{ $product->id }}" class="btn btn-danger">Xóa</a> --}}
                         </td>
                     </tr>
                 @endforeach
@@ -116,8 +115,8 @@
         <!-- Phân trang -->
         <div class="row">
             <div class="col-md-6">
-                <p>Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }}
-                    entries</p>
+                <p>Hiển thị {{ $products->firstItem() }} đến {{ $products->lastItem() }} trong {{ $products->total() }}
+                    mục</p>
             </div>
             <div class="col-md-6">
                 <nav aria-label="Page navigation">

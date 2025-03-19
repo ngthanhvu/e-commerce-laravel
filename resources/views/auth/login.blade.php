@@ -2,10 +2,6 @@
 
 @section('content')
     <style>
-        * {
-            font-family: 'Quicksand', sans-serif;
-        }
-
         .form-container {
             max-width: 500px;
             margin: 50px auto;

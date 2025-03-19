@@ -30,22 +30,24 @@
             <h2 class="text-center text-uppercase mb-3">Sản phẩm mới</h2>
             <div class="row mt-3">
                 @foreach ($products as $product)
-                    <div class="col-md-3 mb-3">
-                        <div class="card border-0">
-                            @if ($product->mainImage)
-                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" class="card-img-top"
-                                    alt="{{ $product->name }}">
-                            @else
-                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                    class="card-img-top" alt="Keycap Artisan Natra">
-                            @endif
-                            <div class="card-body text-center">
-                                <span class="card-title text-muted"
-                                    style="font-size: 13px">{{ $product->category['name'] }}</span>
-                                <h5 class="card-subtitle mb-2 ">{{ number_format($product->price, 0, ',', '.') }}</h5>
-                                <p class="card-text">{{ $product->price }}₫</p>
+                    <div class="col-md-3 col-6 mb-3">
+                        <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
+                            <div class="card border-0">
+                                @if ($product->mainImage)
+                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" class="card-img-top"
+                                        alt="{{ $product->name }}">
+                                @else
+                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                        class="card-img-top" alt="Keycap Artisan Natra">
+                                @endif
+                                <div class="card-body text-center">
+                                    <span class="card-title text-muted"
+                                        style="font-size: 13px">{{ $product->category['name'] }}</span>
+                                    <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
+                                    <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>

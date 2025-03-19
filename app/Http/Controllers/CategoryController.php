@@ -16,8 +16,18 @@ class CategoryController extends Controller
     public function index()
     {
         $title = 'Categories';
-        $categories = Category::all();
-        return view('admin.categories.index', compact('title', 'categories'));
+        $search = request()->input('search');
+        $perPage = request()->input('per_page', 10);
+
+        $query = Category::query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $categories = $query->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);
+
+        return view('admin.categories.index', compact('title', 'categories', 'search', 'perPage'));
     }
 
     /**
@@ -38,6 +48,11 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'name.required' => 'Vui lòng nhập tên danh mục',
+            'name.max' => 'Tên danh mục khó qua 255 kí tự',
+            'description.required' => 'Vui lòng nhập mô tả',
+            'image.required' => 'Vui lòng chọn ảnh',
         ]);
 
         $slug = Str::slug($request->name);
@@ -87,9 +102,9 @@ class CategoryController extends Controller
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
-            'name.required' => 'Vui lóg nhập tên danh mục',
-            'name.max' => 'Tên danh mục khó qua 255 kí tự',
-            'description.required' => 'Vui lóg nhập mô tả',
+            'name.required' => 'Vui lòng nhập tên danh mục',
+            'name.max' => 'Tên danh mục không quá 255 kí tự',
+            'description.required' => 'Vui lòng nhập mô tả',
         ]);
 
         if ($request->hasFile('image')) {

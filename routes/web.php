@@ -23,10 +23,7 @@ Route::get('/gio-hang', function () {
     $title = 'Giỏ hàng';
     return view('carts', compact('title'));
 });
-Route::get('/chi-tiet', function () {
-    $title = 'Chi tiết sản phẩm';
-    return view('detail', compact('title'));
-});
+Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
@@ -34,22 +31,22 @@ Route::post('dang-nhap', [UserController::class, 'login']);
 Route::post('dang-xuat', [UserController::class, 'logout']);
 
 //admin
-Route::get('/admin', function () {
-    $title = 'Trang quản trị';
-    return view('admin.index', compact('title'));
+Route::middleware('check.role:admin')->group(function () {
+    Route::get('/admin', function () {
+        $title = 'Trang quản trị';
+        return view('admin.index', compact('title'));
+    });
+    //products
+    Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.products.index');
+    Route::get('/admin/products/create', [ProductController::class, 'create']);
+    Route::post('/admin/products', [ProductController::class, 'store']);
+    Route::get('/admin/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+    Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+    Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
+    //categories
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::get('/admin/categories/create', [CategoryController::class, 'create']);
+    Route::post('/admin/categories', [CategoryController::class, 'store']);
+    Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
+    Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
 });
-
-//products
-Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.products.index');
-Route::get('/admin/products/create', [ProductController::class, 'create']);
-Route::post('/admin/products', [ProductController::class, 'store']);
-Route::get('/admin/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
-Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
-Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
-
-//categories
-Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
-Route::get('/admin/categories/create', [CategoryController::class, 'create']);
-Route::post('/admin/categories', [CategoryController::class, 'store']);
-Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
-Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');

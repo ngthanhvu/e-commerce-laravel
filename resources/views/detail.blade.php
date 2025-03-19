@@ -40,7 +40,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active"><a href="#" class="text-decoration-none">Trang chủ</a></li>
                 <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Sản phẩm</a></li>
-                <li class="breadcrumb-item active" aria-current="page">STARS75 - BÀN PHÍM CƠ WEIKAV 75%</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
             </ol>
         </nav>
     </div>
@@ -48,26 +48,34 @@
         <div class="row">
             <!-- Hình ảnh sản phẩm -->
             <div class="col-md-6">
-                <img id="mainImage"
+                {{-- <img id="mainImage"
                     src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
-                    class="product-image img-fluid" alt="Bàn phím cơ">
+                    class="product-image img-fluid" alt="Bàn phím cơ"> --}}
+                @if ($product->mainImage)
+                    <img id="mainImage" src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                        class="product-image img-fluid" alt="{{ $product->name }}">
+                @else
+                    <img id="mainImage"
+                        src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                        class="product-image img-fluid" alt="Keycap Artisan Natra">
+                @endif
                 <div class="mt-3 d-flex">
                     <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                         class="thumbnail mx-1 active" onclick="changeImage(this)">
-                    <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
+                    {{-- <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                         class="thumbnail mx-1" onclick="changeImage(this)">
                     <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                         class="thumbnail mx-1" onclick="changeImage(this)">
                     <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
-                        class="thumbnail mx-1" onclick="changeImage(this)">
+                        class="thumbnail mx-1" onclick="changeImage(this)"> --}}
                 </div>
             </div>
 
             <!-- Thông tin sản phẩm -->
             <div class="col-md-6">
-                <h2>STARS75 - BÀN PHÍM CƠ WEIKAV 75%</h2>
+                <h2>{{ $product->name }}</h2>
                 <p class="text-muted">Khung nhôm CNC, 3 Mode, có góc LED vỡ siêu đẹp</p>
-                <h3 class="text-danger">1.350.000₫</h3>
+                <h3 class="text-danger">{{ number_format($product->price, 0, ',', '.') }}₫</h3>
                 <p><strong>Tình trạng:</strong> <span class="text-success">Còn hàng</span></p>
 
                 <!-- Phiên bản -->
@@ -110,7 +118,7 @@
         <section class="new-products border p-3 rounded-2">
             <h2 class="text-center text-uppercase mb-3">Sản phẩm liên quan</h2>
             <div class="row mt-3">
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 col-6 mb-3">
                     <div class="card border-0">
                         <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                             class="card-img-top" alt="Keycap Artisan Natra">
@@ -121,7 +129,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-6">
                     <div class="card border-0">
                         <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                             class="card-img-top" alt="Keycap Artisan Natra">
@@ -132,7 +140,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-6">
                     <div class="card border-0">
                         <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                             class="card-img-top" alt="Keycap Artisan Natra">
@@ -143,7 +151,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-6">
                     <div class="card border-0">
                         <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
                             class="card-img-top" alt="Keycap Artisan Natra">

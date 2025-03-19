@@ -114,11 +114,16 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được thêm thành công!');
     }
 
-    public function show(Product $product)
+    public function show($slug)
     {
-        //
-    }
+        $product = Product::where('slug', $slug)->first();
+        if (!$product) {
+            abort(404);
+        }
+        $title = 'Chi tiết sản phẩm';
 
+        return view('detail', compact('title', 'product'));
+    }
 
     public function edit(Product $product)
     {

@@ -7,6 +7,8 @@
     <title>{{ $title ?? '' }} | Kicap Store</title>
     <link rel="icon" href="//bizweb.dktcdn.net/100/436/596/themes/980306/assets/favicon.png?1742138342352"
         type="image/x-icon">
+    {{-- css  --}}
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}">
     <!-- boostrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -35,11 +37,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
 
 </head>
-<style>
-    * {
-        font-family: 'Quicksand', sans-serif;
-    }
-</style>
 
 <body>
     <div class="wrapper">
@@ -124,9 +121,12 @@
                             <a href="#" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Về chúng
                                 tôi</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/admin" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Admin</a>
-                        </li>
+                        @if (Auth::check() && Auth::user()->role == 'admin')
+                            <li class="nav-item">
+                                <a href="/admin"
+                                    class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Admin</a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </nav>
