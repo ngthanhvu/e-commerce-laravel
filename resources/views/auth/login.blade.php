@@ -78,10 +78,10 @@
             <div class="text-center mt-3">
                 <p>Hoặc đăng nhập bằng:</p>
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="#" class="btn btn-facebook social-btn w-100">
+                    <a href="/login/facebook" class="btn btn-facebook social-btn w-100">
                         <i class="bi bi-facebook me-2"></i> Facebook
                     </a>
-                    <a href="/auth/google" class="btn btn-google social-btn w-100">
+                    <a href="/login/google" class="btn btn-google social-btn w-100">
                         <i class="bi bi-google me-2"></i> Google
                     </a>
                 </div>

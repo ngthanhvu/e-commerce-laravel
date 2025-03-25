@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+// use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -91,5 +94,62 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được cập nhật!');
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            $user = User::updateOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
+                    'name' => $googleUser->getName(),
+                    'password' => null,
+                    'oauth_provider' => 'google',
+                    'oauth_id' => $googleUser->getId(),
+                ]
+            );
+
+            Auth::login($user);
+            return redirect()->route('home')->with('success', 'Đăng nhập Google thành công!');
+        } catch (\Exception $e) {
+            Log::error('Lỗi đăng nhập Google: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->route('dang-nhap')->with('error', 'Đăng nhập Google thất bại.');
+        }
+    }
+
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+            $facebookUser = Socialite::driver('facebook')->user();
+
+            $user = User::updateOrCreate(
+                ['email' => $facebookUser->getEmail()],
+                [
+                    'name' => $facebookUser->getName(),
+                    'password' => null,
+                    'oauth_provider' => 'facebook',
+                    'oauth_id' => $facebookUser->getId(),
+                ]
+            );
+
+            Auth::login($user);
+            return redirect()->route('home')->with('success', 'Đăng nhập Facebook thành công!');
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Đăng nhập Facebook thất bại.');
+        }
     }
 }

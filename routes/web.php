@@ -5,8 +5,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Http;
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
     $title = 'Đăng nhập';
     return view('auth.login', compact('title'));
@@ -24,8 +25,12 @@ Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('produc
 
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
-Route::post('dang-nhap', [UserController::class, 'login']);
+Route::post('dang-nhap', [UserController::class, 'login'])->name('dang-nhap');
 Route::post('dang-xuat', [UserController::class, 'logout']);
+Route::get('/login/google', [UserController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('/login/google/callback', [UserController::class, 'handleGoogleCallback']);
+Route::get('/login/facebook', [UserController::class, 'redirectToFacebook'])->name('login.facebook');
+Route::get('/login/facebook/callback', [UserController::class, 'handleFacebookCallback']);
 
 //admin
 Route::middleware('check.role:admin')->group(function () {
@@ -55,4 +60,10 @@ Route::middleware('check.role:admin')->group(function () {
 Route::get('/404', function () {
     $title = "404 Not Found";
     return view('404', compact('title'));
+});
+
+
+Route::get('/test-ssl', function () {
+    $response = Http::get('https://www.google.com');
+    return $response->successful() ? 'OK' : 'Fail';
 });
