@@ -1,57 +1,37 @@
 <style>
-    * {
-        font-family: 'Signika Negative', sans-serif;
-    }
-
     .sidebar {
         height: 100vh;
         width: 250px;
         position: fixed;
         top: 0;
         left: 0;
-        background-color: #212529;
+        background-color: #1a202c;
+        color: white;
         padding-top: 20px;
     }
 
-    .sidebar .nav-link {
-        color: #adb5bd;
-        transition: all 0.3s;
+    .sidebar a {
+        color: #a0aec0;
+        text-decoration: none;
+        padding: 10px 20px;
+        display: block;
     }
 
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-        color: #fff;
-        background-color: #343a40;
-        border-radius: 5px;
-    }
-
-    .sidebar .nav-link i {
-        font-size: 18px;
-    }
-
-    .sidebar .dropdown-menu {
-        background-color: #343a40;
-        border: none;
-        padding: 0;
-    }
-
-    .sidebar .dropdown-menu .dropdown-item {
-        color: #adb5bd;
-        padding: 8px 20px;
-        transition: all 0.3s;
-    }
-
-    .sidebar .dropdown-menu .dropdown-item:hover {
-        color: #fff;
-        background-color: #495057;
+    .sidebar a:hover {
+        background-color: #2d3748;
+        color: white;
     }
 
     .content {
         margin-left: 250px;
         padding: 20px;
-        width: calc(100% - 250px);
     }
 
+    .navbar {
+        margin-left: 250px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
     .loading-overlay {
         position: fixed;
@@ -74,27 +54,53 @@
         visibility: visible;
     }
 
-    /* Responsive */
-    @media (max-width: 992px) {
-        .sidebar {
-            width: 200px;
-        }
-
-        .content {
-            margin-left: 210px;
-        }
+    .menu-item {
+        position: relative;
     }
 
-    @media (max-width: 768px) {
-        .sidebar {
-            width: 100%;
-            position: relative;
-        }
+    .menu-toggle {
+        color: #a0aec0;
+        text-decoration: none;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
-        .content {
-            margin-left: 0;
-            width: 100%;
-        }
+    .menu-toggle:hover {
+        background-color: #2d3748;
+        color: white;
+    }
+
+    .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .submenu.active {
+        max-height: 200px;
+    }
+
+    .submenu a {
+        color: #a0aec0;
+        text-decoration: none;
+        padding: 8px 20px 8px 40px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .submenu a:hover {
+        background-color: #4a5568;
+        color: white;
+    }
+
+    .toggle-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-icon.active {
+        transform: rotate(180deg);
     }
 </style>
 <div id="loading-spinner" class="loading-overlay">
@@ -103,58 +109,51 @@
     </div>
 </div>
 <!-- Sidebar -->
-<div class="sidebar">
-    <h4 class="text-white text-center mb-4"><a href="/" class="text-white text-decoration-none">Admin
-            Panel</a></h4>
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link active" href="/admin#dashboard">
-                <i class="bi bi-house-door me-2"></i>Bảng điều khiển
-            </a>
-        </li>
+<div class="sidebar d-flex flex-column justify-content-between">
+    <div>
+        <div class="tw-p-4">
+            <h1 class="tw-text-xl tw-font-bold tw-text-white">
+                <i class="fas fa-wave-square tw-text-blue-500"></i> Admin Dashboard
+            </h1>
+        </div>
+        <nav class="tw-mt-4">
+            <a href="/admin"><i class="fas fa-home tw-mr-2"></i> Bảng điều khiển</a>
 
-        <li class="nav-item">
-            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                href="#productsMenu" role="button">
-                <div><i class="bi bi-box me-2"></i>Sản phẩm</div>
-                <i class="bi bi-chevron-down"></i>
-            </a>
-            <div class="collapse" id="productsMenu">
-                <ul class="nav flex-column ps-3">
-                    <li><a class="nav-link" href="/admin/products#list-products">Danh sách sản phẩm</a></li>
-                    <li><a class="nav-link" href="/admin/products/create#add-product">Thêm sản phẩm</a></li>
-                    <li><a class="nav-link" href="/admin/categories#categories">Danh mục</a></li>
-                </ul>
+            <div class="menu-item">
+                <a href="#" class="menu-toggle">
+                    <i class="fas fa-layer-group tw-mr-2"></i> Sản phẩm
+                    <i class="fas fa-chevron-down toggle-icon tw-ml-[75px]"></i>
+                </a>
+                <div class="submenu">
+                    <a href="/admin/products"><i class="fas fa-list tw-mr-2"></i> Quản lý sản phẩm</a>
+                    <a href="/admin/products/create"><i class="fas fa-plus tw-mr-2"></i> Thêm sản phẩm</a>
+                    <a href="/admin/categories"><i class="fas fa-folder tw-mr-2"></i> Danh mục</a>
+                </div>
             </div>
-        </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/users#users">
-                <i class="bi bi-person me-2"></i>Người dùng
-            </a>
-        </li>
+            {{-- <a href="/admin/course"><i class="fas fa-calendar-alt tw-mr-2"></i> Khoá học</a> --}}
+            <a href="/admin/users"><i class="fas fa-users tw-mr-2"></i> Người dùng</a>
+        </nav>
+    </div>
 
-        <!-- Menu phân cấp Settings -->
-        <li class="nav-item">
-            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                href="#settingsMenu" role="button">
-                <div><i class="bi bi-gear me-2"></i>Cài đặt</div>
-                <i class="bi bi-chevron-down"></i>
-            </a>
-            <div class="collapse" id="settingsMenu">
-                <ul class="nav flex-column ps-3">
-                    <li><a class="nav-link" href="/admin/settings/general#general">General</a></li>
-                    <li><a class="nav-link" href="/admin/settings/security#security">Security</a></li>
-                    <li><a class="nav-link" href="/admin/settings/notifications#notifications">Notifications</a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/reports#reports">
-                <i class="bi bi-bar-chart me-2"></i>Báo cáo
-            </a>
-        </li>
-    </ul>
+    <div class="tw-p-4">
+        <a href="/" class="tw-text-white text-decoration-none">
+            <i class="fas fa-arrow-left tw-mr-2"></i> Back Home
+        </a>
+    </div>
 </div>
+<nav class="navbar tw-p-3">
+    <div class="container-fluid">
+        <div class="d-flex tw-w-50">
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="dropdown">
+                <a class="d-flex align-items-center tw-text-dark text-decoration-none tw-text-gray-500" href="#">
+                    <img src="https://www.gravatar.com/avatar/dfb7d7bb286d54795ab66227e90ff048.jpg?s=80&d=mp&r=g"
+                        class="tw-rounded-circle tw-me-2 tw-w-8" alt="User">
+                    <span>Xin chào, {{ Auth::user()->name }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

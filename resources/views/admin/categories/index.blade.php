@@ -1,8 +1,14 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="p-3 mb-4 rounded-3 bg-light">
-        <h2>Danh sách danh mục</h2>
+    <div class="tw-flex tw-justify-between tw-items-center tw-p-3">
+        <div>
+            <h3 class="tw-text-2xl tw-font-bold">Quản lý danh mục</h3>
+            <p class="tw-text-gray-500 tw-mt-1">Danh sách các danh mục đang có!</p>
+        </div>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-plus tw-mr-1"></i> Tạo danh mục mới
+        </a>
     </div>
     @if (session('success'))
         <script>
@@ -22,21 +28,19 @@
             });
         </script>
     @endif
-    <div class="p-3 mb-4 rounded-3 bg-light">
+    <div class="p-3 mb-4 rounded-3">
         <div class="row mb-3">
             <div class="col-md-6">
-                <a href="/admin/categories/create" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tạo danh mục</a>
             </div>
             <div class="col-md-3 offset-md-3">
-                <form method="GET" action="{{ route('admin.categories.index') }}" class="input-group">
+                <form method="GET" action="{{ route('admin.categories.index') }}" class="mb-3">
                     <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
-                        value="{{ $search }}" aria-label="Search">
-                    <button class="btn btn-outline-secondary border-0" type="submit"><i class="bi bi-search"></i></button>
+                        value="{{ $search }}" aria-label="Search" aria-describedby="button-search">
                     <input type="hidden" name="per_page" value="{{ $perPage }}">
                 </form>
             </div>
         </div>
-        <table class="table table-striped table-hover text-center">
+        <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
                     <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
@@ -46,7 +50,7 @@
                     <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="align-middle">
                 @php $index = 1; @endphp
                 @if ($categories->isNotEmpty())
                     @include('admin.categories.partials.category-list', [

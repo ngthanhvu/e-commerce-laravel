@@ -47,7 +47,7 @@ Route::middleware('check.role:admin')->group(function () {
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
     //categories
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::get('/admin/categories/create', [CategoryController::class, 'create']);
+    Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
     Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit']);
     Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
