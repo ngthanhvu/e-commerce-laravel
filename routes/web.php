@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CartsController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -17,10 +18,12 @@ Route::get('/dang-ky', function () {
     return view('auth.register', compact('title'));
 });
 Route::get('/san-pham', [HomeController::class, 'products'])->name('products');
-Route::get('/gio-hang', function () {
-    $title = 'Giỏ hàng';
-    return view('carts', compact('title'));
-});
+//carts
+Route::get('/gio-hang', [CartsController::class, 'index'])->name('carts.index');
+Route::post('/gio-hang/create', [CartsController::class, 'store'])->name('carts.store');
+Route::delete('/gio-hang/{id}', [CartsController::class, 'delete'])->name('carts.delete');
+Route::put('/gio-hang/{id}', [CartsController::class, 'update'])->name('carts.update');
+
 Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 //auth
@@ -60,10 +63,4 @@ Route::middleware('check.role:admin')->group(function () {
 Route::get('/404', function () {
     $title = "404 Not Found";
     return view('404', compact('title'));
-});
-
-
-Route::get('/test-ssl', function () {
-    $response = Http::get('https://www.google.com');
-    return $response->successful() ? 'OK' : 'Fail';
 });

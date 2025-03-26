@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
-// use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
+use App\Models\Carts;
 
 class UserController extends Controller
 {
@@ -67,7 +67,13 @@ class UserController extends Controller
             'password.required' => 'Vui lòng nhập mật khâu',
         ]);
 
+        $oldSessionId = session()->getId();
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $userId = Auth::id();
+
+            Carts::where('session_id', $oldSessionId)
+                ->whereNull('user_id')
+                ->update(['user_id' => $userId]);
             return redirect('/')->with('success', 'Đăng nhập thành công');
         } else {
             return back()->with('error', 'Email hoặc mật khâu không đúng');
@@ -104,6 +110,7 @@ class UserController extends Controller
     public function handleGoogleCallback()
     {
         try {
+            $oldSessionId = session()->getId();
             $googleUser = Socialite::driver('google')->user();
 
             $user = User::updateOrCreate(
@@ -117,6 +124,12 @@ class UserController extends Controller
             );
 
             Auth::login($user);
+
+            $userId = $user->id;
+            Carts::where('session_id', $oldSessionId)
+                ->whereNull('user_id')
+                ->update(['user_id' => $userId]);
+
             return redirect()->route('home')->with('success', 'Đăng nhập Google thành công!');
         } catch (\Exception $e) {
             Log::error('Lỗi đăng nhập Google: ' . $e->getMessage(), [
@@ -134,6 +147,7 @@ class UserController extends Controller
     public function handleFacebookCallback()
     {
         try {
+            $oldSessionId = session()->getId();
             $facebookUser = Socialite::driver('facebook')->user();
 
             $user = User::updateOrCreate(
@@ -147,6 +161,12 @@ class UserController extends Controller
             );
 
             Auth::login($user);
+
+            $userId = $user->id;
+            Carts::where('session_id', $oldSessionId)
+                ->whereNull('user_id')
+                ->update(['user_id' => $userId]);
+
             return redirect()->route('home')->with('success', 'Đăng nhập Facebook thành công!');
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Đăng nhập Facebook thất bại.');

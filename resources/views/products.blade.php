@@ -126,7 +126,8 @@
                                 <div class="card border-0 product-card">
                                     @if ($product->mainImage)
                                         <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
-                                            class="card-img-top" alt="{{ $product->name }}">
+                                            class="card-img-top" alt="{{ $product->name }}"
+                                            style="witdth: 225px; height: 225px; object-fit: cover; border: 1px solid #ccc">
                                     @else
                                         <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
                                             class="card-img-top" alt="Keycap Artisan Natra">

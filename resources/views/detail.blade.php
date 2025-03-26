@@ -95,8 +95,19 @@
                     <button class="btn btn-outline-dark" onclick="changeQuantity(1)">+</button>
                 </div>
 
-                <button class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO GIỎ HÀNG</button>
-                <button class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu thích</button>
+                <form action="{{ route('carts.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="quantity" id="quantityInput" value="1">
+                    <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
+                    <input type="hidden" name="session_id" value="{{ session()->getId() }}">
+                    <input type="hidden" name="price" value="{{ $product->price }}">
+                    <button type="submit" class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO
+                        GIỎ
+                        HÀNG</button>
+                    <button type="button" class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu
+                        thích</button>
+                </form>
             </div>
         </div>
 
@@ -122,8 +133,10 @@
 
         function changeQuantity(amount) {
             let qtyInput = document.getElementById('quantity');
+            let qtycart = document.getElementById('quantityInput');
             let qty = parseInt(qtyInput.value) + amount;
             qtyInput.value = qty > 0 ? qty : 1;
+            qtycart.value = qty > 0 ? qty : 1;
         }
     </script>
 @endsection

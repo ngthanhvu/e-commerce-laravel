@@ -59,98 +59,121 @@
                     </tr>
                 </thead>
                 <tbody id="cartItems">
-                    <!-- Sản phẩm mẫu 1 -->
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
-                                alt="Keycap Artisan Natra">
-                        </td>
-                        <td>KEYCAP ARTISAN NF NATRA</td>
-                        <td data-price="250000">250.000₫</td>
-                        <td>
-                            <div class="quantity-control">
-                                <button class="btn btn-outline-secondary" onclick="changeQuantity(this, -1)">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1" readonly>
-                                <button class="btn btn-outline-secondary" onclick="changeQuantity(this, 1)">+</button>
-                            </div>
-                        </td>
-                        <td class="subtotal">250.000₫</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="removeItem(this)">
-                                <i class="bi bi-trash"></i> Xóa
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Sản phẩm mẫu 2 -->
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <img src="https://bizweb.dktcdn.net/thumb/large/100/436/596/products/2-1740367782202.png?v=1740367788347"
-                                alt="Laptop ABC">
-                        </td>
-                        <td>Laptop ABC</td>
-                        <td data-price="15000000">15.000.000₫</td>
-                        <td>
-                            <div class="quantity-control">
-                                <button class="btn btn-outline-secondary" onclick="changeQuantity(this, -1)">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1" readonly>
-                                <button class="btn btn-outline-secondary" onclick="changeQuantity(this, 1)">+</button>
-                            </div>
-                        </td>
-                        <td class="subtotal">15.000.000₫</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="removeItem(this)">
-                                <i class="bi bi-trash"></i> Xóa
-                            </button>
-                        </td>
-                    </tr>
+                    @foreach ($carts as $cart)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                @if ($cart->product->mainImage)
+                                    <img src="{{ asset('storage/' . $cart->product->mainImage->sub_image) }}"
+                                        alt="{{ $cart->product->name }}">
+                                @else
+                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                        alt="Keycap Artisan Natra">
+                                @endif
+                            </td>
+                            <td>{{ $cart->product->name }}</td>
+                            <td data-price="250000">{{ number_format($cart->price) }}₫</td>
+                            <td>
+                                <div class="quantity-control">
+                                    <button class="btn btn-outline-secondary" onclick="changeQuantity(this, -1)">-</button>
+                                    <input type="number" class="quantity-input" value="{{ $cart->quantity }}"
+                                        min="1" readonly>
+                                    <button class="btn btn-outline-secondary" onclick="changeQuantity(this, 1)">+</button>
+                                </div>
+                            </td>
+                            <td class="subtotal">{{ number_format($cart->price * $cart->quantity) ?? 0 }}₫</td>
+                            <td>
+                                <form action="{{ route('carts.delete', $cart->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="cart_id" value="{{ $cart->id }}">
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @if ($carts->isEmpty())
+                        <tr>
+                            <td colspan="7" class="text-center">Không có sản phẩm nào trong giỏ hàng</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
 
-        <!-- Tổng tiền và nút thanh toán -->
         <div class="row total-section">
             <div class="col-md-4 offset-md-8">
-                <h4>Tổng Tiền: <span id="cartTotal">15.250.000₫</span></h4>
+                @if ($carts->isEmpty())
+                    <h4>Tổng Tiền: <span id="cartTotal">0₫</span></h4>
+                @else
+                    <h4>Tổng Tiền: <span id="cartTotal">{{ number_format($cart->price * $cart->quantity) }}₫</span></h4>
+                @endif
                 <a href="/checkout" class="btn btn-success w-100 mt-3">Thanh Toán</a>
-                <a href="/products" class="btn btn-outline-dark w-100 mt-2">Tiếp Tục Mua Sắm</a>
+                <a href="/san-pham" class="btn btn-outline-dark w-100 mt-2">Tiếp Tục Mua Sắm</a>
             </div>
         </div>
     </div>
 
     <script>
-        function updateTotal() {
-            const items = document.querySelectorAll('#cartItems tr');
-            let total = 0;
-
-            items.forEach(item => {
-                const price = parseInt(item.querySelector('td:nth-child(3)').getAttribute('data-price'));
-                const quantity = parseInt(item.querySelector('.quantity-input').value);
-                const subtotal = price * quantity;
-
-                item.querySelector('.subtotal').textContent = new Intl.NumberFormat('vi-VN').format(subtotal) + '₫';
-                total += subtotal;
-            });
-
-            document.getElementById('cartTotal').textContent = new Intl.NumberFormat('vi-VN').format(total) + '₫';
-        }
-
-        function changeQuantity(button, change) {
-            const input = button.parentElement.querySelector('.quantity-input');
+        async function changeQuantity(button, change) {
+            const row = button.closest('tr');
+            const input = row.querySelector('.quantity-input');
             let quantity = parseInt(input.value) || 1;
             quantity += change;
 
             if (quantity < 1) quantity = 1;
             input.value = quantity;
-            updateTotal();
+
+            const cartId = row.querySelector('input[name="cart_id"]').value;
+
+            try {
+                const response = await fetch(`/gio-hang/${cartId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        quantity
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === "success") {
+                    updateTotal();
+                    iziToast.success({
+                        title: 'Thành công',
+                        message: 'Cập nhật giỏ hàng thành công!',
+                        position: 'topRight'
+                    });
+                } else {
+                    iziToast.error({
+                        title: 'Lỗi',
+                        message: 'Cập nhật giỏ hàng khỏ thành công!',
+                        position: 'topRight'
+                    });
+                    console.log("Lỗi: " + data.message);
+                }
+            } catch (error) {
+                console.error("Lỗi khi cập nhật giỏ hàng:", error);
+            }
         }
 
-        function removeItem(button) {
-            button.closest('tr').remove();
-            updateTotal();
-        }
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const price = parseInt(row.querySelector('[data-price]').dataset.price) || 0;
+                const quantity = parseInt(row.querySelector('.quantity-input').value) || 1;
+                const subtotal = price * quantity;
 
+                row.querySelector('.subtotal').textContent = new Intl.NumberFormat('vi-VN').format(subtotal) + "₫";
+                total += subtotal;
+            });
+
+            document.getElementById('cartTotal').textContent = new Intl.NumberFormat('vi-VN').format(total) + "₫";
+        }
         document.addEventListener('DOMContentLoaded', updateTotal);
     </script>
 @endsection
