@@ -29,41 +29,53 @@
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">0</span>
                                 </a>
                             </div>
-                            <!-- Avatar và tên (phiên bản chưa đăng nhập) -->
+                            <!-- Avatar và dropdown -->
                             <div class="d-flex align-items-center">
-                                <img src="https://muaclone247.com/assets/storage/images/avatar4N0.png" alt="avatar"
-                                    class="rounded-circle me-2" width="40" height="40">
-                                <div class="text-end">
-                                    <div>
-                                        @if (session('success'))
-                                            <script>
-                                                iziToast.success({
-                                                    title: 'Thành công',
-                                                    message: '{{ session('success') }}',
-                                                    position: 'topRight'
-                                                });
-                                            </script>
-                                        @endif
-
-                                        @if (Auth::check())
-                                            <div>
-                                                <span>Chào, {{ Auth::user()->name }}</span>
-                                            </div>
-                                            <div class="mt-2">
+                                @if (Auth::check())
+                                    <div class="avatar-container">
+                                        <img src="@if (Auth::user()->avatar) {{ asset(Auth::user()->avatar) }} @else https://muaclone247.com/assets/storage/images/avatar4N0.png @endif"
+                                            class="rounded-circle me-2 avatar" alt="Avatar" data-bs-toggle="dropdown"
+                                            aria-expanded="false" width="40" height="40">
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li class="user-info">
+                                                <img src="@if (Auth::user()->avatar) {{ asset(Auth::user()->avatar) }} @else https://muaclone247.com/assets/storage/images/avatar4N0.png @endif"
+                                                    alt="User Avatar" width="50" height="50">
+                                                <div>
+                                                    <div class="user-name">{{ Auth::user()->name }}</div>
+                                                    <div class="user-handle">{{ Auth::user()->name }}</div>
+                                                </div>
+                                            </li>
+                                            <li><a class="dropdown-item" href="{{ url('/profile') }}">Trang cá nhân</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#">Cài đặt</a></li>
+                                            <li>
                                                 <form action="/dang-xuat" method="post" id="logoutForm">
                                                     @csrf
-                                                    <span onclick="document.getElementById('logoutForm').submit();"
-                                                        class="text-danger text-decoration-none"
-                                                        style="cursor: pointer">Đăng xuất</span>
-                                                    </p>
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                                                        Đăng xuất
+                                                    </a>
                                                 </form>
-                                            </div>
-                                        @else
-                                            <a href="/dang-nhap" class="text-primary text-decoration-none">Đăng
-                                                nhập</a>
-                                        @endif
+                                            </li>
+                                        </ul>
                                     </div>
-                                </div>
+                                @else
+                                    <img src="https://muaclone247.com/assets/storage/images/avatar4N0.png"
+                                        alt="avatar" class="rounded-circle me-2" width="40" height="40">
+                                    <div class="text-end">
+                                        <a href="/dang-nhap" class="text-primary text-decoration-none">Đăng nhập</a>
+                                    </div>
+                                @endif
+
+                                @if (session('success'))
+                                    <script>
+                                        iziToast.success({
+                                            title: 'Thành công',
+                                            message: '{{ session('success') }}',
+                                            position: 'topRight'
+                                        });
+                                    </script>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -73,3 +85,58 @@
         @include('includes.navbar')
     </div>
 </div>
+
+<!-- Thêm CSS cần thiết -->
+<style>
+    /* CSS cho avatar và dropdown */
+    .avatar-container {
+        position: relative;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 250px;
+        padding: 10px;
+    }
+
+    .dropdown-menu .dropdown-item {
+        padding: 10px 15px;
+        border-radius: 5px;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #f0f2f5;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .user-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .user-info .user-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .user-info .user-handle {
+        color: #606770;
+        font-size: 14px;
+    }
+</style>

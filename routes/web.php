@@ -26,6 +26,11 @@ Route::put('/gio-hang/{id}', [CartsController::class, 'update'])->name('carts.up
 
 Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('products.show');
 
+//profile
+Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+Route::get('/profile/history', [HomeController::class, 'history'])->name('history');
+Route::get('/profile/address', [HomeController::class, 'address'])->name('address');
+
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
 Route::post('dang-nhap', [UserController::class, 'login'])->name('dang-nhap');
@@ -34,6 +39,12 @@ Route::get('/login/google', [UserController::class, 'redirectToGoogle'])->name('
 Route::get('/login/google/callback', [UserController::class, 'handleGoogleCallback']);
 Route::get('/login/facebook', [UserController::class, 'redirectToFacebook'])->name('login.facebook');
 Route::get('/login/facebook/callback', [UserController::class, 'handleFacebookCallback']);
+Route::get('/quen-mat-khau', function () {
+    return view('auth.forgot');
+});
+Route::get('/doi-mat-khau', function () {
+    return view('auth.reset');
+});
 
 //admin
 Route::middleware('check.role:admin')->group(function () {
@@ -58,9 +69,4 @@ Route::middleware('check.role:admin')->group(function () {
     //users
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-});
-
-Route::get('/404', function () {
-    $title = "404 Not Found";
-    return view('404', compact('title'));
 });

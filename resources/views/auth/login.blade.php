@@ -70,6 +70,7 @@
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">Ghi nhớ tôi</label>
+                    <a href="/quen-mat-khau" class="float-end text-decoration-none">Quên mật khẩu?</a>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
             </form>

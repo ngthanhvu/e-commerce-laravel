@@ -63,4 +63,22 @@ class HomeController extends Controller
 
         return view('products', compact('products', 'categories', 'title', 'search', 'priceMax', 'sort', 'categoryId'));
     }
+
+    public function profile()
+    {
+        $title = "Thông tin cá nhân";
+        return view('profile.profile', compact('title'));
+    }
+
+    public function address()
+    {
+        $title = "Địa chỉ";
+        return view('profile.address', compact('title'));
+    }
+
+    public function history()
+    {
+        $title = "Lịch sử";
+        return view('profile.history', compact('title'));
+    }
 }
