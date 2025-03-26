@@ -30,13 +30,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
+<body style="background-color: #F4F7FB;">
     @include('includes.admin_sidebar')
     <!-- Main Content -->
     <div class="content">
-        <div class="tw-bg-white tw-p-6 tw-rounded-lg tw-shadow-md" style="height: calc(100vh - 100px);">
-            @yield('content')
-        </div>
+        @yield('content')
     </div>
     @include('includes.admin_footer')
 </body>

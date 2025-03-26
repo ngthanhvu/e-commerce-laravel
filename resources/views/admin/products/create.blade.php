@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="p-3 mb-4 rounded-3 bg-light">
-        <h2>Thêm sản phẩm mới</h2>
+    <div class="tw-mb-5">
+        <h3 class="tw-text-3xl tw-font-bold text-center tw-mb-3">Thêm sản phẩm</h3>
     </div>
 
-    <div class="container">
+    <div class="container bg-white tw-p-5 tw-rounded-[15px]">
         <form action="/admin/products" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
@@ -54,7 +54,31 @@
 
                     <div class="mb-3">
                         <label for="main_image" class="form-label">Ảnh chính</label>
-                        <input type="file" class="form-control" id="main_image" name="main_image">
+                        <div class="custom-file-upload">
+                            <input type="file" class="d-none" id="main_image" name="main_image" accept="image/*">
+                            <div class="drop-area text-center p-5 border border-2 border-dashed rounded">
+                                <div class="upload-icon mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary"></i>
+                                </div>
+                                <p class="mb-1">Drop your file here or <span
+                                        class="text-primary browse-link">browse</span></p>
+                                <p class="text-muted small mb-0">Pick a file up to 2MB.</p>
+                            </div>
+                            <div class="file-info mt-2 d-none">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa-solid fa-file me-2"></i>
+                                    <span class="file-name me-2"></span>
+                                    <span class="file-size text-muted small me-2"></span>
+                                    <div class="progress flex-grow-1">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                    </div>
+                                    <button type="button" class="btn btn-link text-danger p-0 ms-2 remove-file">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div id="main_image_preview" class="mt-2"></div>
                         @error('main_image')
                             <p class="text-danger">{{ $message }}</p>
@@ -63,14 +87,40 @@
 
                     <div class="mb-3">
                         <label for="sub_images" class="form-label">Ảnh phụ</label>
-                        <input type="file" class="form-control" id="sub_images" name="sub_images[]" multiple>
+                        <div class="custom-file-upload">
+                            <input type="file" class="d-none" id="sub_images" name="sub_images[]" multiple
+                                accept="image/*">
+                            <div class="drop-area text-center p-5 border border-2 border-dashed rounded">
+                                <div class="upload-icon mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary"></i>
+                                </div>
+                                <p class="mb-1">Drop your file here or <span
+                                        class="text-primary browse-link">browse</span></p>
+                                <p class="text-muted small mb-0">Pick a file up to 2MB.</p>
+                            </div>
+                            <div class="file-info mt-2 d-none">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa-solid fa-file me-2"></i>
+                                    <span class="file-name me-2"></span>
+                                    <span class="file-size text-muted small me-2"></span>
+                                    <div class="progress flex-grow-1">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                    </div>
+                                    <button type="button" class="btn btn-link text-danger p-0 ms-2 remove-file">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div id="sub_images_preview" class="mt-2 d-flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
                 <div class="col-12">
                     <div class="mb-3">
-                        <label class="form-label">Thêm biến thể sản phẩm <span class="text-muted">(tuỳ chọn)</span></label>
+                        <label class="form-label">Thêm biến thể sản phẩm <span class="text-muted">(tuỳ
+                                chọn)</span></label>
                         <div id="variant-container">
                             <div class="variant-item mb-2">
                                 <div class="row">
@@ -93,20 +143,51 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-secondary" id="add-variant">Thêm biến thể</button>
+                        <button type="button" class="btn btn-outline-secondary" id="add-variant">Thêm biến thể</button>
                     </div>
                 </div>
 
                 <!-- Nút submit -->
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Tạo sản phẩm</button>
+                    <button type="submit" class="btn btn-outline-success me-2">Tạo sản phẩm</button>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-outline-danger">Huỷ</a>
                 </div>
             </div>
         </form>
     </div>
 
+    <style>
+        .custom-file-upload .drop-area {
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload .drop-area:hover {
+            background-color: #e9ecef;
+        }
+
+        .custom-file-upload .drop-area.dragover {
+            background-color: #dee2e6;
+        }
+
+        .custom-file-upload .browse-link {
+            text-decoration: underline;
+        }
+
+        .custom-file-upload .progress {
+            height: 10px;
+            margin-top: 5px;
+        }
+
+        .custom-file-upload .file-info {
+            background-color: #f1f3f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
     <script>
-        // Thêm biến thể
         document.getElementById('add-variant').addEventListener('click', function() {
             let container = document.getElementById('variant-container');
             let count = container.getElementsByClassName('variant-item').length;
@@ -131,43 +212,112 @@
             container.insertAdjacentHTML('beforeend', html);
         });
 
-        // Preview ảnh chính
-        document.getElementById('main_image').addEventListener('change', function(e) {
-            const preview = document.getElementById('main_image_preview');
-            preview.innerHTML = ''; // Xóa preview cũ
+        // Xử lý kéo thả và chọn file
+        document.querySelectorAll('.custom-file-upload').forEach(upload => {
+            const input = upload.querySelector('input[type="file"]');
+            const dropArea = upload.querySelector('.drop-area');
+            const fileInfo = upload.querySelector('.file-info');
+            const fileName = upload.querySelector('.file-name');
+            const fileSize = upload.querySelector('.file-size');
+            const progressBar = upload.querySelector('.progress-bar');
+            const removeFileBtn = upload.querySelector('.remove-file');
 
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.style.maxWidth = '200px'; // Giới hạn kích thước ảnh preview
-                    img.style.borderRadius = '5px';
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+            // Mở file explorer khi click vào toàn bộ khu vực drop-area
+            dropArea.addEventListener('click', () => input.click());
 
-        document.getElementById('sub_images').addEventListener('change', function(e) {
-            const preview = document.getElementById('sub_images_preview');
-            preview.innerHTML = '';
+            // Xử lý kéo thả
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('dragover');
+            });
 
-            const files = e.target.files;
-            if (files) {
-                for (let i = 0; i < files.length; i++) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const img = document.createElement('img');
-                        img.src = event.target.result;
-                        img.style.maxWidth = '100px';
-                        img.style.borderRadius = '5px';
-                        preview.appendChild(img);
-                    };
-                    reader.readAsDataURL(files[i]);
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('dragover');
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                input.files = files;
+                input.dispatchEvent(new Event('change')); // Kích hoạt sự kiện change
+            });
+
+            // Xử lý khi chọn file
+            input.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    // Hiển thị thông tin file (chỉ hiển thị file đầu tiên cho main_image)
+                    const file = files[0];
+                    fileName.textContent = file.name;
+                    fileSize.textContent = `(${(file.size / 1024).toFixed(2)} KB)`;
+                    fileInfo.classList.remove('d-none');
+
+                    // Giả lập tiến trình tải lên
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        progressBar.style.width = `${progress}%`;
+                        progressBar.textContent = `${progress}%`;
+                        progressBar.setAttribute('aria-valuenow', progress);
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                        }
+                    }, 200);
+                } else {
+                    fileInfo.classList.add('d-none');
                 }
-            }
+
+                // Kích hoạt preview ảnh (giữ logic cũ của bạn)
+                if (input.id === 'main_image') {
+                    const preview = document.getElementById('main_image_preview');
+                    preview.innerHTML = '';
+                    const file = files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.style.maxWidth = '200px';
+                            img.style.borderRadius = '5px';
+                            preview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                } else if (input.id === 'sub_images') {
+                    const preview = document.getElementById('sub_images_preview');
+                    preview.innerHTML = '';
+                    if (files) {
+                        for (let i = 0; i < files.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                const img = document.createElement('img');
+                                img.src = event.target.result;
+                                img.style.maxWidth = '100px';
+                                img.style.borderRadius = '5px';
+                                preview.appendChild(img);
+                            };
+                            reader.readAsDataURL(files[i]);
+                        }
+                    }
+                }
+            });
+
+            // Xóa file
+            removeFileBtn.addEventListener('click', () => {
+                input.value = ''; // Xóa file
+                fileInfo.classList.add('d-none');
+                progressBar.style.width = '0%';
+                progressBar.textContent = '0%';
+                progressBar.setAttribute('aria-valuenow', 0);
+
+                // Xóa preview
+                if (input.id === 'main_image') {
+                    document.getElementById('main_image_preview').innerHTML = '';
+                } else if (input.id === 'sub_images') {
+                    document.getElementById('sub_images_preview').innerHTML = '';
+                }
+            });
         });
     </script>
 @endsection

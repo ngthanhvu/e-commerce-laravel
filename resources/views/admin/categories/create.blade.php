@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="p-3 mb-4 rounded-3 bg-light">
-        <h2>Thêm danh mục mới</h2>
+    <div class="tw-mb-5">
+        <h3 class="tw-text-3xl tw-font-bold text-center tw-mb-3">Thêm danh mục</h3>
     </div>
 
-    <div class="container">
+    <div class="container tw-w-[50%] tw-bg-white tw-p-5 tw-rounded-[15px]">
         <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
@@ -51,7 +51,8 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
             </div>
-            <button type="submit" class="btn btn-primary">Tạo danh mục</button>
+            <button type="submit" class="btn btn-outline-secondary me-2">Tạo danh mục</button>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-danger">Huỷ</a>
         </form>
     </div>
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="tw-flex tw-justify-between tw-items-center tw-mb-3">
+    <div class="tw-flex tw-justify-between tw-items-center tw-mb-3 bg-white tw-rounded-[15px] tw-pt-3 tw-pl-4">
         <div>
             <h3 class="tw-text-2xl tw-font-bold">Quản lý người dùng</h3>
             <p class="tw-text-gray-500 tw-mt-1">Danh sách các người dùng đang có!</p>
@@ -25,105 +25,109 @@
             });
         </script>
     @endif
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form method="GET" action="{{ route('admin.users.index') }}" id="entriesForm">
-                <label for="entriesPerPage" class="form-label">Hiển thị</label>
-                <select id="entriesPerPage" name="per_page" class="form-select d-inline w-auto"
-                    style="width: auto; display: inline-block;" onchange="document.getElementById('entriesForm').submit()">
-                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <span> mục trên mỗi trang</span>
-                <input type="hidden" name="search" value="{{ $search }}">
-            </form>
+    <div class="bg-white tw-p-5 tw-rounded-[15px]">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <form method="GET" action="{{ route('admin.users.index') }}" id="entriesForm">
+                    <label for="entriesPerPage" class="form-label">Hiển thị</label>
+                    <select id="entriesPerPage" name="per_page" class="form-select d-inline w-auto"
+                        style="width: auto; display: inline-block;"
+                        onchange="document.getElementById('entriesForm').submit()">
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                    <span> mục trên mỗi trang</span>
+                    <input type="hidden" name="search" value="{{ $search }}">
+                </form>
+            </div>
+            <div class="col-md-3 offset-md-3">
+                <form method="GET" action="{{ route('admin.users.index') }}">
+                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
+                        value="{{ $search }}" aria-label="Search">
+                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                </form>
+            </div>
         </div>
-        <div class="col-md-3 offset-md-3">
-            <form method="GET" action="{{ route('admin.users.index') }}">
-                <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
-                    value="{{ $search }}" aria-label="Search">
-                <input type="hidden" name="per_page" value="{{ $perPage }}">
-            </form>
-        </div>
-    </div>
-    <table class="table table-bordered table-hover text-center">
-        <thead>
-            <tr>
-                <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
-                <th scope="col">Tên người dùng <i class="bi bi-arrow-down-up"></i></th>
-                <th scope="col">Email <i class="bi bi-arrow-down-up"></i></th>
-                <th scope="col">Vai trò <i class="bi bi-arrow-down-up"></i></th>
-                <th scope="col">Thời gian tạo <i class="bi bi-arrow-down-up"></i></th>
-                <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
-            </tr>
-        </thead>
-        <tbody class="align-middle">
-            @php
-                $index = 1;
-            @endphp
-            @foreach ($users as $user)
+        <table class="table table-bordered table-hover text-center">
+            <thead>
                 <tr>
-                    <th scope="row">{{ $index++ }}</th>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->role }}</td>
-                    <td>{{ $user->created_at }}</td>
-                    <td>
-                        <button class="btn btn-outline-secondary editUserBtn btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#editUserModal" data-id="{{ $user->id }}" data-name="{{ $user->name }}"
-                            data-email="{{ $user->email }}" data-role="{{ $user->role }}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <form action="/admin/users/{{ $user->id }}" method="POST" style="display: inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i
-                                    class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
+                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Tên người dùng <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Email <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Vai trò <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Thời gian tạo <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
                 </tr>
-            @endforeach
-            @if ($users->isEmpty())
-                <tr>
-                    <td colspan="6" class="text-center">Không có người dùng nào</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="align-middle">
+                @php
+                    $index = 1;
+                @endphp
+                @foreach ($users as $user)
+                    <tr>
+                        <th scope="row">{{ $index++ }}</th>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ $user->role }}</td>
+                        <td>{{ $user->created_at }}</td>
+                        <td>
+                            <button class="btn btn-outline-secondary editUserBtn btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#editUserModal" data-id="{{ $user->id }}"
+                                data-name="{{ $user->name }}" data-email="{{ $user->email }}"
+                                data-role="{{ $user->role }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form action="/admin/users/{{ $user->id }}" method="POST" style="display: inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-secondary btn-sm"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+                @if ($users->isEmpty())
+                    <tr>
+                        <td colspan="6" class="text-center">Không có người dùng nào</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
 
-    <!-- Phân trang -->
-    <div class="row">
-        <div class="col-md-6">
-            <p>Hiển thị {{ $users->firstItem() }} đến {{ $users->lastItem() }} trong {{ $users->total() }}
-                mục</p>
-        </div>
-        <div class="col-md-6">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-end">
-                    <!-- Nút Previous -->
-                    <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link"
-                            href="{{ $users->previousPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}"
-                            tabindex="-1">«</a>
-                    </li>
-
-                    <!-- Các trang -->
-                    @for ($i = 1; $i <= $users->lastPage(); $i++)
-                        <li class="page-item {{ $users->currentPage() == $i ? 'active' : '' }}">
+        <!-- Phân trang -->
+        <div class="row">
+            <div class="col-md-6">
+                <p>Hiển thị {{ $users->firstItem() }} đến {{ $users->lastItem() }} trong {{ $users->total() }}
+                    mục</p>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <!-- Nút Previous -->
+                        <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link"
-                                href="{{ $users->url($i) . '&per_page=' . $perPage . '&search=' . $search }}">{{ $i }}</a>
+                                href="{{ $users->previousPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}"
+                                tabindex="-1">«</a>
                         </li>
-                    @endfor
 
-                    <!-- Nút Next -->
-                    <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
-                        <a class="page-link"
-                            href="{{ $users->nextPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}">»</a>
-                    </li>
-                </ul>
-            </nav>
+                        <!-- Các trang -->
+                        @for ($i = 1; $i <= $users->lastPage(); $i++)
+                            <li class="page-item {{ $users->currentPage() == $i ? 'active' : '' }}">
+                                <a class="page-link"
+                                    href="{{ $users->url($i) . '&per_page=' . $perPage . '&search=' . $search }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        <!-- Nút Next -->
+                        <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link"
+                                href="{{ $users->nextPageUrl() . '&per_page=' . $perPage . '&search=' . $search }}">»</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
     <!-- Modal Sửa Người Dùng -->

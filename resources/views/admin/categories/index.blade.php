@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="tw-flex tw-justify-between tw-items-center tw-p-3">
+    <div class="tw-flex tw-justify-between tw-items-center tw-p-3 bg-white tw-rounded-[15px] mb-3">
         <div>
             <h3 class="tw-text-2xl tw-font-bold">Quản lý danh mục</h3>
             <p class="tw-text-gray-500 tw-mt-1">Danh sách các danh mục đang có!</p>
@@ -28,7 +28,7 @@
             });
         </script>
     @endif
-    <div class="p-3 mb-4 rounded-3">
+    <div class="p-3 mb-4 rounded-3 bg-white tw-rounded-[15px]">
         <div class="row mb-3">
             <div class="col-md-6">
             </div>

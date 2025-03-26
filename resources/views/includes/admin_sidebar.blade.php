@@ -138,7 +138,7 @@
 
     <div class="tw-p-4">
         <a href="/" class="tw-text-white text-decoration-none">
-            <i class="fas fa-arrow-left tw-mr-2"></i> Back Home
+            <i class="fas fa-arrow-left tw-mr-2"></i> Trở về trang chủ
         </a>
     </div>
 </div>
