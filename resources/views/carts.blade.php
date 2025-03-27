@@ -52,6 +52,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Sản Phẩm</th>
                         <th scope="col">Tên</th>
+                        <th scope="col">Phiên Bản</th>
                         <th scope="col">Đơn Giá</th>
                         <th scope="col">Số Lượng</th>
                         <th scope="col">Tổng</th>
@@ -72,7 +73,8 @@
                                 @endif
                             </td>
                             <td>{{ $cart->product->name }}</td>
-                            <td data-price="250000">{{ number_format($cart->price) }}₫</td>
+                            <td>{{ $cart->variant ? $cart->variant->varriant_name : 'Không có phiên bản' }}</td>
+                            <td data-price="{{ $cart->price }}">{{ number_format($cart->price) }}₫</td>
                             <td>
                                 <div class="quantity-control">
                                     <button class="btn btn-outline-secondary" onclick="changeQuantity(this, -1)">-</button>
@@ -81,7 +83,7 @@
                                     <button class="btn btn-outline-secondary" onclick="changeQuantity(this, 1)">+</button>
                                 </div>
                             </td>
-                            <td class="subtotal">{{ number_format($cart->price * $cart->quantity) ?? 0 }}₫</td>
+                            <td class="subtotal">{{ number_format($cart->price * $cart->quantity) }}₫</td>
                             <td>
                                 <form action="{{ route('carts.delete', $cart->id) }}" method="POST">
                                     @csrf
@@ -96,7 +98,7 @@
                     @endforeach
                     @if ($carts->isEmpty())
                         <tr>
-                            <td colspan="7" class="text-center">Không có sản phẩm nào trong giỏ hàng</td>
+                            <td colspan="8" class="text-center">Không có sản phẩm nào trong giỏ hàng</td>
                         </tr>
                     @endif
                 </tbody>
@@ -108,7 +110,9 @@
                 @if ($carts->isEmpty())
                     <h4>Tổng Tiền: <span id="cartTotal">0₫</span></h4>
                 @else
-                    <h4>Tổng Tiền: <span id="cartTotal">{{ number_format($cart->price * $cart->quantity) }}₫</span></h4>
+                    <h4>Tổng Tiền: <span
+                            id="cartTotal">{{ number_format($carts->sum(function ($cart) {return $cart->price * $cart->quantity;})) }}₫</span>
+                    </h4>
                 @endif
                 <a href="/checkout" class="btn btn-success w-100 mt-3">Thanh Toán</a>
                 <a href="/san-pham" class="btn btn-outline-dark w-100 mt-2">Tiếp Tục Mua Sắm</a>
@@ -151,7 +155,7 @@
                 } else {
                     iziToast.error({
                         title: 'Lỗi',
-                        message: 'Cập nhật giỏ hàng khỏ thành công!',
+                        message: data.message,
                         position: 'topRight'
                     });
                     console.log("Lỗi: " + data.message);

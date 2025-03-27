@@ -16,9 +16,14 @@ class Carts extends Model
         'session_id',
         'quantity',
         'price',
+        'variant_id'
     ];
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+    public function variant()
+    {
+        return $this->belongsTo(Variant::class, 'variant_id', 'id');
     }
 }

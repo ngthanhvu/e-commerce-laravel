@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carts;
+use App\Models\Product;
+use App\Models\Variant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,20 +38,71 @@ class CartsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required',
-            'quantity' => 'required',
-            'price' => 'required',
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'price' => 'required|numeric',
+            'variant_id' => 'nullable|exists:variants,id',
         ]);
-        $carts = [
-            'session_id' => session()->getId(),
-            'user_id' => Auth::id(),
-            'product_id' => $validated['product_id'],
-            'quantity' => $validated['quantity'],
-            'price' => $validated['price'],
-        ];
-        Carts::create($carts);
-        Log::info('Cart created', $carts);
-        return redirect()->route('carts.index')->with('success', 'Giỏ hàng đã được thêm!');
+
+        $product = Product::findOrFail($validated['product_id']);
+        $quantityRequested = $validated['quantity'];
+        $variant = null;
+        $availableQuantity = 0;
+
+        if ($request->filled('variant_id')) {
+            $variant = Variant::findOrFail($validated['variant_id']);
+            $availableQuantity = $variant->varriant_quantity;
+        } else {
+            $availableQuantity = $product->quantity;
+        }
+
+        if ($quantityRequested > $availableQuantity) {
+            return redirect()->back()->with('error', 'Số lượng yêu cầu vượt quá số lượng tồn kho! Còn lại: ' . $availableQuantity);
+        }
+
+        $existingCart = Carts::where('product_id', $validated['product_id'])
+            ->where('variant_id', $request->filled('variant_id') ? $validated['variant_id'] : null)
+            ->when(Auth::check(), function ($query) {
+                return $query->where('user_id', Auth::id());
+            }, function ($query) use ($request) {
+                return $query->where('session_id', $request->session_id);
+            })
+            ->first();
+
+        if ($existingCart) {
+            $newQuantity = $existingCart->quantity + $quantityRequested;
+            if ($newQuantity > $availableQuantity) {
+                return redirect()->back()->with('error', 'Tổng số lượng trong giỏ hàng vượt quá số lượng tồn kho! Còn lại: ' . $availableQuantity);
+            }
+            $existingCart->update([
+                'quantity' => $newQuantity,
+            ]);
+        } else {
+            $cartData = [
+                'session_id' => $request->session_id,
+                'user_id' => Auth::id(),
+                'product_id' => $validated['product_id'],
+                'variant_id' => $request->filled('variant_id') ? $validated['variant_id'] : null,
+                'quantity' => $quantityRequested,
+                'price' => $validated['price'],
+            ];
+            Carts::create($cartData);
+            Log::info('Cart created', $cartData);
+        }
+
+        $userId = Auth::user()->id ?? null;
+        $sessionId = session()->getId();
+
+        $carts = Carts::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        }, function ($query) use ($sessionId) {
+            return $query->where('session_id', $sessionId);
+        })->get();
+
+        $count_cart = $carts->sum('quantity');
+        session(['count_cart' => $count_cart]);
+
+        return redirect()->route('carts.index')->with('success', 'Giỏ hàng đã được thêm!');
     }
 
 
