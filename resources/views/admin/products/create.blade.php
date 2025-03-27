@@ -2,13 +2,14 @@
 
 @section('content')
     <div class="tw-mb-5">
-        <h3 class="tw-text-3xl tw-font-bold text-center tw-mb-3">Thêm sản phẩm</h3>
+        <h3 class="tw-text-3xl tw-font-bold tw-text-center tw-mb-3">Thêm sản phẩm</h3>
     </div>
 
     <div class="container bg-white tw-p-5 tw-rounded-[15px]">
         <form action="/admin/products" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
+                <!-- Cột trái -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="name" class="form-label">Tên sản phẩm</label>
@@ -36,19 +37,7 @@
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
 
-                <div class="mb-3 tw-w-[50%]">
-                    <label for="description" class="form-label">Mô tả</label>
-                    <div id="description-editor" style="height: 200px;"></div>
-                    <input type="hidden" class="form-control" name="description" id="description">
-                    @error('description')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
-                </div>
-
-
-                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="category_id" class="form-label">Danh mục</label>
                         <select class="form-control" id="category_id" name="category_id">
@@ -61,7 +50,10 @@
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
 
+                <!-- Cột phải -->
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label for="main_image" class="form-label">Ảnh chính</label>
                         <div class="custom-file-upload">
@@ -127,6 +119,19 @@
                     </div>
                 </div>
 
+                <!-- Mô tả (full width) -->
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Mô tả</label>
+                        <div id="description-editor" style="height: 200px;"></div>
+                        <input type="hidden" class="form-control" name="description" id="description">
+                        @error('description')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Biến thể sản phẩm (full width) -->
                 <div class="col-12">
                     <div class="mb-3">
                         <label class="form-label">Thêm biến thể sản phẩm <span class="text-muted">(tuỳ
@@ -166,6 +171,7 @@
         </form>
     </div>
 
+    <!-- CSS -->
     <style>
         .custom-file-upload .drop-area {
             background-color: #f8f9fa;
@@ -197,7 +203,9 @@
         }
     </style>
 
+    <!-- JavaScript -->
     <script>
+        // Thêm biến thể
         document.getElementById('add-variant').addEventListener('click', function() {
             let container = document.getElementById('variant-container');
             let count = container.getElementsByClassName('variant-item').length;
@@ -232,10 +240,8 @@
             const progressBar = upload.querySelector('.progress-bar');
             const removeFileBtn = upload.querySelector('.remove-file');
 
-            // Mở file explorer khi click vào toàn bộ khu vực drop-area
             dropArea.addEventListener('click', () => input.click());
 
-            // Xử lý kéo thả
             dropArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropArea.classList.add('dragover');
@@ -248,37 +254,30 @@
             dropArea.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropArea.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                input.files = files;
-                input.dispatchEvent(new Event('change')); // Kích hoạt sự kiện change
+                input.files = e.dataTransfer.files;
+                input.dispatchEvent(new Event('change'));
             });
 
-            // Xử lý khi chọn file
             input.addEventListener('change', (e) => {
                 const files = e.target.files;
                 if (files.length > 0) {
-                    // Hiển thị thông tin file (chỉ hiển thị file đầu tiên cho main_image)
                     const file = files[0];
                     fileName.textContent = file.name;
                     fileSize.textContent = `(${(file.size / 1024).toFixed(2)} KB)`;
                     fileInfo.classList.remove('d-none');
 
-                    // Giả lập tiến trình tải lên
                     let progress = 0;
                     const interval = setInterval(() => {
                         progress += 10;
                         progressBar.style.width = `${progress}%`;
                         progressBar.textContent = `${progress}%`;
                         progressBar.setAttribute('aria-valuenow', progress);
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                        }
+                        if (progress >= 100) clearInterval(interval);
                     }, 200);
                 } else {
                     fileInfo.classList.add('d-none');
                 }
 
-                // Kích hoạt preview ảnh (giữ logic cũ của bạn)
                 if (input.id === 'main_image') {
                     const preview = document.getElementById('main_image_preview');
                     preview.innerHTML = '';
@@ -313,15 +312,13 @@
                 }
             });
 
-            // Xóa file
             removeFileBtn.addEventListener('click', () => {
-                input.value = ''; // Xóa file
+                input.value = '';
                 fileInfo.classList.add('d-none');
                 progressBar.style.width = '0%';
                 progressBar.textContent = '0%';
                 progressBar.setAttribute('aria-valuenow', 0);
 
-                // Xóa preview
                 if (input.id === 'main_image') {
                     document.getElementById('main_image_preview').innerHTML = '';
                 } else if (input.id === 'sub_images') {
@@ -330,6 +327,7 @@
             });
         });
 
+        // Quill Editor
         var quill = new Quill('#description-editor', {
             theme: 'snow',
             placeholder: 'Nhập mô tả sản phẩm...',
@@ -344,7 +342,6 @@
             }
         });
 
-        // Cập nhật nội dung vào input trước khi submit
         document.querySelector('form').onsubmit = function() {
             document.querySelector('#description').value = quill.root.innerHTML;
         };

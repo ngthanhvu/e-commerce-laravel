@@ -114,8 +114,10 @@
                             id="cartTotal">{{ number_format($carts->sum(function ($cart) {return $cart->price * $cart->quantity;})) }}₫</span>
                     </h4>
                 @endif
-                <a href="/checkout" class="btn btn-success w-100 mt-3">Thanh Toán</a>
-                <a href="/san-pham" class="btn btn-outline-dark w-100 mt-2">Tiếp Tục Mua Sắm</a>
+                <a href="/checkout" class="btn btn-success w-100 mt-3"><i class="fa-solid fa-credit-card"></i> Thanh
+                    Toán</a>
+                <a href="/san-pham" class="btn btn-outline-dark w-100 mt-2"><i class="fa-solid fa-cart-plus"></i> Tiếp Tục
+                    Mua Sắm</a>
             </div>
         </div>
     </div>
