@@ -105,6 +105,7 @@
                                 <button type="button" class="btn btn-outline-secondary btn-sm delete-btn"><i
                                         class="fa fa-trash"></i></button>
                             </form>
+                            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-gear"></i></a>
                         </td>
                     </tr>
                 @endforeach

@@ -38,6 +38,16 @@
                     </div>
                 </div>
 
+                <div class="mb-3 tw-w-[50%]">
+                    <label for="description" class="form-label">Mô tả</label>
+                    <div id="description-editor" style="height: 200px;"></div>
+                    <input type="hidden" class="form-control" name="description" id="description">
+                    @error('description')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+
+
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="category_id" class="form-label">Danh mục</label>
@@ -319,5 +329,24 @@
                 }
             });
         });
+
+        var quill = new Quill('#description-editor', {
+            theme: 'snow',
+            placeholder: 'Nhập mô tả sản phẩm...',
+            modules: {
+                toolbar: [
+                    [{
+                        header: [1, 2, false]
+                    }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block']
+                ]
+            }
+        });
+
+        // Cập nhật nội dung vào input trước khi submit
+        document.querySelector('form').onsubmit = function() {
+            document.querySelector('#description').value = quill.root.innerHTML;
+        };
     </script>
 @endsection

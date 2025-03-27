@@ -12,8 +12,18 @@ class CartsController extends Controller
 {
     public function index()
     {
+        $userId = Auth::user()->id ?? null;
+        $sessionId = session()->getId();
+
+        $carts = Carts::with(['product.mainImage'])
+            ->when($userId, function ($query) use ($userId) {
+                return $query->where('user_id', $userId);
+            }, function ($query) use ($sessionId) {
+                return $query->where('session_id', $sessionId);
+            })
+            ->get();
+
         $title = "Giỏ hàng";
-        $carts = Carts::with(['product.mainImage'])->get();
         return view('carts', compact('title', 'carts'));
     }
 

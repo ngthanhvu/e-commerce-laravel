@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price', 'quantity', 'slug', 'category_id'];
+    protected $fillable = ['name', 'price', 'quantity', 'slug', 'category_id', 'description'];
 
     // Một sản phẩm thuộc về một danh mục
     public function category()

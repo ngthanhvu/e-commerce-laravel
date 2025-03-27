@@ -113,7 +113,11 @@
 
         <div class="mt-5" style="border-top: 1px solid #ccc; padding-top: 20px;">
             <h4>MÔ TẢ</h4>
-            <p>Weikav Stars75 là mẫu bàn phím layout 75% với thiết kế nhôm CNC cao cấp...</p>
+            @if ($product->description == null)
+                <p>Không có mô tả nào.</p>
+            @else
+                <div>{!! $product->description !!}</div>
+            @endif
         </div>
     </div>
 

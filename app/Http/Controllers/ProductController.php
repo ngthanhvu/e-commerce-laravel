@@ -51,6 +51,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'main_image' => 'required|image',
             'sub_images.*' => 'image',
+            'description' => 'required|string',
         ], [
             'name.required' => 'Vui lòng nhập tên sản phẩm',
             'price.required' => 'Vui lòng nhập giá sản phẩm',
@@ -61,6 +62,7 @@ class ProductController extends Controller
             'category_id.exists' => 'Danh mục không tồn tại',
             'main_image.required' => 'Vui lòng chọn hình ảnh chính',
             'main_image.image' => 'Hình ảnh chính phải là hình ảnh',
+            'description.required' => 'Vui lòng nhập mô tả sản phẩm',
         ]);
 
         $slug = Str::slug($request->name);
@@ -77,6 +79,7 @@ class ProductController extends Controller
             'quantity' => $request->quantity,
             'slug' => $slug,
             'category_id' => $request->category_id,
+            'description' => $request->description,
         ]);
 
         $mainImagePath = $request->file('main_image')->store('products', 'public');
