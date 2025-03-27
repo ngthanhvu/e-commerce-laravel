@@ -5,7 +5,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CartsController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

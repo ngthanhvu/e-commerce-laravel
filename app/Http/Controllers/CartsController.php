@@ -22,7 +22,8 @@ class CartsController extends Controller
                 return $query->where('session_id', $sessionId);
             })
             ->get();
-
+        $count_cart = $carts->count();
+        session(['count_cart' => $count_cart]);
         $title = "Giỏ hàng";
         return view('carts', compact('title', 'carts'));
     }

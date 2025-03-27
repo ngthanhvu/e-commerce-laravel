@@ -26,7 +26,7 @@
                                     hàng
                                     <i class="bi bi-cart2 fs-4"></i>
                                     <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">0</span>
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">{{ session('count_cart', 0) }}</span>
                                 </a>
                             </div>
                             <!-- Avatar và dropdown -->

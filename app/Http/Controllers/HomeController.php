@@ -12,8 +12,19 @@ class HomeController extends Controller
     public function index()
     {
         $title = "Trang chủ";
-        $products = Product::with('category', 'mainImage', 'variants', 'images')->get();
-        return view('index', compact('products', 'title'));
+
+        $products = Product::with('category', 'mainImage', 'variants', 'images')
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
+
+        $categories = Category::with(['products' => function ($query) {
+            $query->with('mainImage', 'variants', 'images');
+        }])
+            ->has('products')
+            ->get();
+
+        return view('index', compact('products', 'categories', 'title'));
     }
 
     public function products(Request $request)
