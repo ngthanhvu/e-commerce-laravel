@@ -39,11 +39,15 @@ Route::get('/login/google', [UserController::class, 'redirectToGoogle'])->name('
 Route::get('/login/google/callback', [UserController::class, 'handleGoogleCallback']);
 Route::get('/login/facebook', [UserController::class, 'redirectToFacebook'])->name('login.facebook');
 Route::get('/login/facebook/callback', [UserController::class, 'handleFacebookCallback']);
+Route::post('/send-otp', [UserController::class, 'sendOtp']);
+Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::get('/quen-mat-khau', function () {
-    return view('auth.forgot');
+    $title = "Quên mật khẩu";
+    return view('auth.forgot', compact('title'));
 });
 Route::get('/doi-mat-khau', function () {
-    return view('auth.reset');
+    $title = "Xác nhận mật khẩu";
+    return view('auth.reset', compact('title'));
 });
 
 //admin

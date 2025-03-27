@@ -46,6 +46,14 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email"
+                        placeholder="Nhập email của bạn" required>
+                    @error('email')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu mới</label>
                     <input type="password" class="form-control" name="password" id="password"
                         placeholder="Nhập mật khẩu mới" required>
@@ -62,4 +70,40 @@
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = document.querySelectorAll(".otp-input");
+
+            inputs.forEach((input, index) => {
+                input.addEventListener("input", function(e) {
+                    if (this.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener("keydown", function(e) {
+                    if (e.key === "Backspace" && this.value === "" && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener("paste", function(e) {
+                    e.preventDefault();
+                    let pasteData = (e.clipboardData || window.clipboardData).getData("text")
+                .trim();
+                    let digits = pasteData.replace(/\D/g, "").split("").slice(0, inputs.length);
+
+                    digits.forEach((digit, i) => {
+                        inputs[i].value = digit;
+                    });
+
+                    if (digits.length === inputs.length) {
+                        inputs[inputs.length - 1].focus();
+                    } else if (digits.length > 0) {
+                        inputs[digits.length].focus();
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

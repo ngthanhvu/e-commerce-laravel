@@ -21,7 +21,7 @@
     <div class="container">
         <div class="form-container" id="loginForm">
             <h2 class="text-center mb-4">Quên mật khẩu</h2>
-            <form method="POST" action="/dang-nhap">
+            <form method="POST" action="{{ url('/send-otp') }}">
                 @csrf
                 <div class="mb-3">
                     <label for="loginEmail" class="form-label">Email</label>

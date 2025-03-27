@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Carts;
 
 class UserController extends Controller
@@ -171,5 +172,67 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Đăng nhập Facebook thất bại.');
         }
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.exists' => 'Email không tồn tại trong hệ thống',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        $otp = rand(100000, 999999);
+
+        $user->otp = $otp;
+        $user->otp_expires_at = now()->addMinutes(10);
+        $user->save();
+
+        Mail::raw("Mã OTP của bạn là: $otp. Mã này có hiệu lực trong 10 phút.", function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Mã OTP đặt lại mật khẩu');
+        });
+
+        return redirect()->back()->with('success', 'Mã OTP đã được gửi đến email của bạn!');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'otp' => 'required|array|size:6',
+            'otp.*' => 'required|digits:1',
+            'password' => 'required|min:6|confirmed',
+        ], [
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.exists' => 'Email không tồn tại trong hệ thống',
+            'otp.required' => 'Vui lòng nhập mã OTP',
+            'otp.size' => 'Mã OTP phải có đúng 6 số',
+            'otp.*.required' => 'Vui lòng nhập đầy đủ 6 số OTP',
+            'otp.*.digits' => 'Mỗi ô OTP phải là 1 số',
+            'password.required' => 'Vui lòng nhập mật khẩu mới',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp',
+        ]);
+
+        $otp = implode('', $request->input('otp'));
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->otp !== $otp || now()->gt($user->otp_expires_at)) {
+            return back()->with('error', 'Mã OTP không hợp lệ hoặc đã hết hạn!');
+        }
+
+        $user->update([
+            'password' => bcrypt($request->password),
+            'otp' => null,
+            'otp_expires_at' => null,
+        ]);
+
+        return redirect('/dang-nhap')->with('success', 'Mật khẩu đã được đặt lại thành công!');
     }
 }

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? '' }} | Kicap Store</title>
-    <link rel="icon" href="//bizweb.dktcdn.net/100/436/596/themes/980306/assets/favicon.png?1742138342352"
+    <link rel="icon"
+        href="https://res.cloudinary.com/kineticlabs/image/upload/v1642032264/api-images/categories/keycaps_e3hsth.png"
         type="image/x-icon">
     {{-- css  --}}
     <link rel="stylesheet" href="{{ asset('css/public.css') }}">
