@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Carts;
+use App\Mail\RegistrationSuccess;
 
 class UserController extends Controller
 {
@@ -54,6 +55,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
+        Mail::to($user->email)->send(new RegistrationSuccess($user));
         return redirect('/dang-nhap')->with('success', 'Đăng ký thành công');
     }
 
