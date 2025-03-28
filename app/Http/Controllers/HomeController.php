@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Address;
 
 class HomeController extends Controller
 {
@@ -84,7 +86,8 @@ class HomeController extends Controller
     public function address()
     {
         $title = "Địa chỉ";
-        return view('profile.address', compact('title'));
+        $addresses = Address::where('user_id', Auth::user()->id)->get();
+        return view('profile.address', compact('title', 'addresses'));
     }
 
     public function history()

@@ -1,6 +1,24 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        .card {
+            transition: border 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            border: 1px solid #333333 !important;
+            box-shadow: 0px 2px 5px #333333;
+        }
+
+        .ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+    </style>
+
     <div id="carouselExample" class="carousel slide mx-auto" data-bs-ride="carousel" style="width: 80%">
         <div class="carousel-inner">
             <div class="carousel-item active">
@@ -28,9 +46,9 @@
 
     <div class="container mt-4">
         <!-- Phần Sản phẩm mới -->
-        <section class="new-products border p-3 rounded-2 mb-4" style="min-height: 500px;">
-            <h2 class="text-center text-uppercase mb-3">Sản phẩm mới</h2>
-
+        <section class="new-products border p-4 rounded-2 mb-4"
+            style="min-height: 500px; background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);">
+            <h2 class="text-center text-uppercase mb-4 mt-3">Sản phẩm mới</h2>
             @if (count($products) > 4)
                 <div class="swiper product-swiper-new">
                     <div class="swiper-wrapper">
@@ -41,9 +59,9 @@
                             <div class="swiper-slide">
                                 <div class="row">
                                     @foreach ($chunk as $product)
-                                        <div class="col-md-3 col-6 mb-3">
+                                        <div class="col-md-3 col-6">
                                             <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                                <div class="card border-0">
+                                                <div class="card border-0" style="background-color: transparent">
                                                     @if ($product->mainImage)
                                                         <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
                                                             class="card-img-top" alt="{{ $product->name }}"
@@ -53,10 +71,13 @@
                                                             class="card-img-top" alt="Keycap Artisan Natra">
                                                     @endif
                                                     <div class="card-body text-center">
-                                                        <span class="card-title text-muted" style="font-size: 13px">
+                                                        <span class="card-title" style="font-size: 14px">
                                                             {{ $product->category['name'] }}
                                                         </span>
-                                                        <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
+                                                        <h5
+                                                            class="card-subtitle mb-2 tw-text-[20px] tw-uppercase tw-tracking-widest mt-1 ellipsis">
+                                                            {{ $product->name }}
+                                                        </h5>
                                                         <p class="card-text">
                                                             {{ number_format($product->price, 0, ',', '.') }}₫</p>
                                                     </div>
@@ -92,7 +113,7 @@
                                         <span class="card-title text-muted" style="font-size: 13px">
                                             {{ $product->category['name'] }}
                                         </span>
-                                        <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
+                                        <h5 class="card-subtitle mb-2 ellipsis">{{ $product->name }}</h5>
                                         <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p>
                                     </div>
                                 </div>
@@ -101,13 +122,11 @@
                     @endforeach
                 </div>
             @endif
-
-            <button class="btn btn-dark text-center mx-auto d-block mt-3">Xem thêm</button>
         </section>
 
         <!-- Phần sản phẩm theo danh mục -->
         @foreach ($categories as $category)
-            <section class="new-products border p-3 rounded-2 mb-4" style="min-height: 500px;">
+            <section class="new-products p-3 rounded-2 mb-4" style="min-height: 500px;">
                 <h2 class="text-center text-uppercase mb-3">{{ $category->name }}</h2>
 
                 @if ($category->products->count() > 4)
@@ -136,7 +155,8 @@
                                                             <span class="card-title text-muted" style="font-size: 13px">
                                                                 {{ $category->name }}
                                                             </span>
-                                                            <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
+                                                            <h5 class="card-subtitle mb-2 ellipsis">{{ $product->name }}
+                                                            </h5>
                                                             <p class="card-text">
                                                                 {{ number_format($product->price, 0, ',', '.') }}₫</p>
                                                         </div>
@@ -172,7 +192,7 @@
                                             <span class="card-title text-muted" style="font-size: 13px">
                                                 {{ $category->name }}
                                             </span>
-                                            <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
+                                            <h5 class="card-subtitle mb-2 ellipsis">{{ $product->name }}</h5>
                                             <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p>
                                         </div>
                                     </div>

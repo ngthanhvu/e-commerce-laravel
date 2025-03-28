@@ -2,36 +2,6 @@
 
 @section('content')
     <style>
-        .sidebar {
-            background-color: #fff;
-            padding: 20px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #333;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background-color: #f0f2f5;
-            color: #ff6200;
-        }
-
-        .profile-content {
-            padding: 30px;
-        }
-
-        .profile-form .form-label {
-            font-weight: 500;
-        }
-
-        .profile-form .form-control {
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-
         .btn-save {
             background-color: #ff6200;
             border-color: #ff6200;
@@ -97,17 +67,7 @@
         <div class="row">
             <!-- Cột bên trái: Sidebar -->
             <div class="col-md-3 col-lg-2 sidebar">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">Thông tin tài khoản</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/profile/address">Địa chỉ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile/history">Đơn hàng</a>
-                    </li>
-                </ul>
+                @include('profile.includes.sidebar')
             </div>
 
             <!-- Cột bên phải: Nội dung địa chỉ -->
@@ -115,36 +75,37 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Quản lý địa chỉ</h5>
-
-                        <!-- Nút hiển thị form -->
                         <button class="btn btn-add-address" onclick="toggleAddressForm()">Thêm địa chỉ</button>
-
-                        <!-- Form thêm địa chỉ (ẩn mặc định) -->
-                        <form class="profile-form address-form" method="POST" action="/profile/address" id="addressForm">
+                        <form class="profile-form address-form" method="POST" action="{{ route('address.store') }}"
+                            id="addressForm">
                             @csrf
                             <div class="mb-3">
-                                <label for="username" class="form-label">Tên đăng nhập</label>
-                                <input type="text" class="form-control" id="username" name="username" value="nguo_dung"
-                                    readonly>
+                                <label for="name" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Nhập họ và tên">
+                                @error('name')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    value="example@email.com">
-                            </div>
-                            <div class="mb-3">
-                                <label for="full_name" class="form-label">Họ và tên</label>
-                                <input type="text" class="form-control" id="fullname" name="fullname"
-                                    value="Nguyễn Văn A">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="phone" class="form-control" id="phone" name="phone"
+                                    placeholder="Nhập số điện thoại">
+                                @error('phone')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Địa chỉ</label>
                                 <input type="text" class="form-control" id="address" name="address"
                                     placeholder="Nhập địa chỉ của bạn">
+                                @error('address')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <button type="submit" class="btn btn-save">Lưu thay đổi</button>
+                            <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
+                            <button type="submit" class="btn btn-save">Thêm mới!</button>
                         </form>
-
                         <!-- Danh sách địa chỉ -->
                         <div class="address-table mt-2">
                             <h5>Danh sách địa chỉ</h5>
@@ -158,33 +119,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Ví dụ dữ liệu tĩnh -->
-                                    @php
-                                        $addresses = [
-                                            [
-                                                'id' => 1,
-                                                'fullname' => 'Nguyễn Văn A',
-                                                'address' => '123 Đường Láng, Hà Nội',
-                                            ],
-                                            [
-                                                'id' => 2,
-                                                'fullname' => 'Nguyễn Văn A',
-                                                'address' => '456 Nguyễn Trãi, Thanh Xuân',
-                                            ],
-                                        ];
-                                    @endphp
                                     @forelse ($addresses as $index => $address)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $address['fullname'] }}</td>
+                                            <td>{{ $address['name'] }}</td>
                                             <td>{{ $address['address'] }}</td>
                                             <td>
-                                                <form action="/profile/address/delete/{{ $address['id'] }}" method="POST"
+                                                <form action="{{ route('address.destroy', $address['id']) }}" method="POST"
                                                     style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn-delete"><i class="bi bi-trash"></i>
-                                                        Xóa</button>
+                                                    <button type="button" class="btn-delete delete-btn"
+                                                        data-target="delete">
+                                                        <i class="bi bi-trash"></i> Xóa
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -201,8 +149,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script để toggle form -->
     <script>
         function toggleAddressForm() {
             var form = document.getElementById('addressForm');
@@ -212,5 +158,26 @@
                 form.style.display = 'none';
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    Swal.fire({
+                        title: "Bạn có chắc chắn?",
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Xóa",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.closest("form").submit();
+                        }
+                    });
+                });
+            });
+        });
     </script>
 @endsection

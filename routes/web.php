@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartsController;
+use App\Http\Controllers\AddressController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -29,6 +30,8 @@ Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('produc
 Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
 Route::get('/profile/history', [HomeController::class, 'history'])->name('history');
 Route::get('/profile/address', [HomeController::class, 'address'])->name('address');
+Route::post('/address/create', [AddressController::class, 'store'])->name('address.store');
+Route::delete('/address/{id}', [AddressController::class, 'destroy'])->name('address.destroy');
 
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
