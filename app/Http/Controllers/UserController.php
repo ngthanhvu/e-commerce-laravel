@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Carts;
 use App\Mail\RegistrationSuccess;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -102,7 +103,7 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được cập nhật!');
+        return redirect()->back()->with('success', 'Người dùng đã được cập nhật!');
     }
 
     public function redirectToGoogle()
@@ -236,5 +237,34 @@ class UserController extends Controller
         ]);
 
         return redirect('/dang-nhap')->with('success', 'Mật khẩu đã được đặt lại thành công!');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ], [
+            'old_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có ít nhất 6 ký tự.',
+            'new_password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user || !Hash::check($request->old_password, $user->password)) {
+            return back()->with('error', 'Mật khẩu hiện tại không chính xác.');
+        }
+
+        if ($user instanceof User) {
+            $user->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+        } else {
+            return back()->with('error', 'Không thể cập nhật mật khẩu. Người dùng không hợp lệ.');
+        }
+
+        return back()->with('success', 'Mật khẩu đã được thay đổi thành công.');
     }
 }

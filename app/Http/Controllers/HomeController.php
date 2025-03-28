@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Address;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -80,7 +81,8 @@ class HomeController extends Controller
     public function profile()
     {
         $title = "Thông tin cá nhân";
-        return view('profile.profile', compact('title'));
+        $profile = User::find(Auth::user()->id);
+        return view('profile.profile', compact('title', 'profile'));
     }
 
     public function address()

@@ -32,6 +32,8 @@ Route::get('/profile/history', [HomeController::class, 'history'])->name('histor
 Route::get('/profile/address', [HomeController::class, 'address'])->name('address');
 Route::post('/address/create', [AddressController::class, 'store'])->name('address.store');
 Route::delete('/address/{id}', [AddressController::class, 'destroy'])->name('address.destroy');
+Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.update');
+Route::post('/profile/password', [UserController::class, 'changePassword'])->name('profile.password');
 
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
