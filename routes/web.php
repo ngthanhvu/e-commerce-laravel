@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -78,3 +79,6 @@ Route::middleware('check.role:admin')->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
 });
+
+//checkout
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index')->middleware('is_login');

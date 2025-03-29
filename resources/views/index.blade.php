@@ -7,8 +7,8 @@
         }
 
         .card:hover {
-            border: 1px solid #333333 !important;
-            box-shadow: 0px 2px 5px #333333;
+            border: 1px solid #ffffff !important;
+            /* box-shadow: 0px 2px 5px #333333; */
         }
 
         .ellipsis {

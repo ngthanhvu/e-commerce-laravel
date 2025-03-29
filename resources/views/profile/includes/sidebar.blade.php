@@ -12,8 +12,8 @@
 
     .sidebar .nav-link:hover,
     .sidebar .nav-link.active {
-        background-color: #f0f2f5;
-        color: #ff6200;
+        background-color: #333;
+        color: #f0f2f5;
     }
 
     .profile-content {
@@ -46,17 +46,6 @@
     .profile-form .form-control {
         background-color: #f8f9fa;
         border-radius: 5px;
-    }
-
-    .btn-save {
-        background-color: #ff6200;
-        border-color: #ff6200;
-        color: #fff;
-    }
-
-    .btn-save:hover {
-        background-color: #e55a00;
-        border-color: #e55a00;
     }
 </style>
 <ul class="nav flex-column">

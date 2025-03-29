@@ -27,7 +27,7 @@
                                     value="{{ old('email', $profile->email) }}">
                                 <input type="hidden" name="role" value="{{ $profile->role }}">
                             </div>
-                            <button type="submit" class="btn btn-save">Lưu thay đổi</button>
+                            <button type="submit" class="btn btn-dark">Lưu thay đổi</button>
                         </form>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <button type="submit" class="btn btn-save">Đổi mật khẩu</button>
+                            <button type="submit" class="btn btn-dark">Đổi mật khẩu</button>
                         </form>
                     </div>
                 </div>

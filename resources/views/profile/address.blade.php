@@ -75,7 +75,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Quản lý địa chỉ</h5>
-                        <button class="btn btn-add-address" onclick="toggleAddressForm()">Thêm địa chỉ</button>
+                        <button class="btn btn-dark" onclick="toggleAddressForm()">Thêm địa chỉ</button>
                         <form class="profile-form address-form" method="POST" action="{{ route('address.store') }}"
                             id="addressForm">
                             @csrf
@@ -114,6 +114,7 @@
                                     <tr>
                                         <th>STT</th>
                                         <th>Họ và tên</th>
+                                        <th>Số điện thoại</th>
                                         <th>Địa chỉ</th>
                                         <th>Hành động</th>
                                     </tr>
@@ -123,6 +124,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $address['name'] }}</td>
+                                            <td>{{ $address['phone'] }}</td>
                                             <td>{{ $address['address'] }}</td>
                                             <td>
                                                 <form action="{{ route('address.destroy', $address['id']) }}" method="POST"
