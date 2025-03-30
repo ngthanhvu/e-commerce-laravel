@@ -1,8 +1,58 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .step {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .step i {
+            font-size: 2em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: #666;
+        }
+
+        .step.active i {
+            color: #28a745;
+        }
+    </style>
     <div class="container tw-mt-5">
-        <h2 class="tw-mb-4 tw-text-2xl tw-font-bold">Thanh toán</h2>
+        <div class="steps">
+            <div class="step active">
+                <i class="fas fa-shopping-cart"></i>
+                <p class="text-success">Giỏ hàng</p>
+            </div>
+            <span class="arrow text-success"><i class="fas fa-arrow-right"></i></span>
+            <div class="step active">
+                <i class="fas fa-credit-card"></i>
+                <p class="text-success">Thanh toán</p>
+            </div>
+            <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+            <div class="step">
+                <i class="fas fa-check-circle"></i>
+                <p>Thành công</p>
+            </div>
+        </div>
+        <h2 class="tw-mb-4 tw-text-[30px] tw-font-bold text-center">Thanh toán</h2>
         <div class="row">
             <!-- Thông tin khách hàng -->
             <div class="col-md-6">
@@ -54,7 +104,8 @@
                 <form action="/checkout/create" method="POST">
                     @csrf
                     <h4 class="tw-text-lg tw-font-semibold">Phương thức thanh toán</h4>
-                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2">
+                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2"
+                        style="border: 1px solid #ccc; padding-left: 30px; padding-top: 10px; padding-bottom: 10px; border-radius: 5px;">
                         <input class="form-check-input tw-me-2" type="radio" name="payment_method" id="cod"
                             value="cod" checked>
                         <label class="form-check-label tw-d-flex tw-align-items-center" for="cod">
@@ -63,7 +114,8 @@
                             Thanh toán khi nhận hàng (COD)
                         </label>
                     </div>
-                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2">
+                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2"
+                        style="border: 1px solid #ccc; padding-left: 30px; padding-top: 10px; padding-bottom: 10px; border-radius: 5px;">
                         <input class="form-check-input tw-me-2" type="radio" name="payment_method" id="vnpay"
                             value="vnpay">
                         <label class="form-check-label tw-d-flex tw-align-items-center" for="vnpay">
@@ -72,7 +124,8 @@
                             VNPay
                         </label>
                     </div>
-                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2">
+                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2"
+                        style="border: 1px solid #ccc; padding-left: 30px; padding-top: 10px; padding-bottom: 10px; border-radius: 5px;">
                         <input class="form-check-input tw-me-2" type="radio" name="payment_method" id="momo"
                             value="momo">
                         <label class="form-check-label tw-d-flex tw-align-items-center" for="momo">

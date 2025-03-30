@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class CartsController extends Controller
 {
@@ -148,12 +149,10 @@ class CartsController extends Controller
     public function delete($id)
     {
         $carts = Carts::find($id);
-        $carts->delete();
-        return redirect()->route('carts.index')->with('success', 'Giỏ hàng đã được xoá!');
-    }
 
-    public function destroy(Carts $carts)
-    {
+        if (!$carts) {
+            return redirect()->back()->with('error', 'Không tìm thấy giỏ hàng!');
+        }
         $carts->delete();
         return redirect()->route('carts.index')->with('success', 'Giỏ hàng đã được xoá!');
     }

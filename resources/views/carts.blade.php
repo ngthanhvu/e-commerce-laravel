@@ -40,8 +40,58 @@
         .total-section {
             padding-top: 20px;
         }
+
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .step {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .step i {
+            font-size: 2em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: #666;
+        }
+
+        .step.active i {
+            color: #28a745;
+        }
     </style>
     <div class="container mt-5 mb-5">
+        <div class="steps">
+            <div class="step active">
+                <i class="fas fa-shopping-cart"></i>
+                <p class="text-success">Giỏ hàng</p>
+            </div>
+            <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+            <div class="step">
+                <i class="fas fa-credit-card"></i>
+                <p>Thanh toán</p>
+            </div>
+            <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+            <div class="step">
+                <i class="fas fa-check-circle"></i>
+                <p>Thành công</p>
+            </div>
+        </div>
+
         <h2 class="text-center mb-4">Giỏ Hàng Của Bạn</h2>
 
         <!-- Bảng giỏ hàng -->
@@ -60,7 +110,7 @@
                     </tr>
                 </thead>
                 <tbody id="cartItems">
-                    @foreach ($carts as $cart)
+                    @forelse ($carts as $cart)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
@@ -85,25 +135,39 @@
                             </td>
                             <td class="subtotal">{{ number_format($cart->price * $cart->quantity) }}₫</td>
                             <td>
-                                <form action="{{ route('carts.delete', $cart->id) }}" method="POST">
+                                <form action="{{ route('carts.delete', $cart->id) }}" method="POST"
+                                    onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này không?');">
                                     @csrf
                                     @method('DELETE')
                                     <input type="hidden" name="cart_id" value="{{ $cart->id }}">
-                                    <button class="btn btn-danger btn-sm">
+                                    <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="bi bi-trash"></i> Xóa
                                     </button>
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
-                    @if ($carts->isEmpty())
+                    @empty
                         <tr>
                             <td colspan="8" class="text-center">Không có sản phẩm nào trong giỏ hàng</td>
                         </tr>
-                    @endif
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
+        <!-- Nút xóa tất cả và tổng tiền -->
+        {{-- @if ($carts->isNotEmpty())
+            <div class="row mb-3">
+                <div class="col-12 text-end">
+                    <form action="{{ route('carts.clearCart') }}" method="POST"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng không?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-link btn-sm">Xóa tất cả</button>
+                    </form>
+                </div>
+            </div>
+        @endif --}}
 
         <div class="row total-section">
             <div class="col-md-4 offset-md-8">
@@ -111,7 +175,7 @@
                     <h4>Tổng Tiền: <span id="cartTotal">0₫</span></h4>
                 @else
                     <h4>Tổng Tiền: <span
-                            id="cartTotal">{{ number_format($carts->sum(function ($cart) {return $cart->price * $cart->quantity;})) }}₫</span>
+                            id="cartTotal">{{ number_format($carts->sum(fn($cart) => $cart->price * $cart->quantity)) }}₫</span>
                     </h4>
                 @endif
                 <a href="/checkout" class="btn btn-success w-100 mt-3"><i class="fa-solid fa-credit-card"></i> Thanh
