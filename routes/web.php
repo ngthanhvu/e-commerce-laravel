@@ -82,4 +82,4 @@ Route::middleware('check.role:admin')->group(function () {
 });
 
 //checkout
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index')->middleware('is_login');
+Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout.index')->middleware('is_login');

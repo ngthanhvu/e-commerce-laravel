@@ -137,14 +137,25 @@
 
                     <h4 class="tw-mt-4 tw-text-lg tw-font-semibold">Tóm tắt đơn hàng</h4>
                     <ul class="list-group tw-mb-3">
-                        <li class="list-group-item tw-d-flex tw-justify-between">
-                            <span>Sản phẩm 1</span>
-                            <strong>250.000₫</strong>
-                        </li>
-                        <li class="list-group-item tw-d-flex tw-justify-between">
-                            <span>Sản phẩm 2</span>
-                            <strong>150.000₫</strong>
-                        </li>
+                        @forelse ($carts as $cart)
+                            <li class="list-group-item tw-d-flex tw-justify-between tw-align-items-center">
+                                <div class="tw-d-flex tw-align-items-center tw-gap-3">
+                                    @if ($cart->product->mainImage)
+                                        <img src="{{ asset('storage/' . $cart->product->mainImage->sub_image) }}"
+                                            alt="{{ $cart->product->name }}" class="product-image" width="50"
+                                            height="50" style="border: 1px solid #ccc">
+                                    @else
+                                        <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                            alt="Default" class="product-image" width="50">
+                                    @endif
+                                    <span>{{ $cart->product->name }} (x{{ $cart->quantity }})</span>
+                                </div>
+                                <strong
+                                    class="tw-absolute tw-right-4 tw-top-1/2 tw-transform -tw-translate-y-1/2">{{ number_format($cart->price * $cart->quantity) }}₫</strong>
+                            </li>
+                        @empty
+                            <li class="list-group-item">Không có sản phẩm nào trong giỏ hàng</li>
+                        @endforelse
                         <li class="list-group-item">
                             <label for="coupon_code" class="tw-mb-1">Mã giảm giá</label>
                             <div class="input-group">
@@ -161,10 +172,15 @@
                         </li>
                         <li class="list-group-item tw-d-flex tw-justify-between">
                             <strong>Tổng cộng</strong>
-                            <strong id="total_amount_display">420.000₫</strong>
+                            <strong
+                                id="total_amount_display">{{ number_format($carts->sum(fn($cart) => $cart->price * $cart->quantity) + 20000) }}₫</strong>
                         </li>
                     </ul>
-
+                    <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
+                    <input type="hidden" name="address_id" value="">
+                    <input type="hidden" name="">
+                    <input type="hidden" name="">
+                    <input type="hidden" name="">
                     <button type="submit"
                         class="btn btn-primary tw-w-full tw-bg-blue-600 tw-text-white hover:tw-bg-blue-700">
                         Đặt hàng <i class="fa-solid fa-bag-shopping tw-ml-2"></i>

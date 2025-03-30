@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Address;
 use App\Models\User;
+use App\Models\Carts;
 
 class HomeController extends Controller
 {
@@ -96,5 +97,17 @@ class HomeController extends Controller
     {
         $title = "Lịch sử";
         return view('profile.history', compact('title'));
+    }
+
+    public function checkout()
+    {
+        $title = "Thanh toán";
+
+        $user_id = Auth::user()->id ?? null;
+
+        $carts = Carts::with(['product.mainImage', 'variant'])->where('user_id', $user_id)->get();
+
+        $addresses = Address::where('user_id', Auth::user()->id)->get();
+        return view('checkout', compact('title', 'addresses', 'carts'));
     }
 }

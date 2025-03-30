@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Checkout;
-use App\Models\Address;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Orders;
+use App\Models\Orders_item;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class CheckoutController extends Controller
+class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $title = "Thanh toán";
-        $addresses = Address::where('user_id', Auth::user()->id)->get();
-        return view('checkout', compact('title', 'addresses'));
+        //
     }
 
     /**
@@ -39,7 +36,7 @@ class CheckoutController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Checkout $checkout)
+    public function show(Orders $orders)
     {
         //
     }
@@ -47,7 +44,7 @@ class CheckoutController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Checkout $checkout)
+    public function edit(Orders $orders)
     {
         //
     }
@@ -55,7 +52,7 @@ class CheckoutController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Checkout $checkout)
+    public function update(Request $request, Orders $orders)
     {
         //
     }
@@ -63,7 +60,7 @@ class CheckoutController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Checkout $checkout)
+    public function destroy(Orders $orders)
     {
         //
     }
