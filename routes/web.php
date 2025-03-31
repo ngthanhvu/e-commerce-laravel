@@ -87,7 +87,7 @@ Route::middleware('is_login')->group(function () {
     Route::post('/checkout/create', [OrdersController::class, 'store'])->name('orders.store');
 });
 
-Route::get('/success/{order}', function () {
+Route::get('/success', function () {
     $title = "Thành công!";
     return view('alert.success', compact('title'));
 })->name('alert.success');
@@ -95,3 +95,7 @@ Route::get('/fail', function () {
     $title = "Thất bại!";
     return view('alert.fail', compact('title'));
 })->name('alert.fail');
+
+Route::get('/vnpay/callback', [OrdersController::class, 'vnpayCallback'])->name('vnpay.callback');
+Route::get('/momo/callback', [OrdersController::class, 'momoCallback'])->name('momo.callback');
+Route::post('/momo/ipn', [OrdersController::class, 'momoIpn'])->name('momo.ipn');
