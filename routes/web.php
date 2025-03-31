@@ -7,7 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrdersController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -82,4 +82,16 @@ Route::middleware('check.role:admin')->group(function () {
 });
 
 //checkout
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout.index')->middleware('is_login');
+Route::middleware('is_login')->group(function () {
+    Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout.index');
+    Route::post('/checkout/create', [OrdersController::class, 'store'])->name('orders.store');
+});
+
+Route::get('/success/{order}', function () {
+    $title = "Thành công!";
+    return view('alert.success', compact('title'));
+})->name('alert.success');
+Route::get('/fail', function () {
+    $title = "Thất bại!";
+    return view('alert.fail', compact('title'));
+})->name('alert.fail');

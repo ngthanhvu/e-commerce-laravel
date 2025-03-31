@@ -62,7 +62,7 @@
                         @foreach ($addresses as $address)
                             <div class="form-check mb-2 rounded-3 d-flex align-items-center"
                                 style="border: 1px solid #ccc; padding-left: 30px; padding-top: 10px; padding-bottom: 10px;">
-                                <input class="form-check-input me-2" type="radio" name="address_id"
+                                <input class="form-check-input me-2" type="radio" name="address_id_temp"
                                     id="address{{ $address->id }}" value="{{ $address->id }}"
                                     {{ $loop->first ? 'checked' : '' }}>
                                 <label class="form-check-label w-100" for="address{{ $address->id }}">
@@ -101,7 +101,7 @@
 
             <!-- Form Checkout -->
             <div class="col-md-6">
-                <form action="/checkout/create" method="POST">
+                <form action="{{ route('orders.store') }}" method="POST" id="checkout-form">
                     @csrf
                     <h4 class="tw-text-lg tw-font-semibold">Phương thức thanh toán</h4>
                     <div class="form-check tw-d-flex tw-align-items-center tw-mb-2"
@@ -176,11 +176,12 @@
                                 id="total_amount_display">{{ number_format($carts->sum(fn($cart) => $cart->price * $cart->quantity) + 20000) }}₫</strong>
                         </li>
                     </ul>
-                    <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
-                    <input type="hidden" name="address_id" value="">
-                    <input type="hidden" name="">
-                    <input type="hidden" name="">
-                    <input type="hidden" name="">
+
+                    <!-- Hidden inputs để gửi dữ liệu -->
+                    <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                    <input type="hidden" name="address_id" id="address_id"
+                        value="{{ $addresses->first()->id ?? '' }}">
+
                     <button type="submit"
                         class="btn btn-primary tw-w-full tw-bg-blue-600 tw-text-white hover:tw-bg-blue-700">
                         Đặt hàng <i class="fa-solid fa-bag-shopping tw-ml-2"></i>
@@ -190,26 +191,42 @@
         </div>
     </div>
 
-    <!-- Script xử lý toggle -->
+    <!-- Script xử lý toggle và cập nhật address_id -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const toggleAddressFormBtn = document.getElementById('toggle-address-form');
             const newAddressForm = document.getElementById('new-address-form');
+            const addressIdInput = document.getElementById('address_id');
             let isFormVisible = {{ empty($addresses) ? 'true' : 'false' }};
 
+            // Cập nhật address_id khi chọn radio button
+            document.querySelectorAll('input[name="address_id_temp"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    addressIdInput.value = this.value;
+                });
+            });
+
+            // Khởi tạo giá trị ban đầu cho address_id
+            const checkedRadio = document.querySelector('input[name="address_id_temp"]:checked');
+            if (checkedRadio) {
+                addressIdInput.value = checkedRadio.value;
+            }
+
+            // Xử lý toggle form thêm địa chỉ
             if (toggleAddressFormBtn) {
                 toggleAddressFormBtn.addEventListener('click', function() {
                     if (isFormVisible) {
                         newAddressForm.style.display = 'none';
                         toggleAddressFormBtn.textContent = 'Thêm địa chỉ khác';
-                        document.querySelectorAll('input[name="address_id"]').forEach(input => {
+                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input => {
                             if (input.checked) input.checked = true; // Giữ lựa chọn radio nếu có
                         });
                     } else {
                         newAddressForm.style.display = 'block';
                         toggleAddressFormBtn.textContent = 'Ẩn form thêm địa chỉ';
-                        document.querySelectorAll('input[name="address_id"]').forEach(input => input
+                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input => input
                             .checked = false);
+                        addressIdInput.value = ''; // Xóa address_id khi mở form mới
                     }
                     isFormVisible = !isFormVisible;
                 });

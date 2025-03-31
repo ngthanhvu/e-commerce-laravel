@@ -28,4 +28,9 @@ class Orders extends Model
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(Orders_item::class);
+    }
 }

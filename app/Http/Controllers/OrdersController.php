@@ -4,62 +4,87 @@ namespace App\Http\Controllers;
 
 use App\Models\Orders;
 use App\Models\Orders_item;
+use App\Models\Carts;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'address_id' => 'required',
+            'payment_method' => 'required|in:cod,vnpay,momo',
+        ]);
+        $user = Auth::user();
+        $cartItems = Carts::where('user_id', $user->id)->get();
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Giỏ hàng trống');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $totalPrice = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+            $order = Orders::create([
+                'user_id' => $user->id,
+                'address_id' => $request->address_id,
+                'payment_method' => $request->payment_method,
+                'total_price' => $totalPrice,
+                'status' => 'pending',
+            ]);
+
+            foreach ($cartItems as $item) {
+                Orders_item::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'variant_id' => $item->variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'subtotal' => $item->price * $item->quantity,
+                ]);
+            }
+
+            Carts::where('user_id', $user->id)->delete();
+
+            DB::commit();
+
+            return redirect()->route('alert.success', $order->id)->with('success', 'Thêm đơn hàng thanh cong!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('alert.fail')->with('error', 'Có lỗi khi thêm đơn hàng!');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Orders $orders)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Orders $orders)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Orders $orders)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Orders $orders)
     {
         //

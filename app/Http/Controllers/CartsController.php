@@ -103,7 +103,7 @@ class CartsController extends Controller
         $count_cart = $carts->sum('quantity');
         session(['count_cart' => $count_cart]);
 
-        return redirect()->route('carts.index')->with('success', 'Giỏ hàng đã được thêm!');
+        return redirect()->back()->with('success', 'Giỏ hàng đã được thêm!');
     }
 
 

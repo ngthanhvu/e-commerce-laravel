@@ -138,8 +138,8 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="swiper-button-prev" style="color: #007bff;"></div>
-                    <div class="swiper-button-next" style="color: #007bff;"></div>
+                    <div class="swiper-button-prev" style="color: #333;"></div>
+                    <div class="swiper-button-next" style="color: #333;"></div>
                     <div class="swiper-pagination"></div>
                 </div>
             @else
@@ -226,8 +226,8 @@
                                 </div>
                             @endforeach
                         </div>
-                        <div class="swiper-button-prev" style="color: #007bff;"></div>
-                        <div class="swiper-button-next" style="color: #007bff;"></div>
+                        <div class="swiper-button-prev" style="color: #333;"></div>
+                        <div class="swiper-button-next" style="color: #333;"></div>
                         <div class="swiper-pagination"></div>
                     </div>
                 @else
