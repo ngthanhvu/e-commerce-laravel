@@ -131,7 +131,7 @@
                 </div>
             </div>
 
-            {{-- <a href="/admin/course"><i class="fas fa-calendar-alt tw-mr-2"></i> Khoá học</a> --}}
+            <a href="/admin/orders"><i class="fas fa-money-bill tw-mr-2"></i> Đơn hàng</a>
             <a href="/admin/users"><i class="fas fa-users tw-mr-2"></i> Người dùng</a>
         </nav>
     </div>

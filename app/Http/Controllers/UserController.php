@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Carts;
 use App\Mail\RegistrationSuccess;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\SendOtp;
 
 class UserController extends Controller
 {
@@ -189,17 +190,20 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $otp = rand(100000, 999999);
+        session(['email' => $user->email]);
 
         $user->otp = $otp;
         $user->otp_expires_at = now()->addMinutes(10);
         $user->save();
 
-        Mail::raw("Mã OTP của bạn là: $otp. Mã này có hiệu lực trong 10 phút.", function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Mã OTP đặt lại mật khẩu');
-        });
+        // Mail::raw("Mã OTP của bạn là: $otp. Mã này có hiệu lực trong 10 phút.", function ($message) use ($user) {
+        //     $message->to($user->email)
+        //         ->subject('Mã OTP đặt lại mật khẩu');
+        // });
 
-        return redirect()->back()->with('success', 'Mã OTP đã được gửi đến email của bạn!');
+        Mail::to($user->email)->send(new SendOtp($user));
+
+        return redirect()->route('reset.password')->with('success', 'Mã OTP đã được gửi đến email của bạn!');
     }
 
     public function resetPassword(Request $request)

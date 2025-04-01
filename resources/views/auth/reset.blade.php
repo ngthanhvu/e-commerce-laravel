@@ -48,7 +48,7 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" id="email"
-                        placeholder="Nhập email của bạn" required>
+                        placeholder="Nhập email của bạn" value="{{ session('email') }}">
                     @error('email')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -56,7 +56,7 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu mới</label>
                     <input type="password" class="form-control" name="password" id="password"
-                        placeholder="Nhập mật khẩu mới" required>
+                        placeholder="Nhập mật khẩu mới">
                     @error('password')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -64,7 +64,7 @@
                 <div class="mb-3">
                     <label for="password_confirmation" class="form-label">Xác nhận mật khẩu</label>
                     <input type="password" class="form-control" name="password_confirmation" id="password_confirmation"
-                        placeholder="Xác nhận mật khẩu" required>
+                        placeholder="Xác nhận mật khẩu">
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Xác nhận và lưu</button>
             </form>
@@ -90,7 +90,7 @@
                 input.addEventListener("paste", function(e) {
                     e.preventDefault();
                     let pasteData = (e.clipboardData || window.clipboardData).getData("text")
-                .trim();
+                        .trim();
                     let digits = pasteData.replace(/\D/g, "").split("").slice(0, inputs.length);
 
                     digits.forEach((digit, i) => {

@@ -122,6 +122,7 @@ class CartsController extends Controller
     {
         try {
             $cart = Carts::find($id);
+
             if (!$cart) {
                 return response()->json([
                     'message' => 'Không tìm thấy giỏ hàng!',
@@ -129,9 +130,33 @@ class CartsController extends Controller
                 ], 404);
             }
 
+            $product = Product::findOrFail($cart->product_id);
+            $variant = $cart->variant_id ? Variant::findOrFail($cart->variant_id) : null;
+            $availableQuantity = $variant ? $variant->varriant_quantity : $product->quantity;
+
+            $quantityRequested = $request->quantity;
+            if ($quantityRequested > $availableQuantity) {
+                return response()->json([
+                    'message' => 'Số lượng yêu cầu vượt quá số lượng tồn kho! Còn lại: ' . $availableQuantity,
+                    'status' => 'error',
+                ], 400);
+            }
+
             $cart->update([
-                'quantity' => $request->quantity,
+                'quantity' => $quantityRequested,
             ]);
+
+            $userId = Auth::user()->id ?? null;
+            $sessionId = session()->getId();
+
+            $carts = Carts::when($userId, function ($query) use ($userId) {
+                return $query->where('user_id', $userId);
+            }, function ($query) use ($sessionId) {
+                return $query->where('session_id', $sessionId);
+            })->get();
+
+            $count_cart = $carts->sum('quantity');
+            session(['count_cart' => $count_cart]);
 
             return response()->json([
                 'message' => 'Giỏ hàng đã được cập nhật!',
@@ -144,7 +169,6 @@ class CartsController extends Controller
             ], 500);
         }
     }
-
 
     public function delete($id)
     {

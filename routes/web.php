@@ -54,7 +54,7 @@ Route::get('/quen-mat-khau', function () {
 Route::get('/doi-mat-khau', function () {
     $title = "Xác nhận mật khẩu";
     return view('auth.reset', compact('title'));
-});
+})->name('reset.password');
 
 //admin
 Route::middleware('check.role:admin')->group(function () {
@@ -79,6 +79,8 @@ Route::middleware('check.role:admin')->group(function () {
     //users
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    //orders
+    Route::get('/admin/orders', [OrdersController::class, 'index'])->name('admin.orders.index');
 });
 
 //checkout
@@ -87,6 +89,7 @@ Route::middleware('is_login')->group(function () {
     Route::post('/checkout/create', [OrdersController::class, 'store'])->name('orders.store');
 });
 
+//alert
 Route::get('/success', function () {
     $title = "Thành công!";
     return view('alert.success', compact('title'));
@@ -96,6 +99,7 @@ Route::get('/fail', function () {
     return view('alert.fail', compact('title'));
 })->name('alert.fail');
 
+//payment
 Route::get('/vnpay/callback', [OrdersController::class, 'vnpayCallback'])->name('vnpay.callback');
 Route::get('/momo/callback', [OrdersController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [OrdersController::class, 'momoIpn'])->name('momo.ipn');

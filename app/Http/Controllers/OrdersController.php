@@ -16,7 +16,34 @@ class OrdersController extends Controller
 {
     public function index()
     {
-        //
+        $title = 'Quản lý đơn hàng';
+        $search = request()->input('search');
+        $perPage = request()->input('per_page', 10);
+        $sortBy = request()->input('sort_by', 'id');
+        $sortOrder = request()->input('sort_order', 'desc');
+
+        $query = Orders::query()->with('orderItems');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('payment_method', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        $orders = $query->paginate($perPage);
+
+        $orders->appends([
+            'search' => $search,
+            'per_page' => $perPage,
+            'sort_by' => $sortBy,
+            'sort_order' => $sortOrder,
+        ]);
+
+        return view('admin.orders.index', compact('title', 'orders', 'search', 'perPage', 'sortBy', 'sortOrder'));
     }
 
     public function create()

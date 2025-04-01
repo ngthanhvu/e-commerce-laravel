@@ -92,7 +92,8 @@
                 <p class="mt-3"><strong>Số lượng:</strong> <span id="stockQuantity">{{ $product->quantity }}</span></p>
                 <div class="input-group" style="width: 120px;">
                     <button class="btn btn-outline-dark" onclick="changeQuantity(-1)">-</button>
-                    <input type="text" class="form-control text-center" id="quantity" value="1">
+                    <input type="text" class="form-control text-center" id="quantity" value="1"
+                        oninput="updateQuantity()">
                     <button class="btn btn-outline-dark" onclick="changeQuantity(1)">+</button>
                 </div>
 
@@ -159,8 +160,23 @@
             let qtyCart = document.getElementById('quantityInput');
             let qty = parseInt(qtyInput.value) + amount;
 
-            if (qty < 1) qty = 1;
+            if (isNaN(qty) || qty < 1) qty = 1;
             if (qty > maxQuantity) qty = maxQuantity;
+
+            qtyInput.value = qty;
+            qtyCart.value = qty;
+        }
+
+        function updateQuantity() {
+            let qtyInput = document.getElementById('quantity');
+            let qtyCart = document.getElementById('quantityInput');
+            let qty = parseInt(qtyInput.value);
+
+            if (isNaN(qty) || qty < 1) {
+                qty = 1;
+            } else if (qty > maxQuantity) {
+                qty = maxQuantity;
+            }
 
             qtyInput.value = qty;
             qtyCart.value = qty;
