@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Address;
 use App\Models\User;
 use App\Models\Carts;
+use App\Models\Orders;
 
 class HomeController extends Controller
 {
@@ -96,7 +97,14 @@ class HomeController extends Controller
     public function history()
     {
         $title = "Lịch sử";
-        return view('profile.history', compact('title'));
+        $userId = Auth::user()->id;
+
+        $orders = Orders::where('user_id', $userId)
+            ->with(['orderItems.product', 'orderItems.variant', 'user', 'address'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('profile.history', compact('title', 'orders'));
     }
 
     public function checkout()
