@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -100,6 +101,6 @@ Route::get('/fail', function () {
 })->name('alert.fail');
 
 //payment
-Route::get('/vnpay/callback', [OrdersController::class, 'vnpayCallback'])->name('vnpay.callback');
-Route::get('/momo/callback', [OrdersController::class, 'momoCallback'])->name('momo.callback');
-Route::post('/momo/ipn', [OrdersController::class, 'momoIpn'])->name('momo.ipn');
+Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
+Route::get('/momo/callback', [PaymentController::class, 'momoCallback'])->name('momo.callback');
+Route::post('/momo/ipn', [PaymentController::class, 'momoIpn'])->name('momo.ipn');
