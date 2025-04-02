@@ -35,15 +35,22 @@ class AddressController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
+            'province' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
+            'street' => 'required|string|max:255',
             'user_id' => 'required|string|max:255',
         ], [
             'name.required' => 'Vui lòng nhập tên',
             'phone.required' => 'Vui lòng nhập sđt',
-            'address.required' => 'Vui lòng nhập điểm giao hàng',
+            'province.required' => 'Vui lòng nhập tinh',
+            'district.required' => 'Vui lòng nhập huyen',
+            'ward.required' => 'Vui lính quan',
+            'street.required' => 'Vui lính diachi',
+            'user_id.required' => 'Vui lính nguoi dung',
         ]);
         Address::create($request->all());
-        return redirect()->back()->with('success', 'Thêm điểm giao hàng thành công!');
+        return redirect()->back()->with('success', 'Thêm địa chỉ thành công!');
     }
 
     /**

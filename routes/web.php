@@ -104,3 +104,4 @@ Route::get('/fail', function () {
 Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
 Route::get('/momo/callback', [PaymentController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [PaymentController::class, 'momoIpn'])->name('momo.ipn');
+Route::get('/zalopay/callback', [PaymentController::class, 'zalopayCallback'])->name('zalopay.callback');
