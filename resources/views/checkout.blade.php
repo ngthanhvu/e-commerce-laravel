@@ -32,7 +32,19 @@
         }
 
         .step.active i {
+
+
             color: #28a745;
+        }
+
+        .address-form .d-flex {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .address-form .w-50 {
+            flex: 1;
+            min-width: 48%;
         }
     </style>
     <div class="container tw-mt-5">
@@ -67,7 +79,8 @@
                                     {{ $loop->first ? 'checked' : '' }}>
                                 <label class="form-check-label w-100" for="address{{ $address->id }}">
                                     <strong>{{ $address->name }} - {{ $address->phone }}</strong> <br>
-                                    {{ $address->address }}
+                                    {{ $address->province }} - {{ $address->district }} - {{ $address->ward }} -
+                                    {{ $address->street }}
                                 </label>
                             </div>
                         @endforeach
@@ -78,23 +91,55 @@
 
                 <!-- Form thêm địa chỉ mới -->
                 <form action="{{ route('address.store') }}" method="POST" id="new-address-form"
-                    style="display: {{ empty($addresses) ? 'block' : 'none' }};" class="tw-mt-3">
+                    style="display: {{ empty($addresses) ? 'block' : 'none' }};" class="tw-mt-3 address-form">
                     @csrf
+
                     <div class="mb-3">
                         <label class="form-label">Họ và Tên</label>
                         <input type="text" class="form-control tw-border-gray-300" name="name"
                             placeholder="Nhập họ và tên">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Số điện thoại</label>
                         <input type="text" class="form-control tw-border-gray-300" name="phone"
                             placeholder="Nhập số điện thoại">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Địa chỉ giao hàng</label>
-                        <textarea class="form-control tw-border-gray-300" name="address" rows="3" placeholder="Nhập địa chỉ mới"></textarea>
-                        <input type="hidden" name="user_id" value="{{ optional(Auth::user())->id }}">
+                        <div class="d-flex">
+                            <div class="w-50">
+                                <label for="province">Tỉnh/Thành phố</label>
+                                <select class="form-control form-select tw-border-gray-300" id="province" name="province">
+                                    <option value="">Chọn tỉnh/thành phố</option>
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label for="district">Quận/Huyện</label>
+                                <select class="form-control form-select tw-border-gray-300" id="district" name="district">
+                                    <option value="">Chọn quận/huyện</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="w-50">
+                                <label for="ward">Xã/Phường</label>
+                                <select class="form-control form-select tw-border-gray-300" id="ward" name="ward">
+                                    <option value="">Chọn xã/phường</option>
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label for="street">Số nhà, tên đường</label>
+                                <input type="text" class="form-control tw-border-gray-300" id="street" name="street"
+                                    placeholder="Nhập số nhà, tên đường">
+                            </div>
+                        </div>
                     </div>
+
+                    <input type="hidden" name="user_id" value="{{ optional(Auth::user())->id }}">
+                    <input type="hidden" name="address" id="full_address">
+
                     <button type="submit" class="btn btn-dark">Thêm địa chỉ</button>
                 </form>
             </div>
@@ -156,7 +201,7 @@
                         @empty
                             <li class="list-group-item">Không có sản phẩm nào trong giỏ hàng</li>
                         @endforelse
-                        <li class="list-group-item">
+                        <li class="list-group-item tw-d-flex tw-justify-between">
                             <label for="coupon_code" class="tw-mb-1">Mã giảm giá</label>
                             <div class="input-group">
                                 <input type="text" id="coupon_code" class="form-control tw-border-gray-300"
@@ -191,7 +236,7 @@
         </div>
     </div>
 
-    <!-- Script xử lý toggle và cập nhật address_id -->
+    <!-- Script xử lý toggle và API địa chỉ -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const toggleAddressFormBtn = document.getElementById('toggle-address-form');
@@ -231,6 +276,103 @@
                     isFormVisible = !isFormVisible;
                 });
             }
+
+            // Load provinces
+            fetch('https://provinces.open-api.vn/api/p/')
+                .then(response => response.json())
+                .then(data => {
+                    const provinceSelect = document.getElementById('province');
+                    data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.name; // Sử dụng tên thay vì code
+                        option.text = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+                });
+
+            // Load districts when province changes
+            document.getElementById('province').addEventListener('change', function() {
+                const provinceName = this.value;
+                const districtSelect = document.getElementById('district');
+                const wardSelect = document.getElementById('ward');
+
+                // Reset district and ward
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+
+                if (provinceName) {
+                    fetch('https://provinces.open-api.vn/api/p/')
+                        .then(response => response.json())
+                        .then(data => {
+                            const province = data.find(p => p.name === provinceName);
+                            if (province) {
+                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        data.districts.forEach(district => {
+                                            const option = document.createElement('option');
+                                            option.value = district
+                                                .name; // Sử dụng tên thay vì code
+                                            option.text = district.name;
+                                            districtSelect.appendChild(option);
+                                        });
+                                    });
+                            }
+                        });
+                }
+            });
+
+            // Load wards when district changes
+            document.getElementById('district').addEventListener('change', function() {
+                const districtName = this.value;
+                const provinceName = document.getElementById('province').value;
+                const wardSelect = document.getElementById('ward');
+
+                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+
+                if (districtName && provinceName) {
+                    fetch('https://provinces.open-api.vn/api/p/')
+                        .then(response => response.json())
+                        .then(data => {
+                            const province = data.find(p => p.name === provinceName);
+                            if (province) {
+                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const district = data.districts.find(d => d.name ===
+                                            districtName);
+                                        if (district) {
+                                            fetch(
+                                                    `https://provinces.open-api.vn/api/d/${district.code}?depth=2`
+                                                    )
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    data.wards.forEach(ward => {
+                                                        const option = document
+                                                            .createElement('option');
+                                                        option.value = ward
+                                                            .name; // Sử dụng tên thay vì code
+                                                        option.text = ward.name;
+                                                        wardSelect.appendChild(option);
+                                                    });
+                                                });
+                                        }
+                                    });
+                            }
+                        });
+                }
+            });
+
+            // Combine address before submit
+            document.getElementById('new-address-form').addEventListener('submit', function(e) {
+                const province = document.getElementById('province').value;
+                const district = document.getElementById('district').value;
+                const ward = document.getElementById('ward').value;
+                const street = document.getElementById('street').value;
+
+                const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
+                document.getElementById('full_address').value = fullAddress;
+            });
         });
     </script>
 @endsection
