@@ -70,7 +70,13 @@
                         <th scope="row">{{ $index++ }}</th>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->role }}</td>
+                        <td>
+                            @if ($user->role == 'admin')
+                                <span class="badge rounded-pill text-bg-danger">Admin</span>
+                            @elseif ($user->role == 'user')
+                                <span class="badge rounded-pill text-bg-success">User</span>
+                            @endif
+                        </td>
                         <td>{{ $user->created_at }}</td>
                         <td>
                             <button class="btn btn-outline-secondary editUserBtn btn-sm" data-bs-toggle="modal"

@@ -85,13 +85,27 @@
                         <td>{{ number_format($order->total_price) }}₫</td>
                         <td>{{ $order->created_at }}</td>
                         <td>
-                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#orderDetailModal{{ $order->id }}">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-gear"></i></a>
-                            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-trash"></i></a>
+                            <div class="d-flex align-items-center gap-2 justify-content-center">
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#orderDetailModal{{ $order->id }}">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+
+                                <form action="{{ Route('admin.orders.destroy', $order->id) }}" method="POST"
+                                    class="d-inline-block m-0">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
+
                     </tr>
                 @endforeach
                 @if ($orders->isEmpty())

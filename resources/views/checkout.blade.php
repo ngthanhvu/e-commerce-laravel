@@ -238,140 +238,135 @@
 
     <!-- Script xử lý toggle và API địa chỉ -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const toggleAddressFormBtn = document.getElementById('toggle-address-form');
-            const newAddressForm = document.getElementById('new-address-form');
-            const addressIdInput = document.getElementById('address_id');
+        document.addEventListener("DOMContentLoaded", async function() {
+            const toggleAddressFormBtn = document.getElementById("toggle-address-form");
+            const newAddressForm = document.getElementById("new-address-form");
+            const addressIdInput = document.getElementById("address_id");
             let isFormVisible = {{ empty($addresses) ? 'true' : 'false' }};
 
-            // Cập nhật address_id khi chọn radio button
-            document.querySelectorAll('input[name="address_id_temp"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    addressIdInput.value = this.value;
-                });
-            });
-
-            // Khởi tạo giá trị ban đầu cho address_id
-            const checkedRadio = document.querySelector('input[name="address_id_temp"]:checked');
-            if (checkedRadio) {
-                addressIdInput.value = checkedRadio.value;
+            async function fetchData(url) {
+                try {
+                    const response = await fetch(url);
+                    return await response.json();
+                } catch (error) {
+                    console.error("Lỗi khi gọi API:", error);
+                    return null;
+                }
             }
 
-            // Xử lý toggle form thêm địa chỉ
-            if (toggleAddressFormBtn) {
-                toggleAddressFormBtn.addEventListener('click', function() {
-                    if (isFormVisible) {
-                        newAddressForm.style.display = 'none';
-                        toggleAddressFormBtn.textContent = 'Thêm địa chỉ khác';
-                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input => {
-                            if (input.checked) input.checked = true; // Giữ lựa chọn radio nếu có
+            async function loadProvinces() {
+                const data = await fetchData("https://provinces.open-api.vn/api/p/");
+                if (data) {
+                    const provinceSelect = document.getElementById("province");
+                    data.forEach(province => {
+                        const option = document.createElement("option");
+                        option.value = province.name;
+                        option.text = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+                }
+            }
+
+            async function loadDistricts(provinceName) {
+                const districtSelect = document.getElementById("district");
+                const wardSelect = document.getElementById("ward");
+
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+
+                if (!provinceName) return;
+
+                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
+                const province = provinces?.find(p => p.name === provinceName);
+
+                if (province) {
+                    const data = await fetchData(
+                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+                    if (data) {
+                        data.districts.forEach(district => {
+                            const option = document.createElement("option");
+                            option.value = district.name;
+                            option.text = district.name;
+                            districtSelect.appendChild(option);
                         });
+                    }
+                }
+            }
+
+            async function loadWards(districtName, provinceName) {
+                const wardSelect = document.getElementById("ward");
+                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+
+                if (!districtName || !provinceName) return;
+
+                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
+                const province = provinces?.find(p => p.name === provinceName);
+
+                if (province) {
+                    const data = await fetchData(
+                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+                    const district = data?.districts.find(d => d.name === districtName);
+
+                    if (district) {
+                        const wardData = await fetchData(
+                            `https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
+                        if (wardData) {
+                            wardData.wards.forEach(ward => {
+                                const option = document.createElement("option");
+                                option.value = ward.name;
+                                option.text = ward.name;
+                                wardSelect.appendChild(option);
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (toggleAddressFormBtn) {
+                toggleAddressFormBtn.addEventListener("click", function() {
+                    if (isFormVisible) {
+                        newAddressForm.style.display = "none";
+                        toggleAddressFormBtn.textContent = "Thêm địa chỉ khác";
                     } else {
-                        newAddressForm.style.display = 'block';
-                        toggleAddressFormBtn.textContent = 'Ẩn form thêm địa chỉ';
-                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input => input
-                            .checked = false);
-                        addressIdInput.value = ''; // Xóa address_id khi mở form mới
+                        newAddressForm.style.display = "block";
+                        toggleAddressFormBtn.textContent = "Ẩn form thêm địa chỉ";
+                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input =>
+                            input.checked = false);
+                        addressIdInput.value = ""; // Xóa address_id khi mở form mới
                     }
                     isFormVisible = !isFormVisible;
                 });
             }
 
-            // Load provinces
-            fetch('https://provinces.open-api.vn/api/p/')
-                .then(response => response.json())
-                .then(data => {
-                    const provinceSelect = document.getElementById('province');
-                    data.forEach(province => {
-                        const option = document.createElement('option');
-                        option.value = province.name; // Sử dụng tên thay vì code
-                        option.text = province.name;
-                        provinceSelect.appendChild(option);
-                    });
+            document.querySelectorAll('input[name="address_id_temp"]').forEach(radio => {
+                radio.addEventListener("change", function() {
+                    addressIdInput.value = this.value;
                 });
-
-            // Load districts when province changes
-            document.getElementById('province').addEventListener('change', function() {
-                const provinceName = this.value;
-                const districtSelect = document.getElementById('district');
-                const wardSelect = document.getElementById('ward');
-
-                // Reset district and ward
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
-
-                if (provinceName) {
-                    fetch('https://provinces.open-api.vn/api/p/')
-                        .then(response => response.json())
-                        .then(data => {
-                            const province = data.find(p => p.name === provinceName);
-                            if (province) {
-                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        data.districts.forEach(district => {
-                                            const option = document.createElement('option');
-                                            option.value = district
-                                                .name; // Sử dụng tên thay vì code
-                                            option.text = district.name;
-                                            districtSelect.appendChild(option);
-                                        });
-                                    });
-                            }
-                        });
-                }
             });
 
-            // Load wards when district changes
-            document.getElementById('district').addEventListener('change', function() {
-                const districtName = this.value;
-                const provinceName = document.getElementById('province').value;
-                const wardSelect = document.getElementById('ward');
+            const checkedRadio = document.querySelector('input[name="address_id_temp"]:checked');
+            if (checkedRadio) {
+                addressIdInput.value = checkedRadio.value;
+            }
 
-                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
-
-                if (districtName && provinceName) {
-                    fetch('https://provinces.open-api.vn/api/p/')
-                        .then(response => response.json())
-                        .then(data => {
-                            const province = data.find(p => p.name === provinceName);
-                            if (province) {
-                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const district = data.districts.find(d => d.name ===
-                                            districtName);
-                                        if (district) {
-                                            fetch(
-                                                    `https://provinces.open-api.vn/api/d/${district.code}?depth=2`
-                                                    )
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    data.wards.forEach(ward => {
-                                                        const option = document
-                                                            .createElement('option');
-                                                        option.value = ward
-                                                            .name; // Sử dụng tên thay vì code
-                                                        option.text = ward.name;
-                                                        wardSelect.appendChild(option);
-                                                    });
-                                                });
-                                        }
-                                    });
-                            }
-                        });
-                }
+            document.getElementById("province").addEventListener("change", async function() {
+                await loadDistricts(this.value);
             });
 
-            // Combine address before submit
-            document.getElementById('new-address-form').addEventListener('submit', function(e) {
-                const province = document.getElementById('province').value;
-                const district = document.getElementById('district').value;
-                const ward = document.getElementById('ward').value;
-                const street = document.getElementById('street').value;
+            document.getElementById("district").addEventListener("change", async function() {
+                await loadWards(this.value, document.getElementById("province").value);
+            });
+
+            await loadProvinces();
+
+            document.getElementById("new-address-form").addEventListener("submit", function(e) {
+                const province = document.getElementById("province").value;
+                const district = document.getElementById("district").value;
+                const ward = document.getElementById("ward").value;
+                const street = document.getElementById("street").value;
 
                 const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
-                document.getElementById('full_address').value = fullAddress;
+                document.getElementById("full_address").value = fullAddress;
             });
         });
     </script>

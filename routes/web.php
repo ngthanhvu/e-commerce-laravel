@@ -25,7 +25,6 @@ Route::get('/gio-hang', [CartsController::class, 'index'])->name('carts.index');
 Route::post('/gio-hang/create', [CartsController::class, 'store'])->name('carts.store');
 Route::put('/gio-hang/{id}', [CartsController::class, 'update'])->name('carts.update');
 Route::delete('/gio-hang/{id}', [CartsController::class, 'delete'])->name('carts.delete');
-// Route::delete('/gio-hang/clearCart/{carts}', [CartsController::class, 'clearCart'])->name('carts.clearCart');
 
 Route::get('/chi-tiet/{slug}', [ProductController::class, 'show'])->name('products.show');
 
@@ -82,6 +81,7 @@ Route::middleware('check.role:admin')->group(function () {
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
     //orders
     Route::get('/admin/orders', [OrdersController::class, 'index'])->name('admin.orders.index');
+    Route::delete('/admin/orders/delete/{id}', [OrdersController::class, 'destroy'])->name('admin.orders.destroy');
 });
 
 //checkout

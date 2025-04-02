@@ -230,93 +230,94 @@
             }
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Load provinces
-            fetch('https://provinces.open-api.vn/api/p/')
-                .then(response => response.json())
-                .then(data => {
-                    const provinceSelect = document.getElementById('province');
+        document.addEventListener("DOMContentLoaded", async function() {
+            const provinceSelect = document.getElementById("province");
+            const districtSelect = document.getElementById("district");
+            const wardSelect = document.getElementById("ward");
+
+            async function fetchData(url) {
+                try {
+                    const response = await fetch(url);
+                    return await response.json();
+                } catch (error) {
+                    console.error("Lỗi khi gọi API:", error);
+                    return null;
+                }
+            }
+
+            async function loadProvinces() {
+                const data = await fetchData("https://provinces.open-api.vn/api/p/");
+                if (data) {
                     data.forEach(province => {
-                        const option = document.createElement('option');
-                        option.value = province.name; // Sử dụng tên thay vì code
+                        const option = document.createElement("option");
+                        option.value = province.name;
                         option.text = province.name;
                         provinceSelect.appendChild(option);
                     });
-                });
+                }
+            }
 
-            // Load districts when province changes
-            document.getElementById('province').addEventListener('change', function() {
-                const provinceName = this.value;
-                const districtSelect = document.getElementById('district');
-                const wardSelect = document.getElementById('ward');
-
-                // Reset district and ward
+            async function loadDistricts(provinceName) {
                 districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
                 wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
 
-                if (provinceName) {
-                    fetch('https://provinces.open-api.vn/api/p/')
-                        .then(response => response.json())
-                        .then(data => {
-                            const province = data.find(p => p.name === provinceName);
-                            if (province) {
-                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        data.districts.forEach(district => {
-                                            const option = document.createElement('option');
-                                            option.value = district
-                                            .name; // Sử dụng tên thay vì code
-                                            option.text = district.name;
-                                            districtSelect.appendChild(option);
-                                        });
-                                    });
-                            }
+                if (!provinceName) return;
+
+                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
+                const province = provinces?.find(p => p.name === provinceName);
+
+                if (province) {
+                    const data = await fetchData(
+                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+                    if (data) {
+                        data.districts.forEach(district => {
+                            const option = document.createElement("option");
+                            option.value = district.name;
+                            option.text = district.name;
+                            districtSelect.appendChild(option);
                         });
+                    }
                 }
-            });
+            }
 
-            // Load wards when district changes
-            document.getElementById('district').addEventListener('change', function() {
-                const districtName = this.value;
-                const provinceName = document.getElementById('province').value;
-                const wardSelect = document.getElementById('ward');
-
+            async function loadWards(districtName, provinceName) {
                 wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
 
-                if (districtName && provinceName) {
-                    fetch('https://provinces.open-api.vn/api/p/')
-                        .then(response => response.json())
-                        .then(data => {
-                            const province = data.find(p => p.name === provinceName);
-                            if (province) {
-                                fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const district = data.districts.find(d => d.name ===
-                                            districtName);
-                                        if (district) {
-                                            fetch(
-                                                    `https://provinces.open-api.vn/api/d/${district.code}?depth=2`)
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    data.wards.forEach(ward => {
-                                                        const option = document
-                                                            .createElement('option');
-                                                        option.value = ward
-                                                        .name; // Sử dụng tên thay vì code
-                                                        option.text = ward.name;
-                                                        wardSelect.appendChild(option);
-                                                    });
-                                                });
-                                        }
-                                    });
-                            }
-                        });
+                if (!districtName || !provinceName) return;
+
+                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
+                const province = provinces?.find(p => p.name === provinceName);
+
+                if (province) {
+                    const data = await fetchData(
+                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+                    const district = data?.districts.find(d => d.name === districtName);
+
+                    if (district) {
+                        const wardData = await fetchData(
+                            `https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
+                        if (wardData) {
+                            wardData.wards.forEach(ward => {
+                                const option = document.createElement("option");
+                                option.value = ward.name;
+                                option.text = ward.name;
+                                wardSelect.appendChild(option);
+                            });
+                        }
+                    }
                 }
+            }
+
+            provinceSelect.addEventListener("change", async function() {
+                await loadDistricts(this.value);
             });
 
-            // Delete button handling
+            districtSelect.addEventListener("change", async function() {
+                await loadWards(this.value, provinceSelect.value);
+            });
+
+            await loadProvinces();
+
             document.querySelectorAll(".delete-btn").forEach(button => {
                 button.addEventListener("click", function() {
                     Swal.fire({
@@ -328,7 +329,7 @@
                         cancelButtonColor: "#3085d6",
                         confirmButtonText: "Xóa",
                         cancelButtonText: "Hủy"
-                    }).then((result) => {
+                    }).then(result => {
                         if (result.isConfirmed) {
                             this.closest("form").submit();
                         }

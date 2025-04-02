@@ -112,8 +112,11 @@ class OrdersController extends Controller
         //
     }
 
-    public function destroy(Orders $orders)
+    public function destroy($id)
     {
-        //
+        $order = Orders::find($id);
+        Orders_item::where('order_id', $order->id)->delete();
+        $order->delete();
+        return redirect()->back()->with('success', 'Đơn hàng đã được xoá!');
     }
 }

@@ -159,10 +159,18 @@ class PaymentController extends Controller
 
                     $orderItems = $order->orderItems;
                     foreach ($orderItems as $orderItem) {
-                        $product = $orderItem->product;
-                        if ($product) {
-                            $product->quantity -= $orderItem->quantity;
-                            $product->save();
+                        if ($orderItem->variant_id) {
+                            $variant = $orderItem->variant;
+                            if ($variant) {
+                                $variant->varriant_quantity -= $orderItem->quantity;
+                                $variant->save();
+                            }
+                        } else {
+                            $product = $orderItem->product;
+                            if ($product) {
+                                $product->quantity -= $orderItem->quantity;
+                                $product->save();
+                            }
                         }
                     }
 
@@ -241,10 +249,18 @@ class PaymentController extends Controller
 
                     $orderItems = $order->orderItems;
                     foreach ($orderItems as $orderItem) {
-                        $product = $orderItem->product;
-                        if ($product) {
-                            $product->quantity -= $orderItem->quantity;
-                            $product->save();
+                        if ($orderItem->variant_id) {
+                            $variant = $orderItem->variant;
+                            if ($variant) {
+                                $variant->varriant_quantity -= $orderItem->quantity;
+                                $variant->save();
+                            }
+                        } else {
+                            $product = $orderItem->product;
+                            if ($product) {
+                                $product->quantity -= $orderItem->quantity;
+                                $product->save();
+                            }
                         }
                     }
 
@@ -314,9 +330,19 @@ class PaymentController extends Controller
             case 'cod':
                 $orderItems = $order->orderItems;
                 foreach ($orderItems as $orderItem) {
-                    $product = $orderItem->product;
-                    $product->quantity -= $orderItem->quantity;
-                    $product->save();
+                    if ($orderItem->variant_id) {
+                        $variant = $orderItem->variant;
+                        if ($variant) {
+                            $variant->varriant_quantity -= $orderItem->quantity;
+                            $variant->save();
+                        }
+                    } else {
+                        $product = $orderItem->product;
+                        if ($product) {
+                            $product->quantity -= $orderItem->quantity;
+                            $product->save();
+                        }
+                    }
                 }
                 Mail::to($order->user->email)->send(new PaymentConfirmation($order));
                 return redirect()->route('alert.success', $order->id)->with('success', 'Thêm đơn hàng thành công!');
