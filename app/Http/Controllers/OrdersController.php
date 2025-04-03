@@ -48,7 +48,11 @@ class OrdersController extends Controller
         $request->validate([
             'address_id' => 'required',
             'payment_method' => 'required|in:cod,vnpay,momo',
+            'shipping_fee' => 'required|numeric|min:0',
+            'total_amount' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
         ]);
+
         $user = Auth::user();
         $cartItems = Carts::where('user_id', $user->id)->get();
 
@@ -59,12 +63,16 @@ class OrdersController extends Controller
         DB::beginTransaction();
 
         try {
-            $totalPrice = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+            $shippingFee = $request->input('shipping_fee');
+            $totalPrice = $request->input('total_amount');
+
             $order = Orders::create([
                 'user_id' => $user->id,
                 'address_id' => $request->address_id,
                 'payment_method' => $request->payment_method,
                 'total_price' => $totalPrice,
+                'shipping_fee' => $shippingFee,
+                'discount' => $request->input('discount', 0),
                 'status' => 'pending',
             ]);
 
@@ -83,7 +91,6 @@ class OrdersController extends Controller
 
             DB::commit();
 
-            // Gọi PaymentController để xử lý thanh toán
             $paymentController = new PaymentController();
             return $paymentController->processPayment($order, $request->payment_method, $totalPrice);
         } catch (\Exception $e) {

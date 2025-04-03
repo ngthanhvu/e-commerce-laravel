@@ -6,10 +6,10 @@
                 <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/logo.png?1741705947617"
                     width="150"></img>
                 <p>HỘ KINH DOANH KICAP</p>
-                <p>Chứng nhận ĐKKD số: 01A8035150 do phòng TC-KH UBND quận Ba Đình cấp ngày 07/11/2023</p>
-                <p>38, ngõ 575 Kim Mã, Ba Đình, Hà Nội</p>
-                <p><i class="bi bi-telephone"></i> 0369161095</p>
-                <p><i class="bi bi-envelope"></i> kicap.vn@gmail.com</p>
+                <p>Chứng nhận ĐKKD số: 01VU12345678 do phòng TC-KH UBND quận Không Tên cấp ngày 07/11/2125</p>
+                <p>111, Hà Huy Tập, Buôn Ma Thuột, Việt Nam</p>
+                <p><i class="bi bi-telephone"></i> 0987654321</p>
+                <p><i class="bi bi-envelope"></i> kicap.vn@cc.cc</p>
             </div>
 
             <!-- Cột 2: Chính sách khách hàng -->

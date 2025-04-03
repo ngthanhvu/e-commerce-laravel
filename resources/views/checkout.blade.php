@@ -226,6 +226,10 @@
                     <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                     <input type="hidden" name="address_id" id="address_id"
                         value="{{ $addresses->first()->id ?? '' }}">
+                    <input type="hidden" name="shipping_fee" id="shipping_fee" value="20000">
+                    <input type="hidden" name="total_amount" id="total_amount"
+                        value="{{ $carts->sum(fn($cart) => $cart->price * $cart->quantity) + 20000 }}">
+                    <input type="hidden" name="discount" id="discount" value="0">
                     <button type="submit"
                         class="btn btn-primary tw-w-full tw-bg-blue-600 tw-text-white hover:tw-bg-blue-700">
                         Đặt hàng <i class="fa-solid fa-bag-shopping tw-ml-2"></i>
@@ -325,8 +329,14 @@
             const couponCodeInput = document.getElementById("coupon_code");
             const couponMessage = document.getElementById("coupon_message");
             const totalAmountDisplay = document.getElementById("total_amount_display");
-            let shippingFee = 20000; // Phí vận chuyển mặc định
-            let originalTotal = {{ $carts->sum(fn($cart) => $cart->price * $cart->quantity) }} + shippingFee;
+            const shippingFeeDisplay = document.getElementById("shipping_fee_display");
+            const shippingFeeInput = document.getElementById("shipping_fee");
+            const totalAmountInput = document.getElementById("total_amount");
+            const discountInput = document.getElementById("discount");
+
+            let shippingFee = parseInt(shippingFeeInput.value); // Lấy từ input ẩn
+            let originalSubtotal = {{ $carts->sum(fn($cart) => $cart->price * $cart->quantity) }};
+            let totalAmount = parseInt(totalAmountInput.value); // Giá trị ban đầu
 
             applyCouponBtn.addEventListener("click", async function() {
                 const couponCode = couponCodeInput.value.trim();
@@ -344,7 +354,8 @@
                         },
                         body: JSON.stringify({
                             coupon_code: couponCode,
-                            total_amount: originalTotal
+                            total_amount: originalSubtotal +
+                                shippingFee
                         })
                     });
 
@@ -357,16 +368,7 @@
 
                         const newTotal = result.new_total;
                         totalAmountDisplay.textContent = newTotal.toLocaleString() + "₫";
-
-                        // Lưu giá trị discount để gửi khi đặt hàng
-                        const checkoutForm = document.getElementById("checkout-form");
-                        let discountInput = checkoutForm.querySelector('input[name="discount"]');
-                        if (!discountInput) {
-                            discountInput = document.createElement("input");
-                            discountInput.type = "hidden";
-                            discountInput.name = "discount";
-                            checkoutForm.appendChild(discountInput);
-                        }
+                        totalAmountInput.value = newTotal;
                         discountInput.value = result.discount;
                     } else {
                         couponMessage.classList.remove("tw-text-green-500");

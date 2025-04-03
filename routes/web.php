@@ -83,6 +83,13 @@ Route::middleware('check.role:admin')->group(function () {
     //orders
     Route::get('/admin/orders', [OrdersController::class, 'index'])->name('admin.orders.index');
     Route::delete('/admin/orders/delete/{id}', [OrdersController::class, 'destroy'])->name('admin.orders.destroy');
+    //coupon
+    Route::get('/admin/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
+    Route::get('/admin/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
+    Route::post('/admin/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
+    Route::get('/admin/coupons/{id}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
+    Route::put('/admin/coupons/{id}', [CouponController::class, 'update'])->name('admin.coupons.update');
+    Route::delete('/admin/coupons/{id}/delete', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
 });
 
 //checkout
