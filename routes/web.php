@@ -9,6 +9,7 @@ use App\Http\Controllers\CartsController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CouponController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -105,3 +106,6 @@ Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name
 Route::get('/momo/callback', [PaymentController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [PaymentController::class, 'momoIpn'])->name('momo.ipn');
 Route::get('/zalopay/callback', [PaymentController::class, 'zalopayCallback'])->name('zalopay.callback');
+
+// coupon
+Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('coupon.apply');

@@ -226,7 +226,6 @@
                     <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                     <input type="hidden" name="address_id" id="address_id"
                         value="{{ $addresses->first()->id ?? '' }}">
-
                     <button type="submit"
                         class="btn btn-primary tw-w-full tw-bg-blue-600 tw-text-white hover:tw-bg-blue-700">
                         Đặt hàng <i class="fa-solid fa-bag-shopping tw-ml-2"></i>
@@ -321,6 +320,64 @@
                     }
                 }
             }
+
+            const applyCouponBtn = document.getElementById("apply_coupon");
+            const couponCodeInput = document.getElementById("coupon_code");
+            const couponMessage = document.getElementById("coupon_message");
+            const totalAmountDisplay = document.getElementById("total_amount_display");
+            let shippingFee = 20000; // Phí vận chuyển mặc định
+            let originalTotal = {{ $carts->sum(fn($cart) => $cart->price * $cart->quantity) }} + shippingFee;
+
+            applyCouponBtn.addEventListener("click", async function() {
+                const couponCode = couponCodeInput.value.trim();
+                if (!couponCode) {
+                    couponMessage.textContent = "Vui lòng nhập mã giảm giá!";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("{{ route('coupon.apply') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            coupon_code: couponCode,
+                            total_amount: originalTotal
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        couponMessage.classList.remove("tw-text-red-500");
+                        couponMessage.classList.add("tw-text-green-500");
+                        couponMessage.textContent = result.message;
+
+                        const newTotal = result.new_total;
+                        totalAmountDisplay.textContent = newTotal.toLocaleString() + "₫";
+
+                        // Lưu giá trị discount để gửi khi đặt hàng
+                        const checkoutForm = document.getElementById("checkout-form");
+                        let discountInput = checkoutForm.querySelector('input[name="discount"]');
+                        if (!discountInput) {
+                            discountInput = document.createElement("input");
+                            discountInput.type = "hidden";
+                            discountInput.name = "discount";
+                            checkoutForm.appendChild(discountInput);
+                        }
+                        discountInput.value = result.discount;
+                    } else {
+                        couponMessage.classList.remove("tw-text-green-500");
+                        couponMessage.classList.add("tw-text-red-500");
+                        couponMessage.textContent = result.message;
+                    }
+                } catch (error) {
+                    couponMessage.textContent = "Đã xảy ra lỗi, vui lòng thử lại!";
+                    console.error(error);
+                }
+            });
 
             if (toggleAddressFormBtn) {
                 toggleAddressFormBtn.addEventListener("click", function() {
