@@ -119,13 +119,14 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::with(['category', 'mainImage', 'variants', 'images'])->where('slug', $slug)->first();
+        $product = Product::with(['category', 'mainImage', 'variants', 'images', 'ratings.user', 'ratings.likes'])->where('slug', $slug)->first();
+        $ratings = $product->ratings()->with('user', 'likes')->paginate(3);
         if (!$product) {
             abort(404);
         }
         $title = 'Chi tiết sản phẩm';
 
-        return view('detail', compact('title', 'product'));
+        return view('detail', compact('title', 'product', 'ratings'));
     }
 
     public function edit(Product $product)

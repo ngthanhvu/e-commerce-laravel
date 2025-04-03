@@ -10,12 +10,13 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\RatingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
     $title = 'Đăng nhập';
     return view('auth.login', compact('title'));
-});
+})->name('login');
 Route::get('/dang-ky', function () {
     $title = 'Đăng ký';
     return view('auth.register', compact('title'));
@@ -116,3 +117,7 @@ Route::get('/zalopay/callback', [PaymentController::class, 'zalopayCallback'])->
 
 // coupon
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('coupon.apply');
+
+//rating 
+Route::post('/products/{product}/ratings', [RatingController::class, 'store'])->name('ratings.store');
+Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');
