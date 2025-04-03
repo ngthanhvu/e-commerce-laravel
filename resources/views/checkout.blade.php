@@ -79,8 +79,8 @@
                                     {{ $loop->first ? 'checked' : '' }}>
                                 <label class="form-check-label w-100" for="address{{ $address->id }}">
                                     <strong>{{ $address->name }} - {{ $address->phone }}</strong> <br>
-                                    {{ $address->province }} - {{ $address->district }} - {{ $address->ward }} -
-                                    {{ $address->street }}
+                                    {{ $address->street }} - {{ $address->ward }} - {{ $address->district }} -
+                                    {{ $address->province }}
                                 </label>
                             </div>
                         @endforeach

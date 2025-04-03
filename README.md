@@ -26,3 +26,7 @@ php artisan storage:link
 ```bash
 composer require laravel/socialite
 ```
+### Thư viện Guzzle Http Client
+```bash
+composer require guzzlehttp/guzzle
+```

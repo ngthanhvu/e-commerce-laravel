@@ -193,8 +193,8 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $address['name'] }}</td>
                                             <td>{{ $address['phone'] }}</td>
-                                            <td>{{ $address['province'] }} - {{ $address['district'] }} -
-                                                {{ $address['ward'] }} - {{ $address['street'] }}</td>
+                                            <td>{{ $address['street'] }} - {{ $address['ward'] }} -
+                                                {{ $address['district'] }} - {{ $address['province'] }}</td>
                                             <td>
                                                 <form action="{{ route('address.destroy', $address['id']) }}"
                                                     method="POST" style="display:inline;">
