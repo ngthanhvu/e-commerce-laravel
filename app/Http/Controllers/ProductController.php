@@ -120,7 +120,12 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = Product::with(['category', 'mainImage', 'variants', 'images', 'ratings.user', 'ratings.likes'])->where('slug', $slug)->first();
-        $ratings = $product->ratings()->with('user', 'likes')->paginate(3);
+        $ratings = $product->ratings()
+            ->with('user', 'likes')
+            ->withCount('likes')
+            ->orderBy('likes_count', 'desc')
+            ->paginate(3);
+
         if (!$product) {
             abort(404);
         }

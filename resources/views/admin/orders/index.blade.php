@@ -110,7 +110,7 @@
                 @endforeach
                 @if ($orders->isEmpty())
                     <tr>
-                        <td colspan="6" class="text-center">Không có người dùng nào</td>
+                        <td colspan="7" class="text-center">Không có người dùng nào</td>
                     </tr>
                 @endif
             </tbody>

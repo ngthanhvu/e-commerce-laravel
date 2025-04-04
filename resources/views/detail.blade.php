@@ -50,10 +50,15 @@
         .rating-item {
             position: relative;
             padding-top: 40px;
-            /* Tạo khoảng trống cho nút Like */
         }
 
         .like-btn {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+        }
+
+        .more-btn {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -150,67 +155,91 @@
         <!-- Phần đánh giá sản phẩm -->
         <div class="mt-5" style="border-top: 1px solid #ccc; padding-top: 20px;">
             <h4>ĐÁNH GIÁ SẢN PHẨM</h4>
-            @auth
-                <form action="{{ route('ratings.store', $product->id) }}" method="POST" class="mb-4">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Đánh giá của bạn:</strong></label>
-                        <div class="star-rating">
-                            <i class="fa fa-star" data-rating="1" onclick="setRating(1)"></i>
-                            <i class="fa fa-star" data-rating="2" onclick="setRating(2)"></i>
-                            <i class="fa fa-star" data-rating="3" onclick="setRating(3)"></i>
-                            <i class="fa fa-star" data-rating="4" onclick="setRating(4)"></i>
-                            <i class="fa fa-star" data-rating="5" onclick="setRating(5)"></i>
+            <div class="row">
+                <!-- Cột bên trái: Form đánh giá -->
+                <div class="col-md-4">
+                    @auth
+                        <form action="{{ route('ratings.store', $product->id) }}" method="POST" class="mb-4">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Đánh giá của bạn:</strong></label>
+                                <div class="star-rating">
+                                    <i class="fa fa-star" data-rating="1" onclick="setRating(1)"></i>
+                                    <i class="fa fa-star" data-rating="2" onclick="setRating(2)"></i>
+                                    <i class="fa fa-star" data-rating="3" onclick="setRating(3)"></i>
+                                    <i class="fa fa-star" data-rating="4" onclick="setRating(4)"></i>
+                                    <i class="fa fa-star" data-rating="5" onclick="setRating(5)"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="ratingInput" value="0">
+                                @error('rating')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Nhận xét:</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="5" placeholder="Nhập nhận xét của bạn..."></textarea>
+                                @error('comment')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </form>
+                    @else
+                        <p>Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để gửi đánh giá.</p>
+                    @endauth
+                </div>
+
+                <!-- Cột bên phải: Danh sách đánh giá -->
+                <div class="col-md-8">
+                    <div class="ratings-list">
+                        @forelse ($ratings as $rating)
+                            <div class="border p-3 mb-3 rating-item" id="rating-{{ $rating->id }}">
+                                @auth
+                                    <button class="btn btn-sm btn-outline-primary like-btn"
+                                        data-rating-id="{{ $rating->id }}"
+                                        onclick="toggleLike(this, {{ $rating->id }})">
+                                        <i class="fa fa-thumbs-up"></i>
+                                        <span class="like-text">Thích</span>
+                                        (<span class="like-count">{{ $rating->likes->count() }}</span>)
+                                    </button>
+
+                                    <!-- Nút 3 chấm chỉ hiển thị nếu là tác giả -->
+                                    @if (auth()->id() === $rating->user_id)
+                                        <div class="dropdown more-btn">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                id="dropdownMenuButton{{ $rating->id }}" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $rating->id }}"
+                                                style="padding: 0px;">
+                                                <li><a class="dropdown-item text-danger" href="#"
+                                                        onclick="deleteRating({{ $rating->id }})">Xóa</a></li>
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @else
+                                    <span class="like-btn text-muted">
+                                        <i class="fa fa-thumbs-up"></i> {{ $rating->likes->count() }} lượt thích
+                                    </span>
+                                @endauth
+                                <p><strong>{{ $rating->user->name }}</strong> -
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="fa fa-star {{ $i <= $rating->rating ? 'checked' : '' }}"></i>
+                                    @endfor
+                                </p>
+                                <p>{{ $rating->comment ?? 'Không có nhận xét.' }}</p>
+                                <small class="text-muted">{{ $rating->created_at->diffForHumans() }}</small>
+                            </div>
+                        @empty
+                            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                        @endforelse
+
+                        <!-- Phân trang -->
+                        <div class="mt-3">
+                            {{ $ratings->links() }}
                         </div>
-                        <input type="hidden" name="rating" id="ratingInput" value="0">
-                        @error('rating')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
-                    <div class="mb-3">
-                        <label for="comment" class="form-label">Nhận xét:</label>
-                        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Nhập nhận xét của bạn..."></textarea>
-                        @error('comment')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                </form>
-            @else
-                <p>Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để gửi đánh giá.</p>
-            @endauth
-
-            <!-- Danh sách đánh giá với phân trang -->
-            <div class="ratings-list">
-                @forelse ($ratings as $rating)
-                    <div class="border p-3 mb-3 rating-item">
-                        @auth
-                            <button class="btn btn-sm btn-outline-primary like-btn" data-rating-id="{{ $rating->id }}"
-                                onclick="toggleLike(this, {{ $rating->id }})">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span class="like-text">{{ $rating->isLikedByUser(auth()->id()) }}</span>
-                                (<span class="like-count">{{ $rating->likes->count() }}</span>)
-                            </button>
-                        @else
-                            <span class="like-btn text-muted">
-                                <i class="fa fa-thumbs-up"></i> {{ $rating->likes->count() }} lượt thích
-                            </span>
-                        @endauth
-                        <p><strong>{{ $rating->user->name }}</strong> -
-                            @for ($i = 1; $i <= 5; $i++)
-                                <i class="fa fa-star {{ $i <= $rating->rating ? 'checked' : '' }}"></i>
-                            @endfor
-                        </p>
-                        <p>{{ $rating->comment ?? 'Không có nhận xét.' }}</p>
-                        <small class="text-muted">{{ $rating->created_at->diffForHumans() }}</small>
-                    </div>
-                @empty
-                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
-                @endforelse
-
-                <!-- Phân trang -->
-                <div class="mt-3">
-                    {{ $ratings->links() }}
                 </div>
             </div>
         </div>
@@ -303,21 +332,46 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    const likeText = button.querySelector('.like-text');
                     const likeCount = button.querySelector('.like-count');
-                    const currentCount = parseInt(likeCount.textContent, 10);
-
-                    if (data.action === 'liked') {
-                        likeCount.textContent = currentCount + 1;
-                    } else {
-                        likeCount.textContent = currentCount - 1;
-                    }
+                    likeCount.textContent = data.likes_count;
                 } else {
                     alert(data.message || 'Đã xảy ra lỗi!');
                 }
             } catch (error) {
                 console.error('Lỗi khi gọi API:', error);
                 alert('Đã xảy ra lỗi khi xử lý yêu thích!');
+            }
+        }
+
+        async function deleteRating(ratingId) {
+            if (!confirm('Bạn có chắc muốn xóa bình luận này không?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch("{{ url('/ratings') }}/" + ratingId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById(`rating-${ratingId}`).remove();
+                    alert(data.message);
+                } else {
+                    alert(data.message || 'Đã xảy ra lỗi!');
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+                alert('Đã xảy ra lỗi khi xóa bình luận!');
             }
         }
     </script>

@@ -121,3 +121,4 @@ Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('co
 //rating 
 Route::post('/products/{product}/ratings', [RatingController::class, 'store'])->name('ratings.store');
 Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');
+Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('ratings.destroy');

@@ -45,18 +45,35 @@ class RatingController extends Controller
         $rating = Rating::findOrFail($ratingId);
         $userId = Auth::user()->id;
 
-        if ($rating->isLikedByUser($userId)) {
-            RatingLike::where('user_id', $userId)->where('rating_id', $ratingId)->delete();
-            $message = 'Đã bỏ thích bình luận!';
-        } else {
-            RatingLike::create([
-                'user_id' => $userId,
-                'rating_id' => $ratingId,
-            ]);
-            $message = 'Đã thích bình luận!';
+        RatingLike::create([
+            'user_id' => $userId,
+            'rating_id' => $ratingId,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'action' => 'liked',
+            'message' => 'Đã thích bình luận!',
+            'likes_count' => $rating->likes()->count()
+        ]);
+    }
+
+    public function destroy($ratingId)
+    {
+        $rating = Rating::findOrFail($ratingId);
+
+        if ($rating->user_id !== Auth::user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn không có quyền xóa bình luận này!'
+            ], 403);
         }
 
-        // return redirect()->back()->with('success', $message);
-        return response()->json(['success' => true, 'action' => 'liked', 'message' => 'Đã thích bình luận!']);
+        $rating->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bình luận đã được xóa!'
+        ]);
     }
 }

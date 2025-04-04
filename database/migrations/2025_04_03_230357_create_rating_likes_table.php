@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('rating_id')->constrained('ratings')->onDelete('cascade');
             $table->timestamps();
-            // Đảm bảo mỗi user chỉ thích một rating một lần
-            $table->unique(['user_id', 'rating_id']);
         });
     }
 
