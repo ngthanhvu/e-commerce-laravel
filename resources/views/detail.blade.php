@@ -243,6 +243,33 @@
                 </div>
             </div>
         </div>
+        {{-- Sản phẩm liên quan --}}
+        <div class="mt-3">
+            <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Sản phẩm liên
+                quan
+            </h4>
+            <div class="row">
+                @foreach ($related_products as $product)
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            {{-- <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                class="card-img-top"> --}}
+                            @if ($product->mainImage)
+                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                    alt="{{ $product->name }}" class="card-img-top">
+                            @else
+                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                    alt="Không có ảnh" class="card-img-top">
+                            @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $product->name }}</h5>
+                                <p class="card-text">Giá: {{ number_format($product->price, 0, ',', '.') }} đ</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <script>

@@ -4,7 +4,7 @@
     <style>
         .card {
             transition: all 0.3s ease-in-out;
-            border-radius: 15px;
+            /* border-radius: 15px; */
             overflow: hidden;
             background: #fff;
             border: none;
@@ -60,6 +60,41 @@
         .discount-price {
             font-size: 16px;
             color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* CSS cho danh sách danh mục */
+        .category-card {
+            width: 100%;
+            padding-top: 100%;
+            /* Tạo tỷ lệ 1:1 để thành hình vuông */
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-card img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-card p {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(-50%);
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
             font-weight: bold;
         }
     </style>
@@ -191,6 +226,27 @@
                 <p>Không có sản phẩm nào!</p>
             </div>
         @endif
+
+        {{-- hiển thị các danh mục --}}
+        <section>
+            <div class="row mb-3">
+                <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Danh sách
+                    danh mục
+
+                </h4>
+                @foreach ($list_category as $list)
+                    <div class="col-md-3 mb-3">
+                        <a href="/san-pham?category_id= {{ $list->id }}" class="text-decoration-none text-dark">
+                            <div class="category-card">
+                                <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
+                                <p class="text-center tw-text-[25px] text-uppercase">{{ $list->name }}</p>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
         <!-- Phần sản phẩm theo danh mục -->
         @foreach ($categories as $category)
             <section class="new-products p-3 rounded-2 mb-4" style="min-height: 500px;">

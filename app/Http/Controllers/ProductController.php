@@ -131,7 +131,12 @@ class ProductController extends Controller
         }
         $title = 'Chi tiết sản phẩm';
 
-        return view('detail', compact('title', 'product', 'ratings'));
+        $related_products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
+        return view('detail', compact('title', 'product', 'ratings', 'related_products'));
     }
 
     public function edit(Product $product)

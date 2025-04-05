@@ -29,7 +29,9 @@ class HomeController extends Controller
             ->has('products')
             ->get();
 
-        return view('index', compact('products', 'categories', 'title'));
+        $list_category = Category::latest()->take(4)->get();
+
+        return view('index', compact('products', 'categories', 'title', 'list_category'));
     }
 
     public function products(Request $request)
