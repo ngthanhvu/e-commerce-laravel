@@ -100,7 +100,10 @@
                 @endforeach
                 @if ($coupons->isEmpty())
                     <tr>
-                        <td colspan="10" class="text-center">Không có mã giảm giá nào</td>
+                        <td colspan="10" class="text-center">
+                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                            Không có mã giảm giá nào
+                        </td>
                     </tr>
                 @endif
             </tbody>

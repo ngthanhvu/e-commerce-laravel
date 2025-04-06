@@ -43,11 +43,11 @@
         <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Tên danh mục <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Mô tả <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Hình ảnh <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên danh mục</th>
+                    <th scope="col">Mô tả</th>
+                    <th scope="col">Hình ảnh</th>
+                    <th scope="col">Thao tác</th>
                 </tr>
             </thead>
             <tbody class="align-middle">
@@ -60,7 +60,10 @@
                     ])
                 @else
                     <tr>
-                        <td colspan="5" class="text-center">Không có danh mục nào</td>
+                        <td colspan="5" class="text-center">
+                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                            Không có danh mục nào
+                        </td>
                     </tr>
                 @endif
             </tbody>

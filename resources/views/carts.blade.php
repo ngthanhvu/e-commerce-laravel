@@ -96,7 +96,7 @@
 
         <!-- Bảng giỏ hàng -->
         <div class="table-responsive">
-            <table class="table cart-table">
+            <table class="table cart-table text-center">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -148,26 +148,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">Không có sản phẩm nào trong giỏ hàng</td>
+                            <td colspan="8" class="text-center">
+                                <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                                Không có sản phẩm nào trong giỏ hàng
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        <!-- Nút xóa tất cả và tổng tiền -->
-        {{-- @if ($carts->isNotEmpty())
-            <div class="row mb-3">
-                <div class="col-12 text-end">
-                    <form action="{{ route('carts.clearCart') }}" method="POST"
-                        onsubmit="return confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng không?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-link btn-sm">Xóa tất cả</button>
-                    </form>
-                </div>
-            </div>
-        @endif --}}
 
         <div class="row total-section">
             <div class="col-md-4 offset-md-8">

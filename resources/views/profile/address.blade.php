@@ -209,7 +209,10 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-center">Chưa có địa chỉ nào được thêm.</td>
+                                            <td colspan="5" class="text-center">
+                                                <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                                                Chưa có địa chỉ nào được thêm.
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>

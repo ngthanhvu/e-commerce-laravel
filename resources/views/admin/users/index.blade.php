@@ -53,12 +53,12 @@
         <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Tên người dùng <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Email <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Vai trò <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thời gian tạo <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên người dùng</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Vai trò</th>
+                    <th scope="col">Thời gian tạo</th>
+                    <th scope="col">Thao tác</th>
                 </tr>
             </thead>
             <tbody class="align-middle">
@@ -96,7 +96,10 @@
                 @endforeach
                 @if ($users->isEmpty())
                     <tr>
-                        <td colspan="6" class="text-center">Không có người dùng nào</td>
+                        <td colspan="6" class="text-center">
+                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                            Không có người dùng nào
+                        </td>
                     </tr>
                 @endif
             </tbody>

@@ -67,7 +67,10 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center">Không có đơn hàng nào</td>
+                                        <td colspan="6" class="text-center">
+                                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                                            Không có đơn hàng nào
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>

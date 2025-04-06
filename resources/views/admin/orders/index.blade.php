@@ -53,13 +53,13 @@
         <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Đơn hàng ID <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Phương thức thanh toán <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Trạng thái <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Tổng tiền <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thời gian tạo <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Đơn hàng ID</th>
+                    <th scope="col">Phương thức thanh toán</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Tổng tiền</th>
+                    <th scope="col">Thời gian tạo</th>
+                    <th scope="col">Thao tác</th>
                 </tr>
             </thead>
             <tbody class="align-middle">
@@ -110,7 +110,10 @@
                 @endforeach
                 @if ($orders->isEmpty())
                     <tr>
-                        <td colspan="7" class="text-center">Không có người dùng nào</td>
+                        <td colspan="7" class="text-center">
+                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                            Không có đơn hàng nào
+                        </td>
                     </tr>
                 @endif
             </tbody>

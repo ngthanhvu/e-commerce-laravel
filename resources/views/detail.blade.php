@@ -268,6 +268,12 @@
                         </div>
                     </div>
                 @endforeach
+                @if ($related_products->isEmpty())
+                    <div class="col-md-12 text-center">
+                        <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                        <p>Không có sản phẩm liên quan nào.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

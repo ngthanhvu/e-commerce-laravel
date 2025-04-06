@@ -54,15 +54,15 @@
         <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th scope="col"># <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Tên sản phẩm <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Danh mục <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Giá <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Hình ảnh <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Số lượng <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Biến thể <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Slug <i class="bi bi-arrow-down-up"></i></th>
-                    <th scope="col">Thao tác <i class="bi bi-arrow-down-up"></i></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scope="col">Danh mục</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Hình ảnh</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Biến thể</th>
+                    <th scope="col">Slug</th>
+                    <th scope="col">Thao tác</th>
                 </tr>
             </thead>
             <tbody class="align-middle">
@@ -110,7 +110,10 @@
                 @endforeach
                 @if ($products->isEmpty())
                     <tr>
-                        <td colspan="8" class="text-center">Không có sản phẩm nào</td>
+                        <td colspan="9" class="text-center">
+                            <i class="bi bi-inbox tw-text-[40px]"></i><br>
+                            Không có sản phẩm nào
+                        </td>
                     </tr>
                 @endif
             </tbody>

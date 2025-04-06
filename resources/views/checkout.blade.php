@@ -88,6 +88,14 @@
                             khác</button>
                     </div>
                 @endif
+                @if (empty($addresses) || count($addresses) == 0)
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fa-solid fa-circle-exclamation"></i> Bạn chưa có địa chỉ nào. Vui lòng thêm địa chỉ giao
+                        hàng.
+                    </div>
+                    <button type="button" class="btn btn-link tw-mt-2 tw-p-0" id="toggle-address-form">Thêm địa chỉ
+                        khác</button>
+                @endif
 
                 <!-- Form thêm địa chỉ mới -->
                 <form action="{{ route('address.store') }}" method="POST" id="new-address-form"

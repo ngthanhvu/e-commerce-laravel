@@ -229,6 +229,7 @@
 
         {{-- hiển thị các danh mục --}}
         <section>
+            @if($list_category->count() > 0)
             <div class="row mb-3">
                 <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Danh sách
                     danh mục
@@ -236,7 +237,7 @@
                 </h4>
                 @foreach ($list_category as $list)
                     <div class="col-md-3 mb-3">
-                        <a href="/san-pham?category_id= {{ $list->id }}" class="text-decoration-none text-dark">
+                        <a href="/san-pham?category_id={{ $list->id }}" class="text-decoration-none text-dark">
                             <div class="category-card">
                                 <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
                                 <p class="text-center tw-text-[25px] text-uppercase">{{ $list->name }}</p>
@@ -245,6 +246,7 @@
                     </div>
                 @endforeach
             </div>
+            @endif
         </section>
 
         <!-- Phần sản phẩm theo danh mục -->
