@@ -49,6 +49,11 @@
                                                     class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-gray-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-gray-800 tw-ring-1 tw-ring-gray-600/20 tw-ring-inset">
                                                     Thất bại
                                                 </span>
+                                            @elseif($order->status == 'delivered')
+                                                <span
+                                                    class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-green-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-green-800 tw-ring-1 tw-ring-green-600/20 tw-ring-inset">
+                                                    Đã giao hàng
+                                                </span>
                                             @endif
                                         </td>
                                         <td>{{ number_format($order->total_price) }}₫</td>
@@ -75,6 +80,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+
                         @foreach ($orders as $order)
                             <div class="modal fade" id="orderDetailModal{{ $order->id }}" tabindex="-1"
                                 aria-labelledby="orderDetailModalLabel" aria-hidden="true">
@@ -87,8 +93,139 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
+                                            <div class="tw-flex tw-items-center tw-justify-between">
+                                                <!-- 1. Đã đặt hàng -->
+                                                <div class="tw-flex-1 tw-flex tw-flex-col tw-items-center">
+                                                    <div class="tw-relative tw-mb-2">
+                                                        <div
+                                                            class="tw-w-10 tw-h-10 tw-bg-blue-500 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white">
+                                                            <svg class="tw-w-6 tw-h-6" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tw-text-center">
+                                                        <h3 class="tw-text-[17px] tw-text-gray-900">Đã đặt hàng</h3>
+                                                        <p class="tw-text-xs tw-text-gray-500">Tiếp nhận đơn</p>
+                                                    </div>
+                                                </div>
+                                                <!-- Mũi tên 1 -->
+                                                <div class="tw-flex-1 tw-flex tw-items-center tw-justify-center">
+                                                    <svg class="tw-w-6 tw-h-6" fill="none"
+                                                        stroke="{{ $order->status == 'pending' || $order->status == 'paid' || $order->status == 'delivered' ? '#3B82F6' : '#D1D5DB' }}"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </div>
+                                                <!-- 2. Đang thanh toán -->
+                                                <div class="tw-flex-1 tw-flex tw-flex-col tw-items-center">
+                                                    <div class="tw-relative tw-mb-2">
+                                                        <div
+                                                            class="tw-w-10 tw-h-10 {{ $order->status == 'pending' || $order->status == 'paid' || $order->status == 'delivered' ? 'tw-bg-yellow-500' : 'tw-bg-gray-300' }} tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white">
+                                                            <svg class="tw-w-6 tw-h-6" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tw-text-center">
+                                                        <h3 class="tw-text-[17px] tw-text-gray-900">Đang thanh toán</h3>
+                                                        <p class="tw-text-xs tw-text-gray-500">Chờ xử lý</p>
+                                                    </div>
+                                                </div>
+                                                <!-- Mũi tên 2 -->
+                                                <div class="tw-flex-1 tw-flex tw-items-center tw-justify-center">
+                                                    <svg class="tw-w-6 tw-h-6" fill="none"
+                                                        stroke="{{ $order->status == 'paid' || $order->status == 'delivered' ? '#EAB308' : '#D1D5DB' }}"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </div>
+                                                <!-- 3. Thanh toán thành công -->
+                                                <div class="tw-flex-1 tw-flex tw-flex-col tw-items-center">
+                                                    <div class="tw-relative tw-mb-2">
+                                                        <div
+                                                            class="tw-w-10 tw-h-10 {{ $order->status == 'paid' || $order->status == 'delivered' ? 'tw-bg-green-500' : 'tw-bg-gray-300' }} tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white">
+                                                            <svg class="tw-w-6 tw-h-6" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tw-text-center">
+                                                        <h3
+                                                            class="tw-text-[17px] {{ $order->status == 'paid' || $order->status == 'delivered' ? 'tw-text-gray-900' : 'tw-text-gray-400' }}">
+                                                            Thanh toán</h3>
+                                                        <p
+                                                            class="tw-text-xs {{ $order->status == 'paid' || $order->status == 'delivered' ? 'tw-text-gray-500' : 'tw-text-gray-400' }}">
+                                                            Hoàn tất thanh toán</p>
+                                                    </div>
+                                                </div>
+                                                <!-- Mũi tên 3 -->
+                                                <div class="tw-flex-1 tw-flex tw-items-center tw-justify-center">
+                                                    <svg class="tw-w-6 tw-h-6" fill="none"
+                                                        stroke="{{ $order->status == 'delivered' ? '#10B981' : '#D1D5DB' }}"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </div>
+                                                <!-- 4. Giao hàng thành công -->
+                                                <div class="tw-flex-1 tw-flex tw-flex-col tw-items-center">
+                                                    <div class="tw-relative tw-mb-2">
+                                                        <div
+                                                            class="tw-w-10 tw-h-10 {{ $order->status == 'delivered' ? 'tw-bg-green-500' : 'tw-bg-gray-300' }} tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white">
+                                                            <svg class="tw-w-6 tw-h-6" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                                </path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tw-text-center">
+                                                        <h3
+                                                            class="tw-text-[17px] {{ $order->status == 'delivered' ? 'tw-text-gray-900' : 'tw-text-gray-400' }}">
+                                                            Giao hàng</h3>
+                                                        <p
+                                                            class="tw-text-xs {{ $order->status == 'delivered' ? 'tw-text-gray-500' : 'tw-text-gray-400' }}">
+                                                            Hoàn tất giao hàng</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_method }}</p>
-                                            <p><strong>Trạng thái:</strong> {{ $order->status }}</p>
+                                            <p><strong>Trạng thái:</strong>
+                                                @if ($order->status == 'pending')
+                                                    <span
+                                                        class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-yellow-50 tw-px-2 tw-py-1 tw-text-xs tw-font-small tw-text-yellow-800 tw-ring-1 tw-ring-yellow-600/20 tw-ring-inset">Chưa
+                                                        thanh toán</span>
+                                                @elseif($order->status == 'paid')
+                                                    <span
+                                                        class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-green-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-green-800 tw-ring-1 tw-ring-green-600/20 tw-ring-inset">Đã
+                                                        thanh toán</span>
+                                                @elseif($order->status == 'canceled')
+                                                    <span
+                                                        class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-red-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-red-800 tw-ring-1 tw-ring-red-600/20 tw-ring-inset">Đã
+                                                        hủy</span>
+                                                @elseif($order->status == 'fail')
+                                                    <span
+                                                        class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-gray-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-gray-800 tw-ring-1 tw-ring-gray-600/20 tw-ring-inset">Thất
+                                                        bại</span>
+                                                @elseif($order->status == 'delivered')
+                                                    <span
+                                                        class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-green-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-green-800 tw-ring-1 tw-ring-green-600/20 tw-ring-inset">Đã
+                                                        giao hàng</span>
+                                                @endif
+                                            </p>
                                             <p><strong>Tổng tiền:</strong> {{ number_format($order->total_price) }}₫</p>
 
                                             <h5>Sản phẩm trong đơn hàng:</h5>
