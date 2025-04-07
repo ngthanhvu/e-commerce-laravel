@@ -38,6 +38,8 @@ Route::post('/address/create', [AddressController::class, 'store'])->name('addre
 Route::delete('/address/{id}', [AddressController::class, 'destroy'])->name('address.destroy');
 Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.update');
 Route::post('/profile/password', [UserController::class, 'changePassword'])->name('profile.password');
+Route::post('/profile/cancel-order/{id}', [OrdersController::class, 'cancelOrder'])->name('profile.cancel-order');
+Route::post('/profile/reorder/{id}', [OrdersController::class, 'reorder'])->name('profile.reorder');
 
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
@@ -84,6 +86,7 @@ Route::middleware('check.role:admin')->group(function () {
     //orders
     Route::get('/admin/orders', [OrdersController::class, 'index'])->name('admin.orders.index');
     Route::delete('/admin/orders/delete/{id}', [OrdersController::class, 'destroy'])->name('admin.orders.destroy');
+    Route::put('/admin/orders/{id}', [OrdersController::class, 'updateStatus'])->name('admin.orders.updateStatus');
     //coupon
     Route::get('/admin/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
     Route::get('/admin/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
@@ -98,7 +101,6 @@ Route::middleware('is_login')->group(function () {
     Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout.index');
     Route::post('/checkout/create', [OrdersController::class, 'store'])->name('orders.store');
 });
-
 //alert
 Route::get('/success', function () {
     $title = "Thành công!";
@@ -108,16 +110,13 @@ Route::get('/fail', function () {
     $title = "Thất bại!";
     return view('alert.fail', compact('title'));
 })->name('alert.fail');
-
 //payment
 Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
 Route::get('/momo/callback', [PaymentController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [PaymentController::class, 'momoIpn'])->name('momo.ipn');
 Route::get('/zalopay/callback', [PaymentController::class, 'zalopayCallback'])->name('zalopay.callback');
-
 // coupon
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('coupon.apply');
-
 //rating 
 Route::post('/products/{product}/ratings', [RatingController::class, 'store'])->name('ratings.store');
 Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');

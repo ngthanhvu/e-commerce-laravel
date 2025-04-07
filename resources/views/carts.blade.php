@@ -136,7 +136,7 @@
                             <td class="subtotal">{{ number_format($cart->price * $cart->quantity) }}₫</td>
                             <td>
                                 <form action="{{ route('carts.delete', $cart->id) }}" method="POST"
-                                    onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này không?');">
+                                    onsubmit="isDelete(event, this)">
                                     @csrf
                                     @method('DELETE')
                                     <input type="hidden" name="cart_id" value="{{ $cart->id }}">
@@ -176,6 +176,26 @@
     </div>
 
     <script>
+        function isDelete(event, form) {
+            event.preventDefault();
+            const cartId = form.querySelector('input[name="cart_id"]').value;
+
+            const result = Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+                text: "Bạn sẽ không thể khôi phục lại sản phẩm này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+
+        }
+
         async function changeQuantity(button, change) {
             const row = button.closest('tr');
             const input = row.querySelector('.quantity-input');

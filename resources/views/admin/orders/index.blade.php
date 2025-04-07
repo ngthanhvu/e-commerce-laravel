@@ -80,6 +80,18 @@
                                 <span
                                     class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-green-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-green-800 tw-ring-1 tw-ring-green-600/20 tw-ring-inset">Đã
                                     thanh toán</span>
+                            @elseif($order->status == 'cancelled')
+                                <span
+                                    class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-red-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-red-800 tw-ring-1 tw-ring-red-600/20 tw-ring-inset">Đã
+                                    hủy</span>
+                            @elseif($order->status == 'delivered')
+                                <span
+                                    class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-purple-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-purple-800 tw-ring-1 tw-ring-purple-600/20 tw-ring-inset">Đã
+                                    giao hàng</span>
+                            @elseif($order->status == 'fail')
+                                <span
+                                    class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-red-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-red-800 tw-ring-1 tw-ring-red-600/20 tw-ring-inset">Thất
+                                    bại</span>
                             @endif
                         </td>
                         <td>{{ number_format($order->total_price) }}₫</td>
@@ -91,9 +103,11 @@
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
 
-                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editOrderModal{{ $order->id }}" data-id="{{ $order->id }}">
                                     <i class="fa-solid fa-gear"></i>
-                                </a>
+                                </button>
+
 
                                 <form action="{{ Route('admin.orders.destroy', $order->id) }}" method="POST"
                                     class="d-inline-block m-0">
@@ -157,8 +171,48 @@
                     </div>
                 </div>
             </div>
+            {{-- modal edit startus --}}
+            <div class="modal fade" id="editOrderModal{{ $order->id }}" tabindex="-1"
+                aria-labelledby="editOrderModalLabel{{ $order->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editOrderModalLabel{{ $order->id }}">Chỉnh sửa trạng thái
+                                    đơn
+                                    hàng #{{ $order->id }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Đóng"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Trạng thái</label>
+                                    <select class="form-select" name="status" required>
+                                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chưa
+                                            thanh
+                                            toán</option>
+                                        <option value="paid" {{ $order->status == 'paid' ? 'selected' : '' }}>Đã thanh
+                                            toán
+                                        </option>
+                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã
+                                            hủy
+                                        </option>
+                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã
+                                            giao hàng</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         @endforeach
-
 
         <!-- Phân trang -->
         <div class="row">

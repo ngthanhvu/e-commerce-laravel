@@ -57,16 +57,32 @@
                                             @endif
                                         </td>
                                         <td>{{ number_format($order->total_price) }}₫</td>
+                                        {{-- <td>
+                                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#orderDetailModal{{ $order->id }}"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            @if ($order->status == 'pending')
+                                                <button onclick="cancelOrder({{ $order->id }})"
+                                                    class="btn btn-outline-secondary btn-sm"><i
+                                                        class="fa-solid fa-ban"></i></button>
+                                            @else
+                                                <a href="#" class="btn btn-outline-secondary btn-sm"><i
+                                                        class="fa-solid fa-rotate-left"></i></a>
+                                            @endif
+                                        </td> --}}
+
                                         <td>
                                             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#orderDetailModal{{ $order->id }}"><i
                                                     class="fa-solid fa-eye"></i></button>
                                             @if ($order->status == 'pending')
-                                                <a href="#" class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-ban"></i></a>
+                                                <button onclick="cancelOrder({{ $order->id }})"
+                                                    class="btn btn-outline-secondary btn-sm"><i
+                                                        class="fa-solid fa-ban"></i></button>
                                             @else
-                                                <a href="#" class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-rotate-left"></i></a>
+                                                <button onclick="reorder({{ $order->id }})"
+                                                    class="btn btn-outline-secondary btn-sm"><i
+                                                        class="fa-solid fa-rotate-left"></i></button>
                                             @endif
                                         </td>
                                     </tr>
@@ -257,4 +273,127 @@
             </div>
         </div>
     </div>
+    <script>
+        async function cancelOrder(orderId) {
+            const result = await Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ hủy đơn hàng này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Vâng, hủy đơn!',
+                cancelButtonText: 'Không, giữ lại'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/profile/cancel-order/${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_id: orderId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        iziToast.success({
+                            title: 'Thành công',
+                            message: 'Đơn hàng đã được hủy thành công!',
+                            position: 'topRight'
+                        });
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        iziToast.error({
+                            title: 'Lỗi',
+                            message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            position: 'topRight'
+                        });
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    iziToast.error({
+                        title: 'Lỗi',
+                        message: 'Đã xảy ra lỗi hệ thống!',
+                        position: 'topRight'
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            }
+        }
+
+        async function reorder(orderId) {
+            const result = await Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ thêm các sản phẩm từ đơn hàng này vào giỏ hàng!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Vâng, thêm vào!',
+                cancelButtonText: 'Không, hủy bỏ'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/profile/reorder/${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_id: orderId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        iziToast.success({
+                            title: 'Thành công',
+                            message: 'Đơn hàng đã được thêm vào giỏ hàng!',
+                            position: 'topRight'
+                        });
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        iziToast.error({
+                            title: 'Lỗi',
+                            message: data.message || 'Có lỗi xảy ra, vui lòng thử lại!',
+                            position: 'topRight'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    iziToast.error({
+                        title: 'Lỗi',
+                        message: 'Đã xảy ra lỗi hệ thống!',
+                        position: 'topRight'
+                    });
+                }
+            }
+        }
+    </script>
 @endsection

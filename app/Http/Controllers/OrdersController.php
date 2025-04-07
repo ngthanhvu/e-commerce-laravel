@@ -99,31 +99,104 @@ class OrdersController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function show(Orders $orders)
-    {
-        //
-    }
-
-    public function edit(Orders $orders)
-    {
-        //
-    }
-
-    public function update(Request $request, Orders $orders)
-    {
-        //
-    }
-
     public function destroy($id)
     {
         $order = Orders::find($id);
         Orders_item::where('order_id', $order->id)->delete();
         $order->delete();
         return redirect()->back()->with('success', 'Đơn hàng đã được xoá!');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Orders::find($id);
+        $order->status = $request->input('status');
+        $order->save();
+
+        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+    }
+
+    public function cancelOrder($id)
+    {
+        $order = Orders::find($id);
+        if ($order) {
+            $order->status = 'canceled';
+            $order->save();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Đơn hàng đã được hủy!',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đơn hàng không tồn tại!',
+            ]);
+        }
+    }
+
+    public function reorder($id, Request $request)
+    {
+        $order = Orders::with('orderItems.product', 'orderItems.variant')->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đơn hàng không tồn tại!'
+            ], 404);
+        }
+
+        $userId = Auth::user()->id;
+        $sessionId = session()->getId();
+
+        foreach ($order->orderItems as $item) {
+            $product = $item->product;
+            $variant = $item->variant;
+            $availableQuantity = $variant ? $variant->varriant_quantity : $product->quantity;
+
+            if ($item->quantity > $availableQuantity) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Sản phẩm {$product->name} không đủ số lượng tồn kho! Còn lại: $availableQuantity"
+                ], 400);
+            }
+
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            $existingCart = Carts::where('user_id', $userId)
+                ->where('product_id', $item->product_id)
+                ->where('variant_id', $item->variant_id)
+                ->first();
+
+            if ($existingCart) {
+                $newQuantity = $existingCart->quantity + $item->quantity;
+                if ($newQuantity > $availableQuantity) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "Sản phẩm {$product->name} trong giỏ hàng vượt quá số lượng tồn kho! Còn lại: $availableQuantity"
+                    ], 400);
+                }
+                $existingCart->update([
+                    'quantity' => $newQuantity
+                ]);
+            } else {
+                Carts::create([
+                    'user_id' => $userId,
+                    'session_id' => $sessionId,
+                    'product_id' => $item->product_id,
+                    'variant_id' => $item->variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                ]);
+            }
+        }
+
+        // Cập nhật số lượng sản phẩm trong giỏ hàng trong session
+        $carts = Carts::where('user_id', $userId)->get();
+        $count_cart = $carts->sum('quantity');
+        session(['count_cart' => $count_cart]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã thêm sản phẩm từ đơn hàng vào giỏ hàng!'
+        ]);
     }
 }
