@@ -15,7 +15,7 @@
                     <div class="mb-3">
                         <label for="name" class="form-label">Tên sản phẩm</label>
                         <input type="text" class="form-control" id="name" name="name"
-                            value="{{ old('name', $product->name) }}" required>
+                            value="{{ old('name', $product->name) }}">
                         @error('name')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
@@ -24,8 +24,21 @@
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá</label>
                         <input type="number" class="form-control" id="price" name="price"
-                            value="{{ old('price', $product->price) }}" required>
+                            value="{{ old('price', $product->price) }}">
                         @error('price')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="discount_price" class="form-label">Giá giảm</label>
+                        <input type="text" class="form-control" id="discount_price" name="discount_price"
+                            placeholder="Nhập giá giảm (nếu có)"
+                            value="{{ old('discount_price', $product->discount_price) }}">
+                        @if ($product->discount_price)
+                            <p class="text-danger">Giá giảm: {{ number_format($product->discount_price, 0, ',', '.') }}₫</p>
+                        @endif
+                        @error('discount_price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
@@ -33,7 +46,7 @@
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Số lượng</label>
                         <input type="number" class="form-control" id="quantity" name="quantity"
-                            value="{{ old('quantity', $product->quantity) }}" required>
+                            value="{{ old('quantity', $product->quantity) }}">
                         @error('quantity')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
@@ -41,7 +54,7 @@
 
                     <div class="mb-3">
                         <label for="category_id" class="form-label">Danh mục</label>
-                        <select class="form-control" id="category_id" name="category_id" required>
+                        <select class="form-control" id="category_id" name="category_id">
                             <option value="">-- Chọn danh mục --</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}"

@@ -57,32 +57,18 @@
                                             @endif
                                         </td>
                                         <td>{{ number_format($order->total_price) }}₫</td>
-                                        {{-- <td>
-                                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#orderDetailModal{{ $order->id }}"><i
-                                                    class="fa-solid fa-eye"></i></button>
-                                            @if ($order->status == 'pending')
-                                                <button onclick="cancelOrder({{ $order->id }})"
-                                                    class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-ban"></i></button>
-                                            @else
-                                                <a href="#" class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-rotate-left"></i></a>
-                                            @endif
-                                        </td> --}}
-
                                         <td>
                                             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#orderDetailModal{{ $order->id }}"><i
-                                                    class="fa-solid fa-eye"></i></button>
+                                                    class="fa-solid fa-eye"></i> Chi tiết</button>
                                             @if ($order->status == 'pending')
                                                 <button onclick="cancelOrder({{ $order->id }})"
-                                                    class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-ban"></i></button>
+                                                    class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-ban"></i>
+                                                    Huỷ đơn</button>
                                             @else
                                                 <button onclick="reorder({{ $order->id }})"
                                                     class="btn btn-outline-secondary btn-sm"><i
-                                                        class="fa-solid fa-rotate-left"></i></button>
+                                                        class="fa-solid fa-rotate-left"></i> Mua lại</button>
                                             @endif
                                         </td>
                                     </tr>

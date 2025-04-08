@@ -4,10 +4,10 @@
     <style>
         .card {
             transition: all 0.3s ease-in-out;
-            /* border-radius: 15px; */
             overflow: hidden;
             background: #fff;
             border: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .card:hover {
@@ -67,7 +67,6 @@
         .category-card {
             width: 100%;
             padding-top: 100%;
-            /* Tạo tỷ lệ 1:1 để thành hình vuông */
             position: relative;
             overflow: hidden;
             background: #fff;
@@ -229,23 +228,22 @@
 
         {{-- hiển thị các danh mục --}}
         <section>
-            @if($list_category->count() > 0)
-            <div class="row mb-3">
-                <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Danh sách
-                    danh mục
-
-                </h4>
-                @foreach ($list_category as $list)
-                    <div class="col-md-3 mb-3">
-                        <a href="/san-pham?category_id={{ $list->id }}" class="text-decoration-none text-dark">
-                            <div class="category-card">
-                                <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
-                                <p class="text-center tw-text-[25px] text-uppercase">{{ $list->name }}</p>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
+            @if ($list_category->count() > 0)
+                <div class="row mb-3">
+                    <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Danh
+                        sách danh mục
+                    </h4>
+                    @foreach ($list_category as $list)
+                        <div class="col-md-3 mb-3">
+                            <a href="/san-pham?category_id={{ $list->id }}" class="text-decoration-none text-dark">
+                                <div class="category-card">
+                                    <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
+                                    <p class="text-center tw-text-[25px] text-uppercase">{{ $list->name }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
             @endif
         </section>
 

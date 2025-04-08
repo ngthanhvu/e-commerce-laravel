@@ -63,6 +63,19 @@
             top: 10px;
             right: 10px;
         }
+
+        .original-price {
+            font-size: 24px;
+            color: #999;
+            text-decoration: line-through;
+            margin-right: 8px;
+        }
+
+        .discount-price {
+            font-size: 26px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
     </style>
 
     <div class="container">
@@ -101,7 +114,14 @@
             <div class="col-md-6">
                 <h2>{{ $product->name }}</h2>
                 <p class="text-muted">Danh mục: {{ $product->category->name }}</p>
-                <h3 class="text-danger" id="productPrice">{{ number_format($product->price, 0, ',', '.') }}₫</h3>
+                <h3 class="text-danger" id="productPrice">
+                    @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                        <span class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                        <span class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                    @else
+                        <span class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                    @endif
+                </h3>
                 <p><strong>Tình trạng:</strong>
                     <span id="stockStatus" class="{{ $product->quantity > 0 ? 'text-success' : 'text-danger' }}">
                         {{ $product->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}

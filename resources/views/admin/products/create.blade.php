@@ -30,6 +30,15 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="discount_price" class="form-label">Giá giảm</label>
+                        <input type="text" class="form-control" id="discount_price" name="discount_price"
+                            placeholder="Nhập giá giảm (nếu có)">
+                        @error('discount_price')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label for="quantity" class="form-label">Số lượng</label>
                         <input type="number" class="form-control" id="quantity" name="quantity"
                             placeholder="Nhập số lượng">

@@ -58,6 +58,7 @@
                     <th scope="col">Tên sản phẩm</th>
                     <th scope="col">Danh mục</th>
                     <th scope="col">Giá</th>
+                    <th scope="col">Giá khuyến mãi</th>
                     <th scope="col">Hình ảnh</th>
                     <th scope="col">Số lượng</th>
                     <th scope="col">Biến thể</th>
@@ -73,6 +74,7 @@
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->category->name ?? 'Không có danh mục' }}</td>
                         <td>{{ number_format($product->price) }} đ</td>
+                        <td>{{ number_format($product->discount_price) }} đ</td>
                         <td>
                             @if ($product->mainImage)
                                 <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"

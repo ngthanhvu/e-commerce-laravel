@@ -61,6 +61,19 @@
         .product-card:hover {
             transform: scale(1.05);
         }
+
+        .original-price {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-right: 8px;
+        }
+
+        .discount-price {
+            font-size: 16px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
     </style>
     <div class="container mt-3 mb-3">
         <div class="row">
@@ -123,7 +136,7 @@
                     @forelse ($products as $product)
                         <div class="col-md-3 mb-3">
                             <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                <div class="card border-0 product-card">
+                                <div class="card product-card" style="width: 16rem;">
                                     @if ($product->mainImage)
                                         <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
                                             class="card-img-top" alt="{{ $product->name }}"
@@ -136,7 +149,18 @@
                                         <span class="card-title text-muted"
                                             style="font-size: 13px">{{ $product->category['name'] }}</span>
                                         <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
-                                        <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p>
+                                        {{-- <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p> --}}
+                                        <p class="card-text">
+                                            @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                                <span
+                                                    class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                <span
+                                                    class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                            @else
+                                                <span
+                                                    class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
                             </a>
