@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Orders;
 use App\Mail\PaymentConfirmation;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -172,7 +173,12 @@ class PaymentController extends Controller
                                 $product->save();
                             }
                         }
+
+                        Product::where('id', $orderItem->product_id)->update([
+                            'count' => DB::raw('count + 1')
+                        ]);
                     }
+
 
                     $user = $order->user;
                     if ($user && !empty($user->email)) {
@@ -262,7 +268,12 @@ class PaymentController extends Controller
                                 $product->save();
                             }
                         }
+
+                        Product::where('id', $orderItem->product_id)->update([
+                            'count' => DB::raw('count + 1')
+                        ]);
                     }
+
 
                     $user = $order->user;
                     if ($user && !empty($user->email)) {
@@ -343,7 +354,11 @@ class PaymentController extends Controller
                             $product->save();
                         }
                     }
+                    Product::where('id', $orderItem->product_id)->update([
+                        'count' => DB::raw('count + 1')
+                    ]);
                 }
+
                 Mail::to($order->user->email)->send(new PaymentConfirmation($order));
                 return redirect()->route('alert.success', $order->id)->with('success', 'Thêm đơn hàng thành công!');
                 break;

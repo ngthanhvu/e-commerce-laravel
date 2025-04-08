@@ -153,7 +153,9 @@
                     <input type="hidden" name="quantity" id="quantityInput" value="1">
                     <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
                     <input type="hidden" name="session_id" value="{{ session()->getId() }}">
-                    <input type="hidden" name="price" id="priceInput" value="{{ $product->price }}">
+                    {{-- <input type="hidden" name="price" id="priceInput" value="{{ $product->price }}"> --}}
+                    <input type="hidden" name="price" id="priceInput"
+                        value="{{ $product->discount_price && $product->discount_price < $product->price ? $product->discount_price : $product->price }}">
                     <input type="hidden" name="variant_id" id="variantIdInput" value="">
                     <button type="submit" class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO
                         GIỎ HÀNG</button>

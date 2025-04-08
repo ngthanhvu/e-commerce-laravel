@@ -62,10 +62,7 @@ Route::get('/doi-mat-khau', function () {
 
 //admin
 Route::middleware('check.role:admin')->group(function () {
-    Route::get('/admin', function () {
-        $title = 'Trang quản trị';
-        return view('admin.index', compact('title'));
-    });
+    Route::get('/admin', [HomeController::class, 'admin'])->name('admin.index');
     //products
     Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::get('/admin/products/create', [ProductController::class, 'create']);

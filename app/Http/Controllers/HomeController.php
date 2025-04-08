@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Orders_item;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Address;
@@ -32,6 +34,79 @@ class HomeController extends Controller
         $list_category = Category::latest()->take(4)->get();
 
         return view('index', compact('products', 'categories', 'title', 'list_category'));
+    }
+
+    public function admin()
+    {
+        $title = "Trang quản trị";
+
+        $totalRevenue = Orders::sum('total_price');
+
+        $monthlyRevenue = Orders::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(total_price) as revenue')
+        )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get();
+
+        $topProducts = Orders_item::select(
+            'product_id',
+            DB::raw('SUM(quantity) as total_quantity'),
+            DB::raw('SUM(subtotal) as total_revenue')
+        )
+            ->with('product')
+            ->groupBy('product_id')
+            ->orderByDesc('total_quantity')
+            ->limit(5)
+            ->get();
+
+        $totalUsers = User::count();
+
+        $totalOrders = Orders::count();
+
+        $months = range(1, 12);
+
+        $monthlyOrders = Orders::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as order_count')
+        )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->pluck('order_count', 'month')
+            ->all();
+
+        $monthlyProducts = Orders_item::select(
+            DB::raw('MONTH(orders.created_at) as month'),
+            DB::raw('SUM(quantity) as product_count')
+        )
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
+            ->groupBy(DB::raw('MONTH(orders.created_at)'))
+            ->pluck('product_count', 'month')
+            ->all();
+
+        $monthlyUsers = User::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as user_count')
+        )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->pluck('user_count', 'month')
+            ->all();
+
+        $orderData = array_map(fn($month) => $monthlyOrders[$month] ?? 0, $months);
+        $productData = array_map(fn($month) => $monthlyProducts[$month] ?? 0, $months);
+        $userData = array_map(fn($month) => $monthlyUsers[$month] ?? 0, $months);
+
+        return view('admin.index', compact(
+            'title',
+            'totalRevenue',
+            'monthlyRevenue',
+            'topProducts',
+            'totalUsers',
+            'orderData',
+            'productData',
+            'userData',
+            'totalOrders'
+        ));
     }
 
     public function products(Request $request)
