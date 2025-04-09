@@ -136,7 +136,7 @@
                     @forelse ($products as $product)
                         <div class="col-md-3 mb-3">
                             <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                <div class="card product-card" style="width: 16rem;">
+                                <div class="card product-card border-0">
                                     @if ($product->mainImage)
                                         <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
                                             class="card-img-top" alt="{{ $product->name }}"
@@ -149,7 +149,6 @@
                                         <span class="card-title text-muted"
                                             style="font-size: 13px">{{ $product->category['name'] }}</span>
                                         <h5 class="card-subtitle mb-2">{{ $product->name }}</h5>
-                                        {{-- <p class="card-text">{{ number_format($product->price, 0, ',', '.') }}₫</p> --}}
                                         <p class="card-text">
                                             @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                 <span

@@ -8,17 +8,56 @@ use App\Models\RatingLike;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class RatingController extends Controller
 {
     public function index()
     {
-        //
+        $title = "Danh sách đánh giá và bình luận";
+        $search = request()->input('search');
+        $perPage = request()->input('per_page', 10);
+        $sortBy = request()->input('sort_by', 'id');
+        $sortOrder = request()->input('sort_order', 'desc');
+
+        $query = Rating::query()->with('product', 'user');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('comment', 'like', "%{$search}%")
+                    ->orWhereHas('product', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        $ratings = $query->paginate($perPage);
+
+        $ratings->appends([
+            'search' => $search,
+            'per_page' => $perPage,
+            'sort_by' => $sortBy,
+            'sort_order' => $sortOrder,
+        ]);
+
+        return view('admin.comments.index', compact('title', 'ratings', 'search', 'perPage', 'sortBy', 'sortOrder'));
     }
 
-    public function create()
+    public function reply(Request $request, $ratingId)
     {
-        //
+        $request->validate([
+            'admin_reply' => 'required|string|max:500',
+        ]);
+
+        $rating = Rating::findOrFail($ratingId);
+        $rating->update([
+            'admin_reply' => $request->admin_reply,
+        ]);
+
+        Mail::to($rating->user->email)->send(new \App\Mail\AdminReplyNotification($rating));
+        return redirect()->back()->with('success', 'Phản hồi đã được gửi!');
     }
 
     public function store(Request $request, $productId)

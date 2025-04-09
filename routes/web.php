@@ -91,6 +91,9 @@ Route::middleware('check.role:admin')->group(function () {
     Route::get('/admin/coupons/{id}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
     Route::put('/admin/coupons/{id}', [CouponController::class, 'update'])->name('admin.coupons.update');
     Route::delete('/admin/coupons/{id}/delete', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
+    //comment and rating
+    Route::get('/admin/comments', [RatingController::class, 'index'])->name('admin.comments.index');
+    Route::put('/admin/ratings/{rating}/reply', [RatingController::class, 'reply'])->name('ratings.reply');
 });
 
 //checkout

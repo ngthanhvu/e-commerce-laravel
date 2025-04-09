@@ -54,7 +54,6 @@
 
         .like-btn {
             position: absolute;
-            top: 10px;
             right: 40px;
         }
 
@@ -75,6 +74,30 @@
             font-size: 26px;
             color: #e74c3c;
             font-weight: bold;
+        }
+
+        .original-price-related {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-right: 8px;
+        }
+
+        .discount-price-related {
+            font-size: 16px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .card-product {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .card-product:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
         }
     </style>
 
@@ -215,47 +238,77 @@
                 <div class="col-md-8">
                     <div class="ratings-list">
                         @forelse ($ratings as $rating)
-                            <div class="border p-3 mb-3 rating-item" id="rating-{{ $rating->id }}">
-                                @auth
-                                    <button class="btn btn-sm btn-outline-primary like-btn"
-                                        data-rating-id="{{ $rating->id }}"
-                                        onclick="toggleLike(this, {{ $rating->id }})">
-                                        <i class="fa fa-thumbs-up"></i>
-                                        <span class="like-text">Thích</span>
-                                        (<span class="like-count">{{ $rating->likes->count() }}</span>)
-                                    </button>
+                            <div class="card mb-4 shadow-sm" id="rating-{{ $rating->id }}">
+                                <div class="card-body position-relative">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-0">
+                                                <strong>{{ $rating->user->name }}</strong>
+                                                <span class="text-warning ms-2">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i
+                                                            class="fa fa-star {{ $i <= $rating->rating ? 'text-warning' : 'text-secondary' }}"></i>
+                                                    @endfor
+                                                </span>
+                                            </h6>
+                                            <small class="text-muted">{{ $rating->created_at->diffForHumans() }}</small>
+                                        </div>
 
-                                    <!-- Nút 3 chấm chỉ hiển thị nếu là tác giả -->
-                                    @if (auth()->id() === $rating->user_id)
-                                        <div class="dropdown more-btn">
-                                            <button class="btn btn-sm btn-outline-secondary" type="button"
-                                                id="dropdownMenuButton{{ $rating->id }}" data-bs-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $rating->id }}"
-                                                style="padding: 0px;">
-                                                <li><a class="dropdown-item text-danger" href="#"
-                                                        onclick="deleteRating({{ $rating->id }})">Xóa</a></li>
-                                            </ul>
+                                        @auth
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-sm btn-outline-primary me-2 like-btn"
+                                                    data-rating-id="{{ $rating->id }}"
+                                                    onclick="toggleLike(this, {{ $rating->id }})">
+                                                    <i class="fa fa-thumbs-up me-1"></i>
+                                                    <span class="like-text">Thích</span>
+                                                    (<span class="like-count">{{ $rating->likes->count() }}</span>)
+                                                </button>
+
+                                                @if (auth()->id() === $rating->user_id)
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                            id="dropdownMenuButton{{ $rating->id }}"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu"
+                                                            aria-labelledby="dropdownMenuButton{{ $rating->id }}">
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" href="#"
+                                                                    onclick="deleteRating({{ $rating->id }})"
+                                                                    style="padding: 0;">
+                                                                    <i class="fas fa-trash-alt me-2"></i> Xóa
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <span class="text-muted">
+                                                <i class="fa fa-thumbs-up me-1"></i> {{ $rating->likes->count() }} lượt thích
+                                            </span>
+                                        @endauth
+                                    </div>
+
+                                    <p class="mb-2">{{ $rating->comment ?? 'Không có nhận xét.' }}</p>
+
+                                    @if ($rating->admin_reply)
+                                        <div class="bg-light border-start border-4 border-primary p-3 rounded mt-3">
+                                            <p class="mb-1">
+                                                <strong class="text-primary">
+                                                    <i class="fas fa-user-shield me-1"></i>Admin phản hồi:
+                                                </strong>
+                                            </p>
+                                            <p class="mb-0">{{ $rating->admin_reply }}</p>
                                         </div>
                                     @endif
-                                @else
-                                    <span class="like-btn text-muted">
-                                        <i class="fa fa-thumbs-up"></i> {{ $rating->likes->count() }} lượt thích
-                                    </span>
-                                @endauth
-                                <p><strong>{{ $rating->user->name }}</strong> -
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <i class="fa fa-star {{ $i <= $rating->rating ? 'checked' : '' }}"></i>
-                                    @endfor
-                                </p>
-                                <p>{{ $rating->comment ?? 'Không có nhận xét.' }}</p>
-                                <small class="text-muted">{{ $rating->created_at->diffForHumans() }}</small>
+                                </div>
                             </div>
                         @empty
-                            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                            <div class="alert alert-info">Chưa có đánh giá nào cho sản phẩm này.</div>
                         @endforelse
+
 
                         <!-- Phân trang -->
                         <div class="mt-3">
@@ -273,21 +326,32 @@
             <div class="row">
                 @foreach ($related_products as $product)
                     <div class="col-md-3 mb-3">
-                        <div class="card">
-                            {{-- <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                class="card-img-top"> --}}
-                            @if ($product->mainImage)
-                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
-                                    alt="{{ $product->name }}" class="card-img-top">
-                            @else
-                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                    alt="Không có ảnh" class="card-img-top">
-                            @endif
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text">Giá: {{ number_format($product->price, 0, ',', '.') }} đ</p>
+                        <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none text-dark">
+                            <div class="card card-product h-100">
+                                {{-- <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" alt="{{ $product->name }}" class="card-img-top"> --}}
+                                @if ($product->mainImage)
+                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                        alt="{{ $product->name }}" class="card-img-top">
+                                @else
+                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                        alt="Không có ảnh" class="card-img-top">
+                                @endif
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">{{ $product->name }}</h5>
+                                    <p class="card-text text-center">
+                                        @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                            <span
+                                                class="original-price-related">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            <span
+                                                class="discount-price-related">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                        @else
+                                            <span
+                                                class="discount-price-related">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
                 @if ($related_products->isEmpty())

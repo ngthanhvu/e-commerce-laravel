@@ -133,6 +133,7 @@
 
             <a href="/admin/orders"><i class="fas fa-money-bill tw-mr-2"></i> Đơn hàng</a>
             <a href="/admin/coupons"><i class="fas fa-ticket tw-mr-2"></i> Mã giảm giá</a>
+            <a href="/admin/comments"><i class="fa-solid fa-comments tw-mr-2"></i> Bình luận & đánh giá</a>
             <a href="/admin/users"><i class="fas fa-users tw-mr-2"></i> Người dùng</a>
         </nav>
     </div>

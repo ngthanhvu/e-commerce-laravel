@@ -178,7 +178,7 @@ class HomeController extends Controller
 
         $orders = Orders::where('user_id', $userId)
             ->with(['orderItems.product', 'orderItems.variant', 'user', 'address'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return view('profile.history', compact('title', 'orders'));
