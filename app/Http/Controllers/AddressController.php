@@ -49,7 +49,16 @@ class AddressController extends Controller
             'street.required' => 'Vui lính diachi',
             'user_id.required' => 'Vui lính nguoi dung',
         ]);
-        Address::create($request->all());
+        $address = Address::create($request->all());
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Thêm địa chỉ thành công!',
+                'data' => $address
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Thêm địa chỉ thành công!');
     }
 

@@ -10,7 +10,28 @@
             <div class="col-md-9 col-lg-10 profile-content">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Lịch sử đơn hàng</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="card-title">Lịch sử đơn hàng</h4>
+                            <form method="GET" action="{{ route('history') }}" class="mb-4 d-flex">
+                                <select name="status" class="form-select w-auto me-2" onchange="this.form.submit()">
+                                    <option value="">-- Tất cả trạng thái --</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chưa
+                                        thanh
+                                        toán</option>
+                                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Đã thanh toán
+                                    </option>
+                                    <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Đã hủy
+                                    </option>
+                                    <option value="fail" {{ request('status') == 'fail' ? 'selected' : '' }}>Thất bại
+                                    </option>
+                                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Đã
+                                        giao
+                                        hàng</option>
+                                </select>
+                                <noscript><button type="submit" class="btn btn-primary">Lọc</button></noscript>
+                            </form>
+                        </div cla>
+
                         <table class="table text-center">
                             <thead>
                                 <tr>
@@ -83,6 +104,10 @@
                             </tbody>
                         </table>
 
+                        <div class="mt-3">
+                            {{ $orders->appends(request()->query())->links() }}
+                        </div>
+
                         @foreach ($orders as $order)
                             <div class="modal fade" id="orderDetailModal{{ $order->id }}" tabindex="-1"
                                 aria-labelledby="orderDetailModalLabel" aria-hidden="true">
@@ -154,8 +179,8 @@
                                                     <div class="tw-relative tw-mb-2">
                                                         <div
                                                             class="tw-w-10 tw-h-10 {{ $order->status == 'paid' || $order->status == 'delivered' ? 'tw-bg-green-500' : 'tw-bg-gray-300' }} tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white">
-                                                            <svg class="tw-w-6 tw-h-6" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
+                                                            <svg class="tw-w-6 tw-h-6" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                                     stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                             </svg>

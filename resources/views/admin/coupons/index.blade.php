@@ -76,7 +76,7 @@
                     <tr>
                         <th scope="row">{{ $index++ }}</th>
                         <td>{{ $coupon->code }}</td>
-                        <td>{{ $coupon->min_order_amount }}</td>
+                        <td>{{ $coupon->min_order_amount ?? 0 }}</td>
                         <td>{{ $coupon->type }}</td>
                         <td>{{ $coupon->discount }}</td>
                         <td>{{ $coupon->max_usage }}</td>

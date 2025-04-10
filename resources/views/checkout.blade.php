@@ -98,59 +98,6 @@
                 @endif
 
                 <!-- Form thêm địa chỉ mới -->
-                {{-- <form action="{{ route('address.store') }}" method="POST" id="new-address-form"
-                    style="display: {{ empty($addresses) ? 'block' : 'none' }};" class="tw-mt-3 address-form">
-                    @csrf
-
-                    <div class="mb-3">
-                        <label class="form-label">Họ và Tên</label>
-                        <input type="text" class="form-control tw-border-gray-300" name="name"
-                            placeholder="Nhập họ và tên">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="text" class="form-control tw-border-gray-300" name="phone"
-                            placeholder="Nhập số điện thoại">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Địa chỉ giao hàng</label>
-                        <div class="d-flex">
-                            <div class="w-50">
-                                <label for="province">Tỉnh/Thành phố</label>
-                                <select class="form-control form-select tw-border-gray-300" id="province" name="province">
-                                    <option value="">Chọn tỉnh/thành phố</option>
-                                </select>
-                            </div>
-                            <div class="w-50">
-                                <label for="district">Quận/Huyện</label>
-                                <select class="form-control form-select tw-border-gray-300" id="district" name="district">
-                                    <option value="">Chọn quận/huyện</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="w-50">
-                                <label for="ward">Xã/Phường</label>
-                                <select class="form-control form-select tw-border-gray-300" id="ward" name="ward">
-                                    <option value="">Chọn xã/phường</option>
-                                </select>
-                            </div>
-                            <div class="w-50">
-                                <label for="street">Số nhà, tên đường</label>
-                                <input type="text" class="form-control tw-border-gray-300" id="street" name="street"
-                                    placeholder="Nhập số nhà, tên đường">
-                            </div>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="user_id" value="{{ optional(Auth::user())->id }}">
-                    <input type="hidden" name="address" id="full_address">
-
-                    <button type="submit" class="btn btn-dark">Thêm địa chỉ</button>
-                </form> --}}
-
                 <form action="{{ route('address.store') }}" method="POST" id="new-address-form"
                     style="display: {{ empty($addresses) ? 'block' : 'none' }};" class="tw-mt-3 address-form">
                     @csrf
@@ -303,198 +250,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script xử lý toggle và API địa chỉ -->
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", async function() {
-            const toggleAddressFormBtn = document.getElementById("toggle-address-form");
-            const newAddressForm = document.getElementById("new-address-form");
-            const addressIdInput = document.getElementById("address_id");
-            let isFormVisible = {{ empty($addresses) ? 'true' : 'false' }};
-
-            async function fetchData(url) {
-                try {
-                    const response = await fetch(url);
-                    return await response.json();
-                } catch (error) {
-                    console.error("Lỗi khi gọi API:", error);
-                    return null;
-                }
-            }
-
-            async function loadProvinces() {
-                const data = await fetchData("https://provinces.open-api.vn/api/p/");
-                if (data) {
-                    const provinceSelect = document.getElementById("province");
-                    data.forEach(province => {
-                        const option = document.createElement("option");
-                        option.value = province.name;
-                        option.text = province.name;
-                        provinceSelect.appendChild(option);
-                    });
-                }
-            }
-
-            async function loadDistricts(provinceName) {
-                const districtSelect = document.getElementById("district");
-                const wardSelect = document.getElementById("ward");
-
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
-
-                if (!provinceName) return;
-
-                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
-                const province = provinces?.find(p => p.name === provinceName);
-
-                if (province) {
-                    const data = await fetchData(
-                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
-                    if (data) {
-                        data.districts.forEach(district => {
-                            const option = document.createElement("option");
-                            option.value = district.name;
-                            option.text = district.name;
-                            districtSelect.appendChild(option);
-                        });
-                    }
-                }
-            }
-
-            async function loadWards(districtName, provinceName) {
-                const wardSelect = document.getElementById("ward");
-                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
-
-                if (!districtName || !provinceName) return;
-
-                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
-                const province = provinces?.find(p => p.name === provinceName);
-
-                if (province) {
-                    const data = await fetchData(
-                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
-                    const district = data?.districts.find(d => d.name === districtName);
-
-                    if (district) {
-                        const wardData = await fetchData(
-                            `https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
-                        if (wardData) {
-                            wardData.wards.forEach(ward => {
-                                const option = document.createElement("option");
-                                option.value = ward.name;
-                                option.text = ward.name;
-                                wardSelect.appendChild(option);
-                            });
-                        }
-                    }
-                }
-            }
-
-            const applyCouponBtn = document.getElementById("apply_coupon");
-            const couponCodeInput = document.getElementById("coupon_code");
-            const couponMessage = document.getElementById("coupon_message");
-            const totalAmountDisplay = document.getElementById("total_amount_display");
-            const shippingFeeDisplay = document.getElementById("shipping_fee_display");
-            const shippingFeeInput = document.getElementById("shipping_fee");
-            const totalAmountInput = document.getElementById("total_amount");
-            const discountInput = document.getElementById("discount");
-
-            let shippingFee = parseInt(shippingFeeInput.value); // Lấy từ input ẩn
-            let originalSubtotal = {{ $carts->sum(fn($cart) => $cart->price * $cart->quantity) }};
-            let totalAmount = parseInt(totalAmountInput.value); // Giá trị ban đầu
-
-            applyCouponBtn.addEventListener("click", async function() {
-                const couponCode = couponCodeInput.value.trim();
-                if (!couponCode) {
-                    couponMessage.textContent = "Vui lòng nhập mã giảm giá!";
-                    return;
-                }
-
-                try {
-                    const response = await fetch("{{ route('coupon.apply') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            coupon_code: couponCode,
-                            total_amount: originalSubtotal +
-                                shippingFee
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        couponMessage.classList.remove("tw-text-red-500");
-                        couponMessage.classList.add("tw-text-green-500");
-                        couponMessage.textContent = result.message;
-
-                        const newTotal = result.new_total;
-                        totalAmountDisplay.textContent = newTotal.toLocaleString() + "₫";
-                        totalAmountInput.value = newTotal;
-                        discountInput.value = result.discount;
-                    } else {
-                        couponMessage.classList.remove("tw-text-green-500");
-                        couponMessage.classList.add("tw-text-red-500");
-                        couponMessage.textContent = result.message;
-                    }
-                } catch (error) {
-                    couponMessage.textContent = "Đã xảy ra lỗi, vui lòng thử lại!";
-                    console.error(error);
-                }
-            });
-
-            if (toggleAddressFormBtn) {
-                toggleAddressFormBtn.addEventListener("click", function() {
-                    if (isFormVisible) {
-                        newAddressForm.style.display = "none";
-                        toggleAddressFormBtn.textContent = "Thêm địa chỉ khác";
-                    } else {
-                        newAddressForm.style.display = "block";
-                        toggleAddressFormBtn.textContent = "Ẩn form thêm địa chỉ";
-                        document.querySelectorAll('input[name="address_id_temp"]').forEach(input =>
-                            input.checked = false);
-                        addressIdInput.value = ""; // Xóa address_id khi mở form mới
-                    }
-                    isFormVisible = !isFormVisible;
-                });
-            }
-
-            document.querySelectorAll('input[name="address_id_temp"]').forEach(radio => {
-                radio.addEventListener("change", function() {
-                    addressIdInput.value = this.value;
-                });
-            });
-
-            const checkedRadio = document.querySelector('input[name="address_id_temp"]:checked');
-            if (checkedRadio) {
-                addressIdInput.value = checkedRadio.value;
-            }
-
-            document.getElementById("province").addEventListener("change", async function() {
-                await loadDistricts(this.value);
-            });
-
-            document.getElementById("district").addEventListener("change", async function() {
-                await loadWards(this.value, document.getElementById("province").value);
-            });
-
-            await loadProvinces();
-
-            document.getElementById("new-address-form").addEventListener("submit", function(e) {
-                const province = document.getElementById("province").value;
-                const district = document.getElementById("district").value;
-                const ward = document.getElementById("ward").value;
-                const street = document.getElementById("street").value;
-
-                const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
-                document.getElementById("full_address").value = fullAddress;
-            });
-        });
-    </script> --}}
-
     <script>
         document.addEventListener("DOMContentLoaded", async function() {
             const toggleAddressFormBtn = document.getElementById("toggle-address-form");
@@ -721,17 +476,16 @@
                 const districtId = document.getElementById("district").value;
                 const wardCode = this.value;
                 if (districtId && wardCode) {
-                    await calculateShippingFee("YOUR_FROM_DISTRICT_ID", districtId,
+                    await calculateShippingFee("3695", districtId,
                         wardCode); // Thay YOUR_FROM_DISTRICT_ID
                 }
             });
 
             await loadProvinces();
 
-            document.getElementById("new-address-form").addEventListener("submit", function(e) {
-                e.preventDefault(); // Ngăn submit mặc định để xử lý dữ liệu
+            document.getElementById("new-address-form").addEventListener("submit", async function(e) {
+                e.preventDefault();
 
-                // Lấy tên từ dataset.name thay vì value (ID)
                 const provinceSelect = document.getElementById("province");
                 const districtSelect = document.getElementById("district");
                 const wardSelect = document.getElementById("ward");
@@ -743,37 +497,42 @@
                 const wardName = wardSelect.options[wardSelect.selectedIndex]?.dataset.name || "";
                 const street = document.getElementById("street").value;
 
-                // Tạo full_address từ tên
-                const fullAddress = `${street}, ${wardName}, ${districtName}, ${provinceName}`;
-                document.getElementById("full_address").value = fullAddress;
-
-                // Gán tên vào các input ẩn để gửi lên server
                 document.getElementById("province_name").value = provinceName;
                 document.getElementById("district_name").value = districtName;
                 document.getElementById("ward_name").value = wardName;
+                document.getElementById("full_address").value =
+                    `${street}, ${wardName}, ${districtName}, ${provinceName}`;
 
-                // Gửi form
-                const formData = new FormData(this);
-                fetch("{{ route('address.store') }}", {
+                try {
+                    const formData = new FormData(this);
+                    const response = await fetch("{{ route('address.store') }}", {
                         method: "POST",
                         headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json"
                         },
                         body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Thêm địa chỉ thành công!");
-                            location.reload(); // Reload trang để cập nhật danh sách địa chỉ
-                        } else {
-                            // alert("Lỗi: " + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Lỗi khi gửi form:", error);
-                        // alert("Đã xảy ra lỗi, vui lòng thử lại!");
                     });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || "Có lỗi xảy ra");
+                    }
+
+                    // alert("Thêm địa chỉ thành công!");
+                    iziToast.success({
+                        title: 'Thành công',
+                        message: 'Thêm địa chỉ thành công!',
+                        position: 'topRight'
+                    });
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } catch (error) {
+                    console.error("Lỗi khi gửi form:", error);
+                    alert("Đã xảy ra lỗi: " + error.message);
+                }
             });
         });
     </script>

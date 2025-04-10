@@ -150,7 +150,8 @@ class HomeController extends Controller
             }
         }
 
-        $products = $query->get();
+        // $products = $query->get();
+        $products = $query->paginate(12);
 
         $categories = Category::whereNull('parent_id')->with('allChildren')->get();
 
@@ -175,13 +176,18 @@ class HomeController extends Controller
     {
         $title = "Lịch sử";
         $userId = Auth::user()->id;
+        $status = request()->query('status');
 
-        $orders = Orders::where('user_id', $userId)
+        $query = Orders::where('user_id', $userId)
             ->with(['orderItems.product', 'orderItems.variant', 'user', 'address'])
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'asc');
 
-        return view('profile.history', compact('title', 'orders'));
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+        $orders = $query->paginate(5);
+
+        return view('profile.history', compact('title', 'orders', 'status'));
     }
 
     public function checkout()

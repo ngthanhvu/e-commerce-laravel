@@ -169,6 +169,10 @@
                             <p>Không tìm thấy sản phẩm nào.</p>
                         </div>
                     @endforelse
+                    <div class="mt-3">
+                        {{ $products->appends(request()->query())->links() }}
+                    </div>
+
                 </div>
             </div>
         </div>
