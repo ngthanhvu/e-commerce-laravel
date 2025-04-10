@@ -121,3 +121,5 @@ Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('co
 Route::post('/products/{product}/ratings', [RatingController::class, 'store'])->name('ratings.store');
 Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');
 Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('ratings.destroy');
+// print order
+Route::get('/order/{id}/print-invoice', [OrdersController::class, 'printInvoice'])->name('orders.printInvoice');

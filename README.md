@@ -30,3 +30,11 @@ composer require laravel/socialite
 ```bash
 composer require guzzlehttp/guzzle
 ```
+### Thư viện DomPDF
+```bash
+composer require barryvdh/laravel-dompdf
+```
+### Thư viện QR CODE
+```bash
+composer require simplesoftwareio/simple-qrcode
+```

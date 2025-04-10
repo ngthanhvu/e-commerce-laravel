@@ -91,6 +91,11 @@
                                                     class="btn btn-outline-secondary btn-sm"><i
                                                         class="fa-solid fa-rotate-left"></i> Mua lại</button>
                                             @endif
+                                            <a href="{{ route('orders.printInvoice', $order->id) }}" target="_blank"
+                                                class="btn btn-outline-primary btn-sm no-loading">
+                                                <i class="fa fa-print"></i> In hóa đơn
+                                            </a>
+
                                         </td>
                                     </tr>
                                 @empty

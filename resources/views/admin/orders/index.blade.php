@@ -121,6 +121,11 @@
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                <a href="{{ route('orders.printInvoice', $order->id) }}" target="_blank"
+                                    class="btn btn-outline-primary btn-sm no-loading">
+                                    <i class="fa fa-print"></i> In hóa đơn
+                                </a>
+
                             </div>
                         </td>
 

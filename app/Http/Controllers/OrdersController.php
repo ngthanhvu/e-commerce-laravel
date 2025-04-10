@@ -8,6 +8,7 @@ use App\Models\Carts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrdersController extends Controller
 {
@@ -198,5 +199,20 @@ class OrdersController extends Controller
             'status' => 'success',
             'message' => 'Đã thêm sản phẩm từ đơn hàng vào giỏ hàng!'
         ]);
+    }
+
+    public function printInvoice($id)
+    {
+        $order = Orders::with(['orderItems.product', 'user', 'address'])->findOrFail($id);
+
+        if (Auth::check() && Auth::user()->role == 'user') {
+            if ($order->user_id != Auth::user()->id) {
+                return abort(403, 'Bạn không có quyền xem đơn hàng này.');
+            }
+        }
+
+        $pdf = Pdf::loadView('orders.invoice-pdf', compact('order'));
+
+        return $pdf->stream('hoa-don-' . $order->id . '.pdf');
     }
 }
