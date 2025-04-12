@@ -180,8 +180,14 @@
                     <input type="hidden" name="price" id="priceInput"
                         value="{{ $product->discount_price && $product->discount_price < $product->price ? $product->discount_price : $product->price }}">
                     <input type="hidden" name="variant_id" id="variantIdInput" value="">
-                    <button type="submit" class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO
-                        GIỎ HÀNG</button>
+
+                    @if ($product->quantity > 0)
+                        <button type="submit" class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM
+                            VÀO GIỎ HÀNG</button>
+                    @else
+                        <button type="button" class="btn btn-dark w-50 mt-3" disabled><i
+                                class="fa-solid fa-cart-shopping"></i> HẾT HÀNG</button>
+                    @endif
                     <button type="button" class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu
                         thích</button>
                 </form>
