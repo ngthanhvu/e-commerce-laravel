@@ -34,4 +34,12 @@ class Orders_item extends Model
     {
         return $this->belongsTo(Variant::class);
     }
+    public function mainImage()
+    {
+        return $this->hasOne(Image::class, 'product_id', 'product_id')->where('is_main', 1);
+    }
+    public function images()
+    {
+        return $this->hasMany(Image::class, 'product_id', 'product_id')->where('is_main', 0);
+    }
 }

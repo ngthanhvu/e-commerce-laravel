@@ -33,4 +33,8 @@ class Orders extends Model
     {
         return $this->hasMany(Orders_item::class, 'order_id', 'id');
     }
+    public function image()
+    {
+        return $this->hasMany(Image::class, 'order_id', 'id');
+    }
 }

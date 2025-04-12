@@ -4,7 +4,8 @@
     <h3 class="tw-text-2xl tw-font-bold tw-mb-6">Trang chủ admin</h3>
 
     <!-- Stats Cards -->
-    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-4 tw-mb-6">
+    <!-- Trong phần Stats Cards -->
+    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-4 tw-gap-4 tw-mb-6">
         <!-- Card 1: Total Users -->
         <div class="card tw-shadow-md">
             <div class="card-body">
@@ -20,11 +21,18 @@
                     {{ number_format($totalRevenue, 0, ',', '.') }} VNĐ</p>
             </div>
         </div>
-        <!-- Card 3: Active Projects -->
+        <!-- Card 3: Total Orders -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold">Số đơn hàng</h5>
                 <p class="card-text tw-text-3xl tw-font-bold tw-text-purple-600">{{ $totalOrders }} đơn</p>
+            </div>
+        </div>
+        <!-- Card 4: Total Stock -->
+        <div class="card tw-shadow-md">
+            <div class="card-body">
+                <h5 class="card-title tw-text-lg tw-font-semibold">Tổng tồn kho</h5>
+                <p class="card-text tw-text-3xl tw-font-bold tw-text-orange-600">{{ $totalStock }} sản phẩm</p>
             </div>
         </div>
     </div>
@@ -50,19 +58,24 @@
     <!-- Recent Activities Table -->
     <div class="tw-mb-6">
         <h3 class="tw-text-xl tw-font-semibold tw-mb-3">Sản phẩm bán chạy</h3>
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover text-center">
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Hình ảnh</th>
                     <th>Tên sản phẩm</th>
                     <th>Số lượng bán</th>
                     <th>Doanh thu</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="align-middle">
                 @foreach ($topProducts as $index => $product)
                     <tr>
                         <td>{{ $index + 1 }}</td>
+                        <td>
+                            <img src="{{ asset('storage/' . $product->product->mainImage->sub_image) }}"
+                                alt="{{ $product->product->name }}" class="tw-w-16 tw-h-16 tw-object-cover">
+                        </td>
                         <td>{{ $product->product->name }}</td>
                         <td>{{ $product->total_quantity }}</td>
                         <td>{{ number_format($product->total_revenue, 0, ',', '.') }} VNĐ</td>

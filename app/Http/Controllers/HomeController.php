@@ -55,7 +55,7 @@ class HomeController extends Controller
             DB::raw('SUM(quantity) as total_quantity'),
             DB::raw('SUM(subtotal) as total_revenue')
         )
-            ->with('product')
+            ->with(['product.mainImage']) // Sửa từ 'product', 'mainImage' thành 'product.mainImage'
             ->groupBy('product_id')
             ->orderByDesc('total_quantity')
             ->limit(5)
@@ -64,6 +64,8 @@ class HomeController extends Controller
         $totalUsers = User::count();
 
         $totalOrders = Orders::count();
+
+        $totalStock = Product::sum('quantity');
 
         $months = range(1, 12);
 
@@ -105,7 +107,8 @@ class HomeController extends Controller
             'orderData',
             'productData',
             'userData',
-            'totalOrders'
+            'totalOrders',
+            'totalStock'
         ));
     }
 

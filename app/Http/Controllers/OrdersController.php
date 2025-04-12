@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderStatusChanged;
 
 class OrdersController extends Controller
 {
@@ -110,9 +112,15 @@ class OrdersController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $order = Orders::find($id);
+        $order = Orders::with('user')->findOrFail($id); // lấy luôn quan hệ user
+
         $order->status = $request->input('status');
         $order->save();
+
+        // Gửi mail nếu user có email
+        if ($order->user && $order->user->email) {
+            Mail::to($order->user->email)->send(new OrderStatusChanged($order));
+        }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
     }

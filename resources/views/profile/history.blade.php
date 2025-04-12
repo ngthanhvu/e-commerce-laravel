@@ -60,7 +60,7 @@
                                                     class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-green-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-green-800 tw-ring-1 tw-ring-green-600/20 tw-ring-inset">
                                                     Đã thanh toán
                                                 </span>
-                                            @elseif($order->status == 'canceled')
+                                            @elseif($order->status == 'cancelled')
                                                 <span
                                                     class="tw-inline-flex tw-items-center tw-rounded-md tw-bg-red-50 tw-px-2 tw-py-1 tw-text-xs tw-font-medium tw-text-red-800 tw-ring-1 tw-ring-red-600/20 tw-ring-inset">
                                                     Đã hủy

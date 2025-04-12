@@ -54,7 +54,7 @@
                 <div class="mb-3">
                     <label for="loginEmail" class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" id="loginEmail"
-                        placeholder="Nhập email của bạn">
+                        placeholder="Nhập email của bạn" value="{{ old('email') }}">
                     @error('email')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -66,6 +66,9 @@
                     @error('password')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
+                    @if (session('error'))
+                        <p class="text-danger">{{ session('error') }}</p>
+                    @endif
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe">

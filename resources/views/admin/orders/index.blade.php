@@ -114,13 +114,14 @@
 
 
                                 <form action="{{ Route('admin.orders.destroy', $order->id) }}" method="POST"
-                                    class="d-inline-block m-0">
+                                    class="d-inline-block m-0 delete-order-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+
                                 <a href="{{ route('orders.printInvoice', $order->id) }}" target="_blank"
                                     class="btn btn-outline-primary btn-sm no-loading">
                                     <i class="fa fa-print"></i> In hóa đơn
@@ -257,4 +258,30 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const deleteForms = document.querySelectorAll('.delete-order-form');
+
+            deleteForms.forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // chặn form submit
+
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn muốn xoá đơn hàng này?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Vâng, xoá đi!',
+                        cancelButtonText: 'Hủy bỏ'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // tiếp tục submit nếu xác nhận
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endsection

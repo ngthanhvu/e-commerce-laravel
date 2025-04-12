@@ -66,10 +66,12 @@ class UserController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'email' => 'required|email|exists:users,email',
         ], [
             'email.required' => 'Vui lòng nhập email',
             'email.email' => 'Email không đúng định dạng',
             'password.required' => 'Vui lòng nhập mật khâu',
+            'email.exists' => 'Email không tồn tại trong hệ thống',
         ]);
 
         $oldSessionId = session()->getId();
@@ -81,9 +83,10 @@ class UserController extends Controller
                 ->update(['user_id' => $userId]);
             return redirect('/')->with('success', 'Đăng nhập thành công');
         } else {
-            return back()->with('error', 'Email hoặc mật khâu không đúng');
+            return back()->withInput()->with('error', 'Email hoặc mật khâu không đúng');
         }
     }
+
     public function logout(Request $request)
     {
         Auth::logout();
