@@ -6,7 +6,38 @@
             <h3 class="tw-text-2xl tw-font-bold">Quản lý sản phẩm</h3>
             <p class="tw-text-gray-500 tw-mt-1">Danh sách các sản phẩm đang có!</p>
         </div>
+        <button type="button" class="btn btn-outline-primary me-3" data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
+            <i class="fa-solid fa-file-csv"></i> Upload Excel
+        </button>
     </div>
+    <!-- Modal Upload Excel -->
+    <div class="modal fade" id="uploadExcelModal" tabindex="-1" aria-labelledby="uploadExcelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadExcelModalLabel">Upload File Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.products.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="excel_file" class="form-label">Chọn file Excel</label>
+                            <input type="file" class="form-control" id="excel_file" name="excel_file"
+                                accept=".xlsx, .xls" required>
+                        </div>
+                        <p class="text-muted">File Excel cần có các cột: name, price, discount_price, quantity, category_id,
+                            description.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @if (session('success'))
         <script>
             iziToast.success({

@@ -38,3 +38,7 @@ composer require barryvdh/laravel-dompdf
 ```bash
 composer require simplesoftwareio/simple-qrcode
 ```
+## Thư viện excel
+```bash
+composer require maatwebsite/excel
+```

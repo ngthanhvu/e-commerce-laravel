@@ -70,6 +70,7 @@ Route::middleware('check.role:admin')->group(function () {
     Route::get('/admin/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
+    Route::post('/admin/products/import', [ProductController::class, 'import'])->name('admin.products.import');
     //categories
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');

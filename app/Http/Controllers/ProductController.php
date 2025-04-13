@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
 
 class ProductController extends Controller
 {
@@ -33,6 +35,23 @@ class ProductController extends Controller
         $products = $query->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);
 
         return view('admin.products.index', compact('title', 'products', 'search', 'perPage'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls',
+        ], [
+            'excel_file.required' => 'Vui lòng chọn file Excel.',
+            'excel_file.mimes' => 'File phải có định dạng .xlsx hoặc .xls.',
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('excel_file'));
+            return redirect()->route('admin.products.index')->with('success', 'Nhập sản phẩm từ Excel thành công!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.products.index')->with('error', 'Có lỗi xảy ra khi nhập file: ' . $e->getMessage());
+        }
     }
 
     public function create()
