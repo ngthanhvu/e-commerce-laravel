@@ -50,6 +50,121 @@
     {{-- swipper js --}}
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <style>
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 360px;
+            max-height: 500px;
+            height: 500px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chatbot-container.open {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .chatbot-close {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .chat-box {
+            flex: 1;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: 20%;
+        }
+
+        .bot-message {
+            background-color: #f5f5f5;
+            margin-right: 20%;
+        }
+
+        .bot-message img {
+            max-width: 100px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+
+        .input-group-chatbot {
+            display: flex;
+            padding: 10px;
+        }
+
+        .input-group-chatbot input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            font-size: 14px;
+        }
+
+        .input-group-chatbot button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-left: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .input-group-chatbot button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,7 +172,87 @@
     <main class="container-fluid mt-3">
         @yield('content')
     </main>
+
+    <div class="chatbot-icon text-white" onclick="toggleChatbot()">
+        <i class="fa-regular fa-comment"></i>
+    </div>
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-header">
+            <h3>Trợ lý Chatbot</h3>
+            <span class="chatbot-close" onclick="toggleChatbot()">×</span>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="message bot-message">Xin chào! Tôi có thể giúp bạn tìm sản phẩm gì hôm nay?</div>
+        </div>
+        <div class="input-group-chatbot">
+            <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." autocomplete="off">
+            <button onclick="sendMessage()">Gửi</button>
+        </div>
+    </div>
+
     @include('includes.footer')
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        function toggleChatbot() {
+            const container = document.getElementById('chatbotContainer');
+            container.classList.toggle('open');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const chatBox = document.getElementById('chatBox');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            userDiv.textContent = message;
+            chatBox.appendChild(userDiv);
+
+            input.value = '';
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch('{{ route('chatbot.chat') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        message
+                    }),
+                });
+
+                const data = await response.json();
+
+                const htmlContent = marked.parse(data.message);
+
+                const botDiv = document.createElement('div');
+                botDiv.className = 'message bot-message';
+                botDiv.innerHTML = htmlContent;
+                chatBox.appendChild(botDiv);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                console.error('Lỗi:', error);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot-message';
+                errorDiv.textContent = 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại.';
+                chatBox.appendChild(errorDiv);
+            }
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 
 </html>

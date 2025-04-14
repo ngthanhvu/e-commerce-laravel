@@ -4,16 +4,15 @@
     <h3 class="tw-text-2xl tw-font-bold tw-mb-6">Trang chủ admin</h3>
 
     <!-- Stats Cards -->
-    <!-- Trong phần Stats Cards -->
-    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-4 tw-gap-4 tw-mb-6">
-        <!-- Card 1: Total Users -->
+    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-5 tw-gap-4 tw-mb-6">
+        <!-- Card 1: Tổng người dùng -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold">Tổng người dùng</h5>
                 <p class="card-text tw-text-3xl tw-font-bold tw-text-blue-600">{{ $totalUsers }} người</p>
             </div>
         </div>
-        <!-- Card 2: Total Revenue -->
+        <!-- Card 2: Tổng doanh thu -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold">Tổng doanh thu</h5>
@@ -21,14 +20,22 @@
                     {{ number_format($totalRevenue, 0, ',', '.') }} VNĐ</p>
             </div>
         </div>
-        <!-- Card 3: Total Orders -->
+        <!-- Card 3: Doanh thu thực tế -->
+        <div class="card tw-shadow-md">
+            <div class="card-body">
+                <h5 class="card-title tw-text-lg tw-font-semibold">Doanh thu thực tế</h5>
+                <p class="card-text tw-text-3xl tw-font-bold tw-text-teal-600">
+                    {{ number_format($actualRevenue, 0, ',', '.') }} VNĐ</p>
+            </div>
+        </div>
+        <!-- Card 4: Tổng đơn hàng -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold">Số đơn hàng</h5>
                 <p class="card-text tw-text-3xl tw-font-bold tw-text-purple-600">{{ $totalOrders }} đơn</p>
             </div>
         </div>
-        <!-- Card 4: Total Stock -->
+        <!-- Card 5: Tổng tồn kho -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold">Tổng tồn kho</h5>
@@ -39,14 +46,14 @@
 
     <!-- Chart Section -->
     <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4 tw-mb-6">
-        <!-- Line Chart -->
+        <!-- Biểu đồ đường -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold tw-mb-4">Doanh thu hàng tháng</h5>
                 <canvas id="revenueChart" height="200"></canvas>
             </div>
         </div>
-        <!-- Bar Chart -->
+        <!-- Biểu đồ cột -->
         <div class="card tw-shadow-md">
             <div class="card-body">
                 <h5 class="card-title tw-text-lg tw-font-semibold tw-mb-4">Đơn hàng, Sản phẩm, Người dùng</h5>
@@ -55,7 +62,7 @@
         </div>
     </div>
 
-    <!-- Recent Activities Table -->
+    <!-- Bảng sản phẩm bán chạy -->
     <div class="tw-mb-6">
         <h3 class="tw-text-xl tw-font-semibold tw-mb-3">Sản phẩm bán chạy</h3>
         <table class="table table-striped table-hover text-center">
@@ -86,7 +93,7 @@
     </div>
 
     <script>
-        // Revenue Chart (Line Chart)
+        // Biểu đồ doanh thu (Biểu đồ đường)
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
         new Chart(revenueCtx, {
             type: 'line',
@@ -97,17 +104,33 @@
                     @endforeach
                 ],
                 datasets: [{
-                    label: 'Doanh thu (VNĐ)',
-                    data: [
-                        @foreach ($monthlyRevenue as $data)
-                            {{ $data->revenue }},
-                        @endforeach
-                    ],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: true,
-                    tension: 0.4
-                }]
+                        label: 'Doanh thu (VNĐ)',
+                        data: [
+                            @foreach ($monthlyRevenue as $data)
+                                {{ $data->revenue }},
+                            @endforeach
+                        ],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Doanh thu thực tế (VNĐ)',
+                        data: [
+                            @foreach ($monthlyRevenue as $data)
+                                @php
+                                    $actual = $monthlyActualRevenue->firstWhere('month', $data->month);
+                                @endphp
+                                {{ $actual ? $actual->actual_revenue : 0 }},
+                            @endforeach
+                        ],
+                        borderColor: 'rgba(255, 159, 64, 1)', // Màu cam cho doanh thu thực tế
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
             },
             options: {
                 scales: {
@@ -118,7 +141,7 @@
             }
         });
 
-        // Users Chart (Bar Chart)
+        // Biểu đồ người dùng (Biểu đồ cột)
         const usersCtx = document.getElementById('usersChart').getContext('2d');
         new Chart(usersCtx, {
             type: 'bar',

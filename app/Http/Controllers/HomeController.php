@@ -94,6 +94,20 @@ class HomeController extends Controller
             ->pluck('user_count', 'month')
             ->all();
 
+        $actualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
+            ->sum(DB::raw('orders_item.quantity * (orders_item.price - products.original_price)'));
+
+        $monthlyActualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
+            ->select(
+                DB::raw('MONTH(orders.created_at) as month'),
+                DB::raw('SUM(orders_item.quantity * (orders_item.price - products.original_price)) as actual_revenue')
+            )
+            ->groupBy(DB::raw('MONTH(orders.created_at)'))
+            ->orderBy('month')
+            ->get();
+
         $orderData = array_map(fn($month) => $monthlyOrders[$month] ?? 0, $months);
         $productData = array_map(fn($month) => $monthlyProducts[$month] ?? 0, $months);
         $userData = array_map(fn($month) => $monthlyUsers[$month] ?? 0, $months);
@@ -108,7 +122,9 @@ class HomeController extends Controller
             'productData',
             'userData',
             'totalOrders',
-            'totalStock'
+            'totalStock',
+            'actualRevenue',
+            'monthlyActualRevenue',
         ));
     }
 

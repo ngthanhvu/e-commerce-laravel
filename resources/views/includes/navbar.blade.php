@@ -10,6 +10,10 @@
                     phẩm</a>
             </li>
             <li class="nav-item">
+                <a href="/tin-tuc" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Tin
+                    tức</a>
+            </li>
+            <li class="nav-item">
                 <a href="#" class="nav-link link-body-emphasis px-2 text-secondary fw-bold">Về chúng
                     tôi</a>
             </li>

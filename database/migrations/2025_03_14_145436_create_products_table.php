@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->decimal('discount_price', 10, 2)->nullable();
+            $table->decimal('original_price', 10, 2)->nullable();
             $table->integer('quantity');
             $table->string('slug')->unique();
             $table->integer('count')->default(0);

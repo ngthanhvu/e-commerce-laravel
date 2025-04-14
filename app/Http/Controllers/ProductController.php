@@ -66,6 +66,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
+            'original_price' => 'required|numeric',
             'discount_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
@@ -76,6 +77,8 @@ class ProductController extends Controller
             'name.required' => 'Vui lòng nhập tên sản phẩm',
             'price.required' => 'Vui lòng nhập giá sản phẩm',
             'price.numeric' => 'Giá sản phẩm phải là số',
+            'original_price.required' => 'Vui lòng nhập giá gốc sản phẩm',
+            'original_price.numeric' => 'Giá gốc sản phẩm phải là số',
             'discount_price.numeric' => 'Giá khuyến mãi phải là số',
             'quantity.required' => 'Vui lòng nhập số lượng sản phẩm',
             'quantity.integer' => 'Số lượng sản phẩm phải là số nguyên',
@@ -97,6 +100,7 @@ class ProductController extends Controller
         $product = Product::create([
             'name' => $request->name,
             'price' => $request->price,
+            'original_price' => $request->original_price,
             'discount_price' => $request->discount_price,
             'quantity' => $request->quantity,
             'slug' => $slug,
@@ -173,6 +177,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
+            'original_price' => 'required|numeric',
             'discount_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
@@ -183,6 +188,8 @@ class ProductController extends Controller
             'name.required' => 'Vui lòng nhập tên sản phẩm',
             'price.required' => 'Vui lòng nhập giá sản phẩm',
             'price.numeric' => 'Giá sản phẩm phải là số',
+            'original_price.required' => 'Vui lòng nhập giá gốc sản phẩm',
+            'original_price.numeric' => 'Giá gốc sản phẩm phải là số',
             'discount_price.numeric' => 'Giá khuyến mãi phải là số',
             'quantity.required' => 'Vui lòng nhập số lượng sản phẩm',
             'quantity.integer' => 'Số lượng sản phẩm phải là số nguyên',
@@ -203,6 +210,7 @@ class ProductController extends Controller
         $product->update([
             'name' => $request->name,
             'price' => $request->price,
+            'original_price' => $request->original_price,
             'discount_price' => $request->discount_price,
             'quantity' => $request->quantity,
             'slug' => $slug,

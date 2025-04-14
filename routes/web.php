@@ -11,6 +11,8 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ChatbotController;
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dang-nhap', function () {
@@ -124,3 +126,11 @@ Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('
 Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 // print order
 Route::get('/order/{id}/print-invoice', [OrdersController::class, 'printInvoice'])->name('orders.printInvoice');
+// blog
+Route::get('/tin-tuc', function () {
+    $title = "Tin tức";
+    return view('blogs.blog', compact('title'));
+})->name('blog.index');
+//chat bot
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
