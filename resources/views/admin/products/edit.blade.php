@@ -22,19 +22,19 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Giá</label>
-                        <input type="number" class="form-control" id="price" name="price"
-                            value="{{ old('price', $product->price) }}">
-                        @error('price')
+                        <label for="price" class="form-label">Giá nhập</label>
+                        <input type="number" class="form-control" id="original_price" name="original_price"
+                            value="{{ old('original_price', $product->original_price) ?? 0 }}">
+                        @error('original_price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Giá gốc</label>
-                        <input type="number" class="form-control" id="original_price" name="original_price"
-                            value="{{ old('original_price', $product->original_price) ?? 0 }}">
-                        @error('original_price')
+                        <label for="price" class="form-label">Giá bán</label>
+                        <input type="number" class="form-control" id="price" name="price"
+                            value="{{ old('price', $product->price) }}">
+                        @error('price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>

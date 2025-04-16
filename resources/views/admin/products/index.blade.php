@@ -88,8 +88,8 @@
                     <th scope="col">#</th>
                     <th scope="col">Tên sản phẩm</th>
                     <th scope="col">Danh mục</th>
-                    <th scope="col">Giá</th>
-                    <th scope="col">Giá gốc</th>
+                    <th scope="col">Giá nhập</th>
+                    <th scope="col">Giá bán</th>
                     <th scope="col">Giá khuyến mãi</th>
                     <th scope="col">Hình ảnh</th>
                     <th scope="col">Số lượng</th>
@@ -105,8 +105,8 @@
                         <th scope="row">{{ $index++ }}</th>
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->category->name ?? 'Không có danh mục' }}</td>
-                        <td>{{ number_format($product->price) }} đ</td>
                         <td>{{ number_format($product->original_price) }} đ</td>
+                        <td>{{ number_format($product->price) }} đ</td>
                         <td>{{ number_format($product->discount_price) }} đ</td>
                         <td>
                             @if ($product->mainImage)

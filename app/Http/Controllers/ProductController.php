@@ -17,7 +17,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Products';
+        $title = 'Quản lý sản phẩm';
         $search = $request->input('search');
         $perPage = $request->input('per_page', 10);
 

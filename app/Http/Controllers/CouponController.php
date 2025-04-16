@@ -42,30 +42,36 @@ class CouponController extends Controller
 
     public function create()
     {
-        return view('admin.coupons.create');
+        $title = "Thêm mã giảm giá";
+        return view('admin.coupons.create', compact('title'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:50|unique:coupons,code',
-            'discount' => 'required|numeric|min:0',
-            'type' => 'required|in:fixed,percent',
-            'min_order_amount' => 'nullable|numeric|min:0',
-            'max_usage' => 'required|integer|min:1',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'is_active' => 'required|boolean',
-        ], [
-            'code.required' => 'Vui lòng nhập mã giảm giá',
-            'discount.required' => 'Vui lòng nhập giá trị giảm',
-            'type.required' => 'Vui lòng nhập loại',
-            'min_order_amount.required' => 'Vui lòng nhập giá trị tối thieu',
-            'max_usage.required' => 'Vui lòng nhập số lần dùng',
-            'start_date.required' => 'Vui lòng nhập ngày bằng',
-            'end_date.required' => 'Vui lòng nhập ngày kết thúc',
-            'is_active.required' => 'Vui lòng nhập trạng thái thái',
-        ]);
+        $request->validate(
+            [
+                'code' => 'required|string|max:50|unique:coupons,code',
+                'discount' => 'required|numeric|min:0',
+                'type' => 'required|in:fixed,percent',
+                'min_order_amount' => 'nullable|numeric|min:0',
+                'max_usage' => 'required|integer|min:1',
+                'start_date' => 'required|date|after_or_equal:today',
+                'end_date' => 'required|date|after:start_date',
+                'is_active' => 'required|boolean',
+            ],
+            [
+                'code.required' => 'Vui lòng nhập mã giảm giá',
+                'discount.required' => 'Vui lòng nhập giá trị giảm',
+                'type.required' => 'Vui lòng chọn loại mã',
+                'min_order_amount.required' => 'Vui lòng nhập giá trị tối thiểu',
+                'max_usage.required' => 'Vui lòng nhập số lần sử dụng tối đa',
+                'start_date.required' => 'Vui lòng nhập ngày bắt đầu',
+                'start_date.after_or_equal' => 'Ngày bắt đầu phải từ hôm nay trở đi',
+                'end_date.required' => 'Vui lòng nhập ngày kết thúc',
+                'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu',
+                'is_active.required' => 'Vui lòng chọn trạng thái',
+            ]
+        );
 
         Coupon::create($request->all());
 

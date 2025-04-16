@@ -21,19 +21,19 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Giá</label>
-                        <input type="number" class="form-control" id="price" name="price"
+                        <label for="price" class="form-label">Giá nhập</label>
+                        <input type="number" class="form-control" id="original_price" name="original_price"
                             placeholder="Nhập giá sản phẩm">
-                        @error('price')
+                        @error('original_price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Giá gốc</label>
-                        <input type="number" class="form-control" id="original_price" name="original_price"
+                        <label for="price" class="form-label">Giá bán</label>
+                        <input type="number" class="form-control" id="price" name="price"
                             placeholder="Nhập giá sản phẩm">
-                        @error('original_price')
+                        @error('price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>

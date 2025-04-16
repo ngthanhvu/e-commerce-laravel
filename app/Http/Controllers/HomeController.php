@@ -55,16 +55,14 @@ class HomeController extends Controller
             DB::raw('SUM(quantity) as total_quantity'),
             DB::raw('SUM(subtotal) as total_revenue')
         )
-            ->with(['product.mainImage']) // Sửa từ 'product', 'mainImage' thành 'product.mainImage'
+            ->with(['product.mainImage'])
             ->groupBy('product_id')
             ->orderByDesc('total_quantity')
             ->limit(5)
             ->get();
 
         $totalUsers = User::count();
-
         $totalOrders = Orders::count();
-
         $totalStock = Product::sum('quantity');
 
         $months = range(1, 12);
@@ -96,13 +94,14 @@ class HomeController extends Controller
 
         $actualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
             ->join('orders', 'orders_item.order_id', '=', 'orders.id')
-            ->sum(DB::raw('orders_item.quantity * (orders_item.price - products.original_price)'));
+            ->sum(DB::raw('orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)'));
+
 
         $monthlyActualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
             ->join('orders', 'orders_item.order_id', '=', 'orders.id')
             ->select(
                 DB::raw('MONTH(orders.created_at) as month'),
-                DB::raw('SUM(orders_item.quantity * (orders_item.price - products.original_price)) as actual_revenue')
+                DB::raw('SUM(orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)) as actual_revenue')
             )
             ->groupBy(DB::raw('MONTH(orders.created_at)'))
             ->orderBy('month')
