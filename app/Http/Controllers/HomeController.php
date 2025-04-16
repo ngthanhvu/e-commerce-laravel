@@ -13,6 +13,7 @@ use App\Models\Address;
 use App\Models\User;
 use App\Models\Carts;
 use App\Models\Orders;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -36,26 +37,61 @@ class HomeController extends Controller
         return view('index', compact('products', 'categories', 'title', 'list_category'));
     }
 
-    public function admin()
+    public function admin(Request $request)
     {
         $title = "Trang quản trị";
 
-        $totalRevenue = Orders::sum('total_price');
+        // Lấy tham số lọc từ request
+        $filterType = $request->query('filter_type', 'month'); // 'day' hoặc 'month'
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $year = $request->query('year', date('Y'));
+        $month = $request->query('month');
 
-        $monthlyRevenue = Orders::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(total_price) as revenue')
-        )
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->orderBy('month')
-            ->get();
+        // Tổng doanh thu
+        $totalRevenueQuery = Orders::query();
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $totalRevenueQuery->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($filterType === 'month' && $month && $year) {
+            $totalRevenueQuery->whereYear('created_at', $year)->whereMonth('created_at', $month);
+        }
+        $totalRevenue = $totalRevenueQuery->sum('total_price');
 
-        $topProducts = Orders_item::select(
+        // Doanh thu theo thời gian
+        $monthlyRevenueQuery = Orders::query();
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $monthlyRevenueQuery->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(total_price) as revenue')
+            )
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->orderBy('date');
+        } else {
+            $monthlyRevenueQuery->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SUM(total_price) as revenue')
+            )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'))
+                ->orderBy('month');
+        }
+        $monthlyRevenue = $monthlyRevenueQuery->get();
+
+        // Sản phẩm bán chạy
+        $topProductsQuery = Orders_item::query();
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $topProductsQuery->whereBetween('orders.created_at', [$startDate, $endDate]);
+        } elseif ($filterType === 'month' && $month && $year) {
+            $topProductsQuery->whereYear('orders.created_at', $year)->whereMonth('orders.created_at', $month);
+        }
+        $topProducts = $topProductsQuery->select(
             'product_id',
             DB::raw('SUM(quantity) as total_quantity'),
             DB::raw('SUM(subtotal) as total_revenue')
         )
             ->with(['product.mainImage'])
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
             ->groupBy('product_id')
             ->orderByDesc('total_quantity')
             ->limit(5)
@@ -65,51 +101,137 @@ class HomeController extends Controller
         $totalOrders = Orders::count();
         $totalStock = Product::sum('quantity');
 
+        // Dữ liệu biểu đồ
         $months = range(1, 12);
+        $days = $filterType === 'day' && $startDate && $endDate
+            ? collect(Carbon::parse($startDate)->toPeriod(Carbon::parse($endDate)))
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray()
+            : [];
 
-        $monthlyOrders = Orders::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('COUNT(*) as order_count')
-        )
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('order_count', 'month')
-            ->all();
+        $monthlyOrdersQuery = Orders::query();
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $monthlyOrdersQuery->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as order_count')
+            )
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('DATE(created_at)'));
+        } else {
+            $monthlyOrdersQuery->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as order_count')
+            )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'));
+        }
+        $monthlyOrders = $monthlyOrdersQuery->get()->pluck('order_count', $filterType === 'day' ? 'date' : 'month')->toArray();
 
-        $monthlyProducts = Orders_item::select(
-            DB::raw('MONTH(orders.created_at) as month'),
-            DB::raw('SUM(quantity) as product_count')
-        )
-            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
-            ->groupBy(DB::raw('MONTH(orders.created_at)'))
-            ->pluck('product_count', 'month')
-            ->all();
+        $monthlyProductsQuery = Orders_item::query()->join('orders', 'orders_item.order_id', '=', 'orders.id');
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $monthlyProductsQuery->select(
+                DB::raw('DATE(orders.created_at) as date'),
+                DB::raw('SUM(quantity) as product_count')
+            )
+                ->whereBetween('orders.created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('DATE(orders.created_at)'));
+        } else {
+            $monthlyProductsQuery->select(
+                DB::raw('MONTH(orders.created_at) as month'),
+                DB::raw('SUM(quantity) as product_count')
+            )
+                ->whereYear('orders.created_at', $year)
+                ->groupBy(DB::raw('MONTH(orders.created_at)'));
+        }
+        $monthlyProducts = $monthlyProductsQuery->get()->pluck('product_count', $filterType === 'day' ? 'date' : 'month')->toArray();
 
-        $monthlyUsers = User::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('COUNT(*) as user_count')
-        )
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('user_count', 'month')
-            ->all();
+        $monthlyUsersQuery = User::query();
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $monthlyUsersQuery->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as user_count')
+            )
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('DATE(created_at)'));
+        } else {
+            $monthlyUsersQuery->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as user_count')
+            )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'));
+        }
+        $monthlyUsers = $monthlyUsersQuery->get()->pluck('user_count', $filterType === 'day' ? 'date' : 'month')->toArray();
 
-        $actualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
-            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
-            ->sum(DB::raw('orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)'));
+        $actualRevenueQuery = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id');
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $actualRevenueQuery->whereBetween('orders.created_at', [$startDate, $endDate]);
+        } elseif ($filterType === 'month' && $month && $year) {
+            $actualRevenueQuery->whereYear('orders.created_at', $year)->whereMonth('orders.created_at', $month);
+        }
+        $actualRevenue = $actualRevenueQuery->sum(DB::raw('orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)'));
 
-
-        $monthlyActualRevenue = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
-            ->join('orders', 'orders_item.order_id', '=', 'orders.id')
-            ->select(
+        $monthlyActualRevenueQuery = Orders_item::join('products', 'orders_item.product_id', '=', 'products.id')
+            ->join('orders', 'orders_item.order_id', '=', 'orders.id');
+        if ($filterType === 'day' && $startDate && $endDate) {
+            $monthlyActualRevenueQuery->select(
+                DB::raw('DATE(orders.created_at) as date'),
+                DB::raw('SUM(orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)) as actual_revenue')
+            )
+                ->whereBetween('orders.created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('DATE(orders.created_at)'))
+                ->orderBy('date');
+        } else {
+            $monthlyActualRevenueQuery->select(
                 DB::raw('MONTH(orders.created_at) as month'),
                 DB::raw('SUM(orders_item.quantity * GREATEST(orders_item.price - products.original_price, 0)) as actual_revenue')
             )
-            ->groupBy(DB::raw('MONTH(orders.created_at)'))
-            ->orderBy('month')
-            ->get();
+                ->whereYear('orders.created_at', $year)
+                ->groupBy(DB::raw('MONTH(orders.created_at)'))
+                ->orderBy('month');
+        }
+        $monthlyActualRevenue = $monthlyActualRevenueQuery->get();
 
-        $orderData = array_map(fn($month) => $monthlyOrders[$month] ?? 0, $months);
-        $productData = array_map(fn($month) => $monthlyProducts[$month] ?? 0, $months);
-        $userData = array_map(fn($month) => $monthlyUsers[$month] ?? 0, $months);
+        $orderData = $filterType === 'day' && $startDate && $endDate
+            ? array_map(fn($day) => $monthlyOrders[$day] ?? 0, $days)
+            : array_map(fn($month) => $monthlyOrders[$month] ?? 0, $months);
+        $productData = $filterType === 'day' && $startDate && $endDate
+            ? array_map(fn($day) => $monthlyProducts[$day] ?? 0, $days)
+            : array_map(fn($month) => $monthlyProducts[$month] ?? 0, $months);
+        $userData = $filterType === 'day' && $startDate && $endDate
+            ? array_map(fn($day) => $monthlyUsers[$day] ?? 0, $days)
+            : array_map(fn($month) => $monthlyUsers[$month] ?? 0, $months);
+
+        $labels = $filterType === 'day' && $startDate && $endDate
+            ? $days
+            : array_map(fn($m) => 'Tháng ' . $m, $months);
+
+        // Kiểm tra yêu cầu AJAX hoặc header X-Requested-With
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'labels' => $labels,
+                'monthlyRevenue' => $monthlyRevenue,
+                'monthlyActualRevenue' => $monthlyActualRevenue,
+                'orderData' => $orderData,
+                'productData' => $productData,
+                'userData' => $userData,
+                'topProducts' => $topProducts->map(function ($product) {
+                    return [
+                        'product' => [
+                            'name' => $product->product->name,
+                            'mainImage' => [
+                                'sub_image' => $product->product->mainImage->sub_image
+                            ]
+                        ],
+                        'total_quantity' => $product->total_quantity,
+                        'total_revenue' => $product->total_revenue
+                    ];
+                }),
+                'totalRevenue' => $totalRevenue,
+                'actualRevenue' => $actualRevenue
+            ]);
+        }
 
         return view('admin.index', compact(
             'title',
@@ -124,6 +246,12 @@ class HomeController extends Controller
             'totalStock',
             'actualRevenue',
             'monthlyActualRevenue',
+            'labels',
+            'filterType',
+            'startDate',
+            'endDate',
+            'year',
+            'month'
         ));
     }
 
@@ -168,7 +296,6 @@ class HomeController extends Controller
             }
         }
 
-        // $products = $query->get();
         $products = $query->paginate(12);
 
         $categories = Category::whereNull('parent_id')->with('allChildren')->get();
