@@ -91,7 +91,7 @@
                 @endforeach
                 @if ($ratings->isEmpty())
                     <tr>
-                        <td colspan="6" class="text-center">
+                        <td colspan="7" class="text-center">
                             <i class="bi bi-inbox tw-text-[40px]"></i><br>
                             Không có người dùng nào
                         </td>

@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Carts;
 use App\Models\Orders;
 use Carbon\Carbon;
+use App\Models\Post;
 
 class HomeController extends Controller
 {
@@ -345,5 +346,14 @@ class HomeController extends Controller
 
         $addresses = Address::where('user_id', Auth::user()->id)->get();
         return view('checkout', compact('title', 'addresses', 'carts'));
+    }
+
+    public function post()
+    {
+        $title = "Tin tức";
+
+        $posts = Post::all();
+
+        return view('blogs.blog', compact('posts', 'title'));
     }
 }

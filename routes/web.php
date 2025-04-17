@@ -12,6 +12,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\PostController;
+
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -97,6 +99,13 @@ Route::middleware('check.role:admin')->group(function () {
     //comment and rating
     Route::get('/admin/comments', [RatingController::class, 'index'])->name('admin.comments.index');
     Route::put('/admin/ratings/{rating}/reply', [RatingController::class, 'reply'])->name('ratings.reply');
+    //post
+    Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
+    Route::post('/admin/posts', [PostController::class, 'store'])->name('admin.posts.store');
+    Route::delete('/admin/posts/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::get('/admin/posts/{post}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+    Route::put('/admin/posts/{post}', [PostController::class, 'update'])->name('admin.posts.update');
 });
 
 //checkout
@@ -127,10 +136,8 @@ Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('
 // print order
 Route::get('/order/{id}/print-invoice', [OrdersController::class, 'printInvoice'])->name('orders.printInvoice');
 // blog
-Route::get('/tin-tuc', function () {
-    $title = "Tin tức";
-    return view('blogs.blog', compact('title'));
-})->name('blog.index');
+Route::get('/tin-tuc', [HomeController::class, 'post'])->name('blog.index');
+Route::get('/tin-tuc/{slug}', [PostController::class, 'show'])->name('blog.show');
 //chat bot
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
 Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
