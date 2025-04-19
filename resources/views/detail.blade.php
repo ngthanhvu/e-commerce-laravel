@@ -49,7 +49,7 @@
 
         .rating-item {
             position: relative;
-            padding-top: 40px;
+            /* padding-top: 40px; */
         }
 
         .like-btn {
@@ -206,6 +206,15 @@
         <!-- Phần đánh giá sản phẩm -->
         <div class="mt-5" style="border-top: 1px solid #ccc; padding-top: 20px;">
             <h4>ĐÁNH GIÁ SẢN PHẨM</h4>
+            <div class="mb-3" id="rating-filters">
+                <button class="btn btn-outline-danger me-2 active" data-star="all">Tất Cả
+                    ({{ $ratings->count() }})</button>
+                @for ($i = 5; $i >= 1; $i--)
+                    <button class="btn btn-outline-secondary me-2" data-star="{{ $i }}">{{ $i }} Sao
+                        ({{ $ratings->where('rating', $i)->count() }})</button>
+                @endfor
+            </div>
+
             <div class="row">
                 <!-- Cột bên trái: Form đánh giá -->
                 <div class="col-md-4">
@@ -242,9 +251,10 @@
 
                 <!-- Cột bên phải: Danh sách đánh giá -->
                 <div class="col-md-8">
-                    <div class="ratings-list">
+                    <div class="ratings-list" id="ratings-list">
                         @forelse ($ratings as $rating)
-                            <div class="card mb-4 shadow-sm" id="rating-{{ $rating->id }}">
+                            <div class="card mb-4 shadow-sm rating-item" data-star="{{ $rating->rating }}"
+                                id="rating-{{ $rating->id }}">
                                 <div class="card-body position-relative">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
@@ -499,5 +509,29 @@
                 alert('Đã xảy ra lỗi khi xóa bình luận!');
             }
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('#rating-filters button');
+            const ratingItems = document.querySelectorAll(
+                '#ratings-list .rating-item'); // Sửa từ #rating-list thành #ratings-list
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Bỏ class active khỏi tất cả button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const star = this.getAttribute('data-star');
+
+                    ratingItems.forEach(item => {
+                        const itemStar = item.getAttribute('data-star');
+                        if (star === 'all' || itemStar === star) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
     </script>
 @endsection

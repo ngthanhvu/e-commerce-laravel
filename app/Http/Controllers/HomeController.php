@@ -35,7 +35,9 @@ class HomeController extends Controller
 
         $list_category = Category::latest()->take(4)->get();
 
-        return view('index', compact('products', 'categories', 'title', 'list_category'));
+        $posts = Post::latest()->take(3)->get();
+
+        return view('index', compact('products', 'categories', 'title', 'list_category', 'posts'));
     }
 
     public function admin(Request $request)
