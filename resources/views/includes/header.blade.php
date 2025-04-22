@@ -47,6 +47,7 @@
                                             </li>
                                             <li><a class="dropdown-item" href="{{ url('/profile') }}">Trang cá nhân</a>
                                             </li>
+                                            <li><a class="dropdown-item" href="#">Sản phẩm yêu thích</a></li>
                                             <li><a class="dropdown-item" href="#">Cài đặt</a></li>
                                             <li>
                                                 <form action="/dang-xuat" method="post" id="logoutForm">

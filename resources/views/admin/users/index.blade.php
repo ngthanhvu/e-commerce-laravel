@@ -72,25 +72,33 @@
                         <td>{{ $user->email }}</td>
                         <td>
                             @if ($user->role == 'admin')
-                                <span class="badge rounded-pill text-bg-danger">Admin</span>
+                                <span
+                                    class="tw-bg-red-100 tw-text-red-800 tw-text-xs tw-font-medium tw-me-2 tw-px-2.5 tw-py-0.5 tw-rounded-sm tw-dark:bg-gray-700 tw-dark:text-red-400 tw-border tw-border-red-400">Admin</span>
                             @elseif ($user->role == 'user')
-                                <span class="badge rounded-pill text-bg-success">User</span>
+                                <span
+                                    class="tw-bg-green-100 tw-text-green-800 tw-text-xs tw-font-medium tw-me-2 tw-px-2.5 tw-py-0.5 tw-rounded-sm tw-dark:bg-gray-700 tw-dark:text-green-400 tw-border tw-border-green-400">User</span>
                             @endif
                         </td>
                         <td>{{ $user->created_at }}</td>
                         <td>
-                            <button class="btn btn-outline-secondary editUserBtn btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editUserModal" data-id="{{ $user->id }}"
-                                data-name="{{ $user->name }}" data-email="{{ $user->email }}"
-                                data-role="{{ $user->role }}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <form action="/admin/users/{{ $user->id }}" method="POST" style="display: inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-secondary btn-sm"><i
-                                        class="fas fa-trash"></i></button>
-                            </form>
+                            @if ($user->role == 'admin')
+                                <button class="btn btn-outline-secondary btn-sm hover:tw-cursor-not-allowed">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            @else
+                                <button class="btn btn-outline-secondary editUserBtn btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editUserModal" data-id="{{ $user->id }}"
+                                    data-name="{{ $user->name }}" data-email="{{ $user->email }}"
+                                    data-role="{{ $user->role }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="/admin/users/{{ $user->id }}" method="POST" style="display: inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm"><i
+                                            class="fas fa-trash"></i></button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
