@@ -6,12 +6,14 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Variant;
+use App\Models\Favorite;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -162,7 +164,12 @@ class ProductController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(4)
             ->get();
-        return view('detail', compact('title', 'product', 'ratings', 'related_products'));
+
+        $favoriteId = Favorite::where('user_id', Auth::id())
+            ->where('product_id', $product->id)
+            ->exists();
+
+        return view('detail', compact('title', 'product', 'ratings', 'related_products', 'favoriteId'));
     }
 
     public function edit(Product $product)

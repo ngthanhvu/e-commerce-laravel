@@ -13,7 +13,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\PostController;
-
+use App\Http\Controllers\FavoriteController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -44,7 +44,7 @@ Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.
 Route::post('/profile/password', [UserController::class, 'changePassword'])->name('profile.password');
 Route::post('/profile/cancel-order/{id}', [OrdersController::class, 'cancelOrder'])->name('profile.cancel-order');
 Route::post('/profile/reorder/{id}', [OrdersController::class, 'reorder'])->name('profile.reorder');
-
+Route::get('/profile/favorite', [HomeController::class, 'favorite'])->name('profile.favorite');
 //auth
 Route::post('dang-ky', [UserController::class, 'register']);
 Route::post('dang-nhap', [UserController::class, 'login'])->name('dang-nhap');
@@ -112,6 +112,9 @@ Route::middleware('check.role:admin')->group(function () {
 Route::middleware('is_login')->group(function () {
     Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout.index');
     Route::post('/checkout/create', [OrdersController::class, 'store'])->name('orders.store');
+    //add favorite
+    Route::post('/favorite', [FavoriteController::class, 'store'])->name('favorite.store');
+    Route::delete('/favorite/{id}', [FavoriteController::class, 'destroy'])->name('favorite.destroy');
 });
 //alert
 Route::get('/success', function () {

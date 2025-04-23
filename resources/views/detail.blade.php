@@ -188,8 +188,17 @@
                         <button type="button" class="btn btn-dark w-50 mt-3" disabled><i
                                 class="fa-solid fa-cart-shopping"></i> HẾT HÀNG</button>
                     @endif
-                    <button type="button" class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu
-                        thích</button>
+                    {{-- <button type="button" id="addFavorite" data-product-id="{{ $product->id }}"
+                        class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu
+                        thích</button> --}}
+                    <button type="button" id="toggleFavorite" data-product-id="{{ $product->id }}"
+                        data-favorite-id="{{ $favoriteId ?? '' }}" {{-- không quan trọng nếu JS sẽ quản lý toàn bộ --}}
+                        class="btn btn-outline-danger mt-3">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="favorite-text">{{ isset($favoriteId) ? 'Bỏ yêu thích' : 'Yêu thích' }}</span>
+                    </button>
+
+
                 </form>
             </div>
         </div>
@@ -387,4 +396,76 @@
         window.csrfToken = "{{ csrf_token() }}";
     </script>
     <script src="{{ asset('js/detail.js') }}"></script>
+    <script>
+        const btn = document.getElementById('toggleFavorite');
+        const textEl = btn.querySelector('.favorite-text');
+        const productId = btn.dataset.productId;
+
+        let currentFavoriteId = btn.dataset.favoriteId || '';
+
+        btn.addEventListener('click', async function() {
+            if (currentFavoriteId) {
+                const url = `/favorite/${currentFavoriteId}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': window.csrfToken,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        console.log('Đã bỏ yêu thích');
+
+                        currentFavoriteId = '';
+                        btn.dataset.favoriteId = '';
+                        btn.setAttribute('data-favorite-id', '');
+
+                        textEl.textContent = 'Yêu thích';
+                    } else {
+                        alert('Lỗi khi bỏ yêu thích');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi gửi DELETE:', error);
+                    alert('Lỗi khi bỏ yêu thích');
+                }
+            } else {
+                const url = "{{ route('favorite.store') }}";
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': window.csrfToken,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.favorite?.id) {
+                        console.log('Đã thêm vào yêu thích');
+
+                        currentFavoriteId = data.favorite.id;
+                        btn.dataset.favoriteId = currentFavoriteId;
+                        btn.setAttribute('data-favorite-id', currentFavoriteId);
+
+                        textEl.textContent = 'Bỏ yêu thích';
+                    } else if (response.status === 409) {
+                        alert(data.message);
+                    } else {
+                        alert('Lỗi khi thêm vào yêu thích');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi thêm yêu thích:', error);
+                    alert('Lỗi kết nối');
+                }
+            }
+        });
+    </script>
 @endsection

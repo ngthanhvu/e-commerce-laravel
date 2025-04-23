@@ -21,4 +21,9 @@ class User extends Authenticatable
         'oauth_provider',
         'oauth_id',
     ];
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }

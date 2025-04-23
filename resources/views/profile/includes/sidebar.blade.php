@@ -58,6 +58,9 @@
     <li class="nav-item">
         <a class="nav-link" href="/profile/history">Đơn hàng</a>
     </li>
+    <li class="nav-item">
+        <a href="/profile/favorite" class="nav-link">Sản phẩm yêu thích</a>
+    </li>
 </ul>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

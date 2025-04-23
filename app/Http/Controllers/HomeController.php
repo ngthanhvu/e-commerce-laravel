@@ -15,6 +15,7 @@ use App\Models\Carts;
 use App\Models\Orders;
 use Carbon\Carbon;
 use App\Models\Post;
+use App\Models\Favorite;
 
 class HomeController extends Controller
 {
@@ -357,5 +358,17 @@ class HomeController extends Controller
         $posts = Post::all();
 
         return view('blogs.blog', compact('posts', 'title'));
+    }
+
+    public function favorite()
+    {
+        $title = "Sản phẩm yêu thích";
+
+        $user_id = Auth::user()->id ?? null;
+
+        $favorites = Favorite::with(['product.mainImage'])->where('user_id', $user_id)->get();
+        // dd($favorites);
+
+        return view('profile.favorite', compact('title', 'favorites'));
     }
 }
