@@ -8,6 +8,8 @@
             background: #fff;
             border: none;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin: 0 5px;
+            /* Add some margin between cards */
         }
 
         .card:hover {
@@ -102,6 +104,52 @@
             height: 300px;
             object-fit: cover;
         }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .card-subtitle {
+                font-size: 14px;
+            }
+
+            .card-text,
+            .discount-price,
+            .original-price {
+                font-size: 13px;
+            }
+
+            .card-img-top {
+                height: 180px;
+            }
+
+            .category-card p {
+                font-size: 16px;
+                padding: 5px;
+            }
+
+            .blog-img {
+                height: 200px;
+            }
+
+            .swiper-button-prev,
+            .swiper-button-next {
+                display: none !important;
+            }
+
+            /* Mobile product swiper */
+            .mobile-product-swiper {
+                padding: 0 10px;
+            }
+
+            .mobile-product-swiper .swiper-slide {
+                width: 50% !important;
+                /* Show 2 cards at a time */
+                /* padding: 0 5px; */
+            }
+
+            .mobile-product-swiper .card {
+                margin: 0;
+            }
+        }
     </style>
 
     <div id="carouselExample" class="carousel slide mx-auto" data-bs-ride="carousel" style="width: 80%">
@@ -131,8 +179,7 @@
 
     <div class="container mt-4">
         @if (count($products) > 0)
-            <section class="new-products p-4 rounded-2 mb-4"
-                style="min-height: 500px; background-color: #f8f9fa; border: 1px solid #e9ecef;">
+            <section class="new-products p-4 rounded-2 mb-4" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
                 <div class="container">
                     <h3 class="text-center text-uppercase mb-4"
                         style="color: #2c3e50; position: relative; padding-bottom: 10px;">
@@ -141,54 +188,98 @@
                             style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background-color: #e74c3c;"></span>
                     </h3>
                     @if (count($products) > 4)
-                        <div class="swiper product-swiper-new">
-                            <div class="swiper-wrapper">
-                                @php
-                                    $chunks = $products->chunk(4);
-                                @endphp
-                                @foreach ($chunks as $chunk)
-                                    <div class="swiper-slide">
-                                        <div class="row">
-                                            @foreach ($chunk as $product)
-                                                <div class="col-md-3 col-6">
-                                                    <a href="/chi-tiet/{{ $product->slug }}"
-                                                        class="text-decoration-none text-dark">
-                                                        <div class="card"
-                                                            style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                                            @if ($product->mainImage)
-                                                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
-                                                                    class="card-img-top" alt="{{ $product->name }}">
-                                                            @else
-                                                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                                    class="card-img-top" alt="Keycap Artisan Natra">
-                                                            @endif
-                                                            <div class="card-body text-center">
-                                                                <span
-                                                                    class="card-title">{{ $product->category['name'] }}</span>
-                                                                <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                                                <p class="card-text">
-                                                                    @if (isset($product->discount_price) && $product->discount_price < $product->price)
-                                                                        <span
-                                                                            class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                                        <span
-                                                                            class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
-                                                                    @else
-                                                                        <span
-                                                                            class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                                    @endif
-                                                                </p>
+                        <!-- Desktop view (unchanged) -->
+                        <div class="d-none d-md-block">
+                            <div class="swiper product-swiper-new">
+                                <div class="swiper-wrapper">
+                                    @php
+                                        $chunks = $products->chunk(4);
+                                    @endphp
+                                    @foreach ($chunks as $chunk)
+                                        <div class="swiper-slide">
+                                            <div class="row">
+                                                @foreach ($chunk as $product)
+                                                    <div class="col-md-3 col-6">
+                                                        <a href="/chi-tiet/{{ $product->slug }}"
+                                                            class="text-decoration-none text-dark">
+                                                            <div class="card"
+                                                                style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                                                @if ($product->mainImage)
+                                                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                                        class="card-img-top" alt="{{ $product->name }}">
+                                                                @else
+                                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                                        class="card-img-top" alt="Keycap Artisan Natra">
+                                                                @endif
+                                                                <div class="card-body text-center">
+                                                                    <span
+                                                                        class="card-title">{{ $product->category['name'] }}</span>
+                                                                    <h5 class="card-subtitle ellipsis">{{ $product->name }}
+                                                                    </h5>
+                                                                    <p class="card-text">
+                                                                        @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                                                            <span
+                                                                                class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                                            <span
+                                                                                class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                                                        @else
+                                                                            <span
+                                                                                class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                                        @endif
+                                                                    </p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            @endforeach
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                                <div class="swiper-button-prev" style="color: #e74c3c;"></div>
+                                <div class="swiper-button-next" style="color: #e74c3c;"></div>
+                                <div class="swiper-pagination"></div>
                             </div>
-                            <div class="swiper-button-prev" style="color: #e74c3c;"></div>
-                            <div class="swiper-button-next" style="color: #e74c3c;"></div>
-                            <div class="swiper-pagination"></div>
+                        </div>
+
+                        <!-- Mobile view -->
+                        <div class="d-md-none mobile-product-swiper">
+                            <div class="swiper">
+                                <div class="swiper-wrapper">
+                                    @foreach ($products as $product)
+                                        <div class="swiper-slide">
+                                            <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
+                                                <div class="card"
+                                                    style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                                    @if ($product->mainImage)
+                                                        <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                            class="card-img-top" alt="{{ $product->name }}">
+                                                    @else
+                                                        <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                            class="card-img-top" alt="Keycap Artisan Natra">
+                                                    @endif
+                                                    <div class="card-body text-center">
+                                                        <span class="card-title">{{ $product->category['name'] }}</span>
+                                                        <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
+                                                        <p class="card-text">
+                                                            @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                                                <span
+                                                                    class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                                <span
+                                                                    class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                                            @else
+                                                                <span
+                                                                    class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                            @endif
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
                         </div>
                     @else
                         <div class="row mt-3">
@@ -240,7 +331,7 @@
                         sách danh mục
                     </h4>
                     @foreach ($list_category as $list)
-                        <div class="col-md-3 mb-3">
+                        <div class="col-6 col-md-3 mb-3">
                             <a href="/san-pham?category_id={{ $list->id }}" class="text-decoration-none text-dark">
                                 <div class="category-card">
                                     <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
@@ -255,57 +346,100 @@
 
         <!-- Phần sản phẩm theo danh mục -->
         @foreach ($categories as $category)
-            <section class="new-products p-3 rounded-2 mb-4" style="min-height: 500px;">
+            <section class="new-products p-3 rounded-2" style="min-height: 500px;">
                 <h4 class="text-start text-uppercase mb-3"><span class="me-2"
                         style="color: #e74c3c;">|</span>{{ $category->name }}
                 </h4>
                 @if ($category->products->count() > 4)
-                    <div class="swiper product-swiper-{{ $category->id }}">
-                        <div class="swiper-wrapper">
-                            @php
-                                $chunks = $category->products->chunk(4);
-                            @endphp
-                            @foreach ($chunks as $chunk)
-                                <div class="swiper-slide">
-                                    <div class="row">
-                                        @foreach ($chunk as $product)
-                                            <div class="col-md-3 col-6 mb-3">
-                                                <a href="/chi-tiet/{{ $product->slug }}"
-                                                    class="text-decoration-none text-dark">
-                                                    <div class="card">
-                                                        @if ($product->mainImage)
-                                                            <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
-                                                                class="card-img-top" alt="{{ $product->name }}">
-                                                        @else
-                                                            <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                                class="card-img-top" alt="Keycap Artisan Natra">
-                                                        @endif
-                                                        <div class="card-body text-center">
-                                                            <span class="card-title">{{ $category->name }}</span>
-                                                            <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                                            <p class="card-text">
-                                                                @if (isset($product->discount_price) && $product->discount_price < $product->price)
-                                                                    <span
-                                                                        class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                                    <span
-                                                                        class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
-                                                                @else
-                                                                    <span
-                                                                        class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                                @endif
-                                                            </p>
+                    <!-- Desktop view -->
+                    <div class="d-none d-md-block">
+                        <div class="swiper product-swiper-{{ $category->id }}">
+                            <div class="swiper-wrapper">
+                                @php
+                                    $chunks = $category->products->chunk(4);
+                                @endphp
+                                @foreach ($chunks as $chunk)
+                                    <div class="swiper-slide">
+                                        <div class="row">
+                                            @foreach ($chunk as $product)
+                                                <div class="col-md-3 col-6 mb-3">
+                                                    <a href="/chi-tiet/{{ $product->slug }}"
+                                                        class="text-decoration-none text-dark">
+                                                        <div class="card">
+                                                            @if ($product->mainImage)
+                                                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                                    class="card-img-top" alt="{{ $product->name }}">
+                                                            @else
+                                                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                                    class="card-img-top" alt="Keycap Artisan Natra">
+                                                            @endif
+                                                            <div class="card-body text-center">
+                                                                <span class="card-title">{{ $category->name }}</span>
+                                                                <h5 class="card-subtitle ellipsis">{{ $product->name }}
+                                                                </h5>
+                                                                <p class="card-text">
+                                                                    @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                                                        <span
+                                                                            class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                                        <span
+                                                                            class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                                                    @else
+                                                                        <span
+                                                                            class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                                    @endif
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        @endforeach
+                                                    </a>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
+                            <div class="swiper-button-prev" style="color: #333;"></div>
+                            <div class="swiper-button-next" style="color: #333;"></div>
+                            <div class="swiper-pagination"></div>
                         </div>
-                        <div class="swiper-button-prev" style="color: #333;"></div>
-                        <div class="swiper-button-next" style="color: #333;"></div>
-                        <div class="swiper-pagination"></div>
+                    </div>
+
+                    <!-- Mobile view -->
+                    <div class="d-md-none mobile-product-swiper">
+                        <div class="swiper">
+                            <div class="swiper-wrapper">
+                                @foreach ($category->products as $product)
+                                    <div class="swiper-slide">
+                                        <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
+                                            <div class="card">
+                                                @if ($product->mainImage)
+                                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                        class="card-img-top" alt="{{ $product->name }}">
+                                                @else
+                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                        class="card-img-top" alt="Keycap Artisan Natra">
+                                                @endif
+                                                <div class="card-body text-center">
+                                                    <span class="card-title">{{ $category->name }}</span>
+                                                    <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
+                                                    <p class="card-text">
+                                                        @if (isset($product->discount_price) && $product->discount_price < $product->price)
+                                                            <span
+                                                                class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                            <span
+                                                                class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
+                                                        @else
+                                                            <span
+                                                                class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
                     </div>
                 @else
                     <div class="row mt-3">
@@ -350,14 +484,16 @@
         <section>
             <div class="container">
                 <div class="row">
-                    <h3 class="text-center text-uppercase mb-4"
-                        style="color: #2c3e50; position: relative; padding-bottom: 10px;">
-                        Tin tức mới
-                        <span
-                            style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background-color: #e74c3c;"></span>
-                    </h3>
+                    @if ($posts->count() > 0)
+                        <h3 class="text-center text-uppercase mb-4"
+                            style="color: #2c3e50; position: relative; padding-bottom: 10px;">
+                            Tin tức mới
+                            <span
+                                style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background-color: #e74c3c;"></span>
+                        </h3>
+                    @endif
                     @foreach ($posts as $post)
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-4 mb-4">
                             <a href="{{ route('blog.show', $post->slug) }}" class="text-decoration-none text-dark">
                                 <div class="tw-card border-0">
                                     <img src="{{ $post->image }}" class="card-img-top blog-img" alt="Blog Image"
@@ -386,6 +522,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 @if (count($products) > 4)
+                    // Desktop swiper
                     var swiperNew = new Swiper('.product-swiper-new', {
                         slidesPerView: 1,
                         spaceBetween: 20,
@@ -397,10 +534,22 @@
                             clickable: true,
                         },
                     });
+
+                    // Mobile swiper
+                    var swiperNewMobile = new Swiper('.new-products .mobile-product-swiper .swiper', {
+                        slidesPerView: 'auto',
+                        spaceBetween: 10,
+                        centeredSlides: false,
+                        pagination: {
+                            el: '.new-products .mobile-product-swiper .swiper-pagination',
+                            clickable: true,
+                        },
+                    });
                 @endif
 
                 @foreach ($categories as $category)
                     @if ($category->products->count() > 4)
+                        // Desktop swiper
                         var swiper{{ $category->id }} = new Swiper('.product-swiper-{{ $category->id }}', {
                             slidesPerView: 1,
                             spaceBetween: 20,
@@ -412,6 +561,18 @@
                                 clickable: true,
                             },
                         });
+
+                        // Mobile swiper
+                        var swiper{{ $category->id }}Mobile = new Swiper(
+                            '.new-products:has(h4:contains("{{ $category->name }}")) .mobile-product-swiper .swiper', {
+                                slidesPerView: 'auto',
+                                spaceBetween: 10,
+                                centeredSlides: false,
+                                pagination: {
+                                    el: '.new-products:has(h4:contains("{{ $category->name }}")) .mobile-product-swiper .swiper-pagination',
+                                    clickable: true,
+                                },
+                            });
                     @endif
                 @endforeach
             });

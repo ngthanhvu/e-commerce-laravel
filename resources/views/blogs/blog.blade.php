@@ -26,11 +26,6 @@
                     </a>
                 </div>
             @endforeach
-            @if ($posts->count() < 0)
-                <div class="col-md-12 text-center">
-                    <p>Không có bài viết nào.</p>
-                </div>
-            @endif
         </div>
     </div>
 @endsection

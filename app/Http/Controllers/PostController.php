@@ -89,7 +89,7 @@ class PostController extends Controller
             'user_id' => $request->user_id, // hoặc $request->user_id nếu bạn đã gửi từ form
         ]);
 
-        return redirect()->back()->with('success', 'Tạo bài viết thành công');
+        return redirect()->route('admin.posts.index')->with('success', 'Tạo bài viết thành công');
     }
 
 

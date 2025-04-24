@@ -145,7 +145,7 @@
                 @endforeach
                 @if ($products->isEmpty())
                     <tr>
-                        <td colspan="9" class="text-center">
+                        <td colspan="11" class="text-center">
                             <i class="bi bi-inbox tw-text-[40px]"></i><br>
                             Không có sản phẩm nào
                         </td>

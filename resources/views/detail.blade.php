@@ -49,7 +49,6 @@
 
         .rating-item {
             position: relative;
-            /* padding-top: 40px; */
         }
 
         .like-btn {
@@ -98,6 +97,34 @@
         .card-product:hover {
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .thumbnail {
+                width: 45px;
+                height: 45px;
+            }
+
+            .variant-btn {
+                width: 100% !important;
+                margin-bottom: 0.5rem;
+            }
+
+            .btn.w-50 {
+                width: 100% !important;
+            }
+
+            .like-btn {
+                width: 100%;
+                position: static;
+                margin-top: 10px;
+            }
+
+            .related-products .col-md-3 {
+                width: 50%;
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
         }
     </style>
 
@@ -188,12 +215,10 @@
                         <button type="button" class="btn btn-dark w-50 mt-3" disabled><i
                                 class="fa-solid fa-cart-shopping"></i> HẾT HÀNG</button>
                     @endif
-                    {{-- <button type="button" id="addFavorite" data-product-id="{{ $product->id }}"
-                        class="btn btn-outline-danger mt-3"><i class="fa-solid fa-heart"></i> Yêu
-                        thích</button> --}}
+
                     <button type="button" id="toggleFavorite" data-product-id="{{ $product->id }}"
-                        data-favorite-id="{{ $favoriteId ?? '' }}" {{-- không quan trọng nếu JS sẽ quản lý toàn bộ --}}
-                        class="btn btn-outline-danger mt-3">
+                        data-favorite-id="{{ $favoriteId ?? '' }}"
+                        class="btn {{ isset($favoriteId) ? 'btn-danger' : 'btn-outline-danger' }} mt-3">
                         <i class="fa-solid fa-heart"></i>
                         <span class="favorite-text">{{ isset($favoriteId) ? 'Bỏ yêu thích' : 'Yêu thích' }}</span>
                     </button>
@@ -351,7 +376,7 @@
             </h4>
             <div class="row">
                 @foreach ($related_products as $product)
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-3 col-6 mb-3">
                         <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none text-dark">
                             <div class="card card-product h-100">
                                 {{-- <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" alt="{{ $product->name }}" class="card-img-top"> --}}
