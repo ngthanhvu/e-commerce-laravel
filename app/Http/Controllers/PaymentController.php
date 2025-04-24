@@ -110,6 +110,84 @@ class PaymentController extends Controller
         }
     }
 
+    //Tạo URL thanh toán Paypal
+    private function generatePaypalUrl($order, $amount)
+    {
+        $apiUrl = env('PAYPAL_API_URL', 'https://api-m.sandbox.paypal.com');
+        $clientId = env('PAYPAL_CLIENT_ID', 'YourPayPalClientIDHere');
+        $clientSecret = env('PAYPAL_SECRET', 'YourPayPalSecretHere');
+        $returnUrl = route('paypal.callback');
+        $cancelUrl = route('paypal.cancel');
+
+        // Lấy access token
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "$apiUrl/v1/oauth2/token");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$clientSecret");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json', 'Accept-Language: en_US']);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            Log::error('PayPal access token request failed', ['response' => $response]);
+            abort(500, 'Không thể lấy access token từ PayPal');
+        }
+
+        $tokenData = json_decode($response, true);
+        $accessToken = $tokenData['access_token'];
+
+        // Tạo thanh toán
+        $payload = [
+            'intent' => 'CAPTURE',
+            'purchase_units' => [[
+                'reference_id' => $order->id,
+                'amount' => [
+                    'currency_code' => env('PAYPAL_CURRENCY', 'USD'),
+                    'value' => number_format($amount / 24000, 2, '.', '')
+                ]
+            ]],
+            'application_context' => [
+                'return_url' => $returnUrl,
+                'cancel_url' => $cancelUrl,
+                'brand_name' => 'Your Store Name',
+                'locale' => 'en-US',
+                'landing_page' => 'BILLING',
+                'user_action' => 'PAY_NOW'
+            ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "$apiUrl/v2/checkout/orders");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 201) {
+            Log::error('PayPal payment creation failed', ['response' => $response]);
+            abort(500, 'Không thể tạo thanh toán PayPal');
+        }
+
+        $result = json_decode($response, true);
+        foreach ($result['links'] as $link) {
+            if ($link['rel'] === 'approve') {
+                return $link['href'];
+            }
+        }
+
+        Log::error('PayPal approve URL not found', ['response' => $result]);
+        abort(500, 'Không tìm thấy URL thanh toán PayPal');
+    }
+
     // Gửi POST request cho MoMo
     private function execPostRequest($url, $data)
     {
@@ -302,6 +380,105 @@ class PaymentController extends Controller
         }
     }
 
+    //callback cho Paypal
+    public function paypalCallback(Request $request)
+    {
+        $apiUrl = env('PAYPAL_API_URL', 'https://api-m.sandbox.paypal.com');
+        $clientId = env('PAYPAL_CLIENT_ID', 'YourPayPalClientIDHere');
+        $clientSecret = env('PAYPAL_SECRET', 'YourPayPalSecretHere');
+        $orderId = $request->input('token');
+
+        // Lấy access token
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "$apiUrl/v1/oauth2/token");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$clientSecret");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json', 'Accept-Language: en_US']);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            Log::error('PayPal access token request failed', ['response' => $response]);
+            return redirect()->route('alert.fail')->with('error', 'Không thể xác thực PayPal');
+        }
+
+        $tokenData = json_decode($response, true);
+        $accessToken = $tokenData['access_token'];
+
+        // Capture thanh toán
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "$apiUrl/v2/checkout/orders/$orderId/capture");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 201) {
+            Log::error('PayPal capture failed', ['response' => $response]);
+            return redirect()->route('alert.fail')->with('error', 'Thanh toán PayPal thất bại');
+        }
+
+        $result = json_decode($response, true);
+        if ($result['status'] === 'COMPLETED') {
+            $order = Orders::where('id', $result['purchase_units'][0]['reference_id'])->first();
+            if ($order) {
+                $order->status = 'paid';
+                $order->save();
+
+                // Cập nhật số lượng sản phẩm
+                $orderItems = $order->orderItems;
+                foreach ($orderItems as $orderItem) {
+                    if ($orderItem->variant_id) {
+                        $variant = $orderItem->variant;
+                        if ($variant) {
+                            $variant->varriant_quantity -= $orderItem->quantity;
+                            $variant->save();
+                        }
+                    } else {
+                        $product = $orderItem->product;
+                        if ($product) {
+                            $product->quantity -= $orderItem->quantity;
+                            $product->save();
+                        }
+                    }
+
+                    Product::where('id', $orderItem->product_id)->update([
+                        'count' => DB::raw('count + 1')
+                    ]);
+                }
+
+                // Gửi email xác nhận
+                $user = $order->user;
+                if ($user && !empty($user->email)) {
+                    $order->email = $user->email;
+                    Mail::to($order->email)->send(new PaymentConfirmation($order));
+                }
+
+                return redirect()->route('alert.success');
+            }
+        }
+
+        return redirect()->route('alert.fail')->with('error', 'Thanh toán PayPal thất bại');
+    }
+
+    public function paypalCancel(Request $request)
+    {
+        $order = Orders::where('id', $request->input('token'))->first();
+        if ($order) {
+            $order->status = 'canceled';
+            $order->save();
+        }
+        return redirect()->route('alert.fail')->with('error', 'Thanh toán PayPal đã bị hủy');
+    }
+
     // IPN cho MoMo
     public function momoIpn(Request $request)
     {
@@ -369,6 +546,10 @@ class PaymentController extends Controller
             case 'momo':
                 $momoUrl = $this->generateMomoUrl($order, $totalPrice);
                 return redirect()->away($momoUrl);
+                break;
+            case 'paypal':
+                $paypalUrl = $this->generatePaypalUrl($order, $totalPrice);
+                return redirect()->away($paypalUrl);
                 break;
             default:
                 throw new \Exception('Phương thức thanh toán không hợp lệ');

@@ -50,7 +50,7 @@ class OrdersController extends Controller
     {
         $request->validate([
             'address_id' => 'required',
-            'payment_method' => 'required|in:cod,vnpay,momo',
+            'payment_method' => 'required|in:cod,vnpay,momo,paypal',
             'shipping_fee' => 'required|numeric|min:0',
             'total_amount' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0',

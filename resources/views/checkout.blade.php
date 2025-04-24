@@ -191,6 +191,16 @@
                             MOMO
                         </label>
                     </div>
+                    <div class="form-check tw-d-flex tw-align-items-center tw-mb-2"
+                        style="border: 1px solid #ccc; padding-left: 30px; padding-top: 10px; padding-bottom: 10px; border-radius: 5px;">
+                        <input class="form-check-input tw-me-2" type="radio" name="payment_method" id="paypal"
+                            value="paypal">
+                        <label class="form-check-label tw-d-flex tw-align-items-center" for="paypal">
+                            <img src="https://cdn6.aptoide.com/imgs/7/3/6/7361965ab73672c20315b5e0f39f7ab4_icon.png"
+                                alt="Paypal" class="tw-w-5 tw-h-5 tw-me-2">
+                            PAYPAL
+                        </label>
+                    </div>
 
                     <h4 class="tw-mt-4 tw-text-lg tw-font-semibold">Tóm tắt đơn hàng</h4>
                     <ul class="list-group tw-mb-3">

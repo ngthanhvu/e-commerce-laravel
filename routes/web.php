@@ -130,6 +130,8 @@ Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name
 Route::get('/momo/callback', [PaymentController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [PaymentController::class, 'momoIpn'])->name('momo.ipn');
 Route::get('/zalopay/callback', [PaymentController::class, 'zalopayCallback'])->name('zalopay.callback');
+Route::get('/paypal/callback', [PaymentController::class, 'paypalCallback'])->name('paypal.callback');
+Route::get('/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
 // coupon
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('coupon.apply');
 //rating 
